@@ -2,54 +2,98 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>KPI Neufeld - Dashboard y Control Global</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Supervisores - Neufeld</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --critico: #ff4d4d; --regular: #ffcc00; --optimo: #2ecc71;
-            --navy: #0f172a; --slate: #f8fafc; --accent: #27ae60;
+            --verde-neufeld: #27ae60;
+            --verde-oscuro: #1e8449;
+            --bg-light: #f4f7f6;
+            --navy: #0f172a;
+            --text-main: #334155;
+            --rojo: #ef4444;
+            --amarillo: #f59e0b;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #e2e8f0; margin: 0; padding: 20px; }
-        .container { max-width: 1450px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        
-        .logo-container { position: absolute; top: 20px; right: 25px; }
-        .logo-container img { height: 65px; width: auto; }
 
-        .registro-panel { background: var(--navy); color: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-light); 
+            color: var(--text-main);
+            margin: 0; padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+
+        /* HEADER & LOGO */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--bg-light); padding-bottom: 20px; }
+        .logo-container img { height: 80px; width: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); }
+        
+        /* CARGANDO OVERLAY */
+        #loadingOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* FORMULARIO */
+        .registro-panel { background: var(--navy); color: white; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
         .controles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        
-        /* Dashboard Estilo */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .chart-container { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; height: 250px; }
+        .checks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+        .check-card { 
+            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .info-icon { 
+            cursor: pointer; background: #64748b; color: white; border-radius: 50%; 
+            width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-size: 12px; margin-left: 8px;
+        }
 
-        .checks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        .check-card { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
-        
-        .section-title { border-left: 5px solid var(--accent); padding-left: 10px; margin: 25px 0 15px; color: var(--navy); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.75em; }
-        th { background: #f1f5f9; padding: 10px; text-transform: uppercase; border: 1px solid #e2e8f0; }
-        td { padding: 8px; border: 1px solid #f1f5f9; text-align: center; }
+        /* DASHBOARD */
+        .dashboard-controls { background: #fff; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
+        .chart-box { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; position: relative; }
+        .score-badge { position: absolute; top: 20px; right: 20px; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 1.2em; color: white; }
 
-        .semaforo { font-weight: bold; padding: 4px 8px; border-radius: 4px; color: white; display: inline-block; }
-        .rojo { background: var(--critico); } .amarillo { background: var(--regular); color: black; } .verde { background: var(--optimo); }
+        /* COMPARATIVA */
+        .comparativa-section { margin-top: 40px; background: #f8fafc; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; }
 
-        .btn-guardar { background: var(--accent); color: white; font-weight: bold; cursor: pointer; padding: 15px; border-radius: 10px; border: none; width: 100%; margin-top: 20px; }
-        .btn-del { background: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        select, input { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 100%; }
-        .filtro-mes { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        /* TABLA */
+        .table-container { overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        th { background: #f8fafc; color: #64748b; padding: 12px; text-align: center; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+
+        .btn-guardar { 
+            background: var(--verde-neufeld); color: white; border: none; padding: 15px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; font-size: 16px;
+        }
+        .btn-guardar:hover { background: var(--verde-oscuro); }
+        .semaforo { padding: 5px 10px; border-radius: 6px; color: white; font-weight: bold; }
+        select, input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; width: 100%; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="logo-container"><img src="Logo Pasteleria Neufeld.png" alt="Logo Neufeld"></div>
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p id="loadingText" style="margin-top:15px; font-weight:bold; color: var(--navy);">Cargando datos...</p>
+</div>
 
+<div class="container">
+    <div class="header">
+        <h1 style="margin:0; color: var(--navy);">KPI Supervisores</h1>
+        <div class="logo-container">
+            <img src="Logo Pasteleria Neufeld.png" alt="Neufeld Logo">
+        </div>
+    </div>
+
+    <!-- PANEL DE REGISTRO -->
     <div class="registro-panel">
-        <h2>Actualizar KPI Diario</h2>
         <div class="controles">
-            <div><label>Supervisor</label>
+            <div>
+                <label>Supervisor</label>
                 <select id="sup" onchange="cargarSucursales()">
                     <option value="">Seleccionar...</option>
                     <option value="Adriana">ADRIANA</option>
@@ -62,52 +106,114 @@
             <div><label>Sucursal</label><select id="sucursal"></select></div>
             <div><label>Fecha</label><input type="date" id="fecha"></div>
         </div>
+
         <div class="checks-grid">
-            <div class="check-card">Visitas (15) <input type="checkbox" class="kpi" data-r="vis" value="15"></div>
-            <div class="check-card">Checklist (15) <input type="checkbox" class="kpi" data-r="chk" value="15"></div>
-            <div class="check-card">Arqueo (15) <input type="checkbox" class="kpi" data-r="arq" value="15"></div>
-            <div class="check-card">Adeudos (15) <input type="checkbox" class="kpi" data-r="ade" value="15"></div>
-            <div class="check-card">Rotación (10) <input type="checkbox" class="kpi" data-r="rot" value="10"></div>
-            <div class="check-card">Asistencia (10) <input type="checkbox" class="kpi" data-r="asi" value="10"></div>
-            <div class="check-card">Producto (10) <input type="checkbox" class="kpi" data-r="pro" value="10"></div>
-            <div class="check-card">Productividad (10) <input type="checkbox" class="kpi" data-r="pty" value="10"></div>
+            <div class="check-card">
+                <span>Visitas (15) <span class="info-icon" onclick="verInfo('vis')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="vis" value="15">
+            </div>
+            <div class="check-card">
+                <span>Checklist (15) <span class="info-icon" onclick="verInfo('chk')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="chk" value="15">
+            </div>
+            <div class="check-card">
+                <span>Arqueo (15) <span class="info-icon" onclick="verInfo('arq')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="arq" value="15">
+            </div>
+            <div class="check-card">
+                <span>Adeudos (15) <span class="info-icon" onclick="verInfo('ade')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="ade" value="15">
+            </div>
+            <div class="check-card">
+                <span>Rotación (10) <span class="info-icon" onclick="verInfo('rot')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="rot" value="10">
+            </div>
+            <div class="check-card">
+                <span>Asistencia (10) <span class="info-icon" onclick="verInfo('asi')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="asi" value="10">
+            </div>
+            <div class="check-card">
+                <span>Producto (10) <span class="info-icon" onclick="verInfo('pro')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="pro" value="10">
+            </div>
+            <div class="check-card">
+                <span>Productividad (10) <span class="info-icon" onclick="verInfo('pty')">?</span></span>
+                <input type="checkbox" class="kpi" data-r="pty" value="10">
+            </div>
         </div>
         <button class="btn-guardar" onclick="guardarEnNube()">GUARDAR REPORTE</button>
     </div>
 
-    <div class="section-title">
-        <span>DASHBOARD DE DESEMPEÑO POR SUPERVISOR</span>
-        <div style="width: 200px;">
-            <select id="filtroMes" onchange="cargarHistorialGlobal()">
-                <option value="0">Enero</option><option value="1">Febrero</option>
-                <option value="2">Marzo</option><option value="3">Abril</option>
-                <option value="4">Mayo</option><option value="5">Junio</option>
-                <option value="6">Julio</option><option value="7">Agosto</option>
-                <option value="8">Septiembre</option><option value="9">Octubre</option>
-                <option value="10">Noviembre</option><option value="11">Diciembre</option>
+    <!-- DASHBOARD CONTROLS -->
+    <div class="dashboard-controls">
+        <div style="flex: 1;">
+            <label>Filtrar Mes:</label>
+            <select id="filtroMes" onchange="actualizarTodo()">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+                <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+                <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+        <div style="flex: 1;">
+            <label>Filtrar Supervisor en Historial:</label>
+            <select id="filtroSup" onchange="renderTabla()">
+                <option value="Todos">Todos los supervisores</option>
+                <option value="Adriana">Adriana</option><option value="Citlalli">Citlalli</option>
+                <option value="Karla">Karla</option><option value="Leonardo">Leonardo</option>
+                <option value="Noemi">Noemi</option>
             </select>
         </div>
     </div>
-    
-    <div class="dashboard-grid" id="dashboard">
-        <!-- Aquí se generan las gráficas automáticamente -->
+
+    <!-- RADARS -->
+    <div class="dashboard-grid" id="radarContainer"></div>
+
+    <!-- COMPARATIVA BAR CHART -->
+    <div class="comparativa-section">
+        <h3 style="margin-top:0">Comparativa General del Mes</h3>
+        <div style="height: 300px;"><canvas id="comparativaChart"></canvas></div>
     </div>
 
-    <h3 class="section-title">HISTORIAL MENSUAL DETALLADO</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Vis</th><th>Chk</th><th>Arq</th><th>Ade</th><th>Rot</th><th>Asi</th><th>Pro</th><th>Pty</th><th>Total</th><th>Acción</th>
-            </tr>
-        </thead>
-        <tbody id="tablaBody"></tbody>
-    </table>
+    <!-- HISTORIAL -->
+    <h3 style="margin-top:40px; border-bottom: 2px solid var(--verde-neufeld); padding-bottom: 10px;">Historial Mensual Detallado</h3>
+    <div class="table-container">
+        <table id="tablaKPI">
+            <thead>
+                <tr>
+                    <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Vis</th><th>Chk</th><th>Arq</th><th>Ade</th><th>Rot</th><th>Asi</th><th>Pro</th><th>Pty</th><th>Total</th><th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxzACG28-AK4SNTjRwGD2jZzdj-V6dnzfdSA0ATceUMTI9UT8iCXEVSUyzLyotfnVau/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjPp1Fbz7GkUcoTRTV-ECYwr6X8uYY_slu-2FzDE8t_71SO-leVQBx56b--VIvsmEH/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
-    let charts = {};
+    let datosGlobales = [];
+    let comparativaChart = null;
+
+    // DESCRIPCIONES DE LOS BOTONES DE INFO
+    const descripciones = {
+        vis: "Se califica la puntualidad y cumplimiento del calendario de visitas programadas.",
+        chk: "Evaluación de la limpieza, acomodo y estándares operativos de la sucursal.",
+        arq: "Cero descuadres en caja y correcto manejo de vouchers de terminal.",
+        ade: "Seguimiento y cobro efectivo de adeudos de clientes o personal.",
+        rot: "Mantenimiento de plantilla completa y baja rotación de personal.",
+        asi: "Puntualidad del supervisor y asistencia sin faltas justificadas.",
+        pro: "Correcta rotación de fechas (PEPS) y calidad del producto exhibido.",
+        pty: "Alcance de metas de venta y eficiencia operativa de la tienda."
+    };
+
+    function verInfo(key) { alert(descripciones[key]); }
+
+    function toggleLoading(show, text = "Cargando...") {
+        const overlay = document.getElementById('loadingOverlay');
+        document.getElementById('loadingText').innerText = text;
+        overlay.style.display = show ? 'flex' : 'none';
+    }
 
     const sucursalesData = {
         "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -124,89 +230,151 @@
         if(sup) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
     }
 
-    async function guardarEnNube() {
-        const s = document.getElementById('sup').value;
-        const f = document.getElementById('fecha').value;
-        if(!s || !f) return alert("Completa Supervisor y Fecha");
-
-        const reg = { action: 'guardar', s, suc: document.getElementById('sucursal').value, f, realizado: true, vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0 };
-        document.querySelectorAll('.kpi:checked').forEach(i => { reg[i.dataset.r] = parseInt(i.value); reg.total += parseInt(i.value); });
-
-        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-        alert("Guardado"); location.reload();
+    async function actualizarTodo() {
+        toggleLoading(true, "Actualizando Dashboard...");
+        try {
+            const response = await fetch(WEB_APP_URL);
+            datosGlobales = await response.json();
+            renderDashboard();
+            renderTabla();
+        } catch (e) { alert("Error al cargar datos"); }
+        toggleLoading(false);
     }
 
-    async function borrarRegistro(filaId) {
-        const pass = prompt("Introduce la contraseña de administrador para borrar:");
-        if(pass === CODIGO_SEGURIDAD) {
-            // Nota: El borrado requiere una función 'borrar' en tu Apps Script. 
-            // Por ahora, simularemos el envío del ID para borrar.
-            alert("Solicitud de borrado enviada para el ID: " + filaId + ". (Asegúrate de tener la función de borrado en tu Script de Google)");
-            // Aquí iría el fetch a la acción 'borrar'
-        } else {
-            alert("Contraseña incorrecta.");
-        }
-    }
-
-    async function cargarHistorialGlobal() {
-        const mesSeleccionado = parseInt(document.getElementById('filtroMes').value);
-        const response = await fetch(WEB_APP_URL);
-        const datos = await response.json();
-        const body = document.getElementById('tablaBody');
-        const dash = document.getElementById('dashboard');
-        body.innerHTML = ''; dash.innerHTML = '';
+    function renderDashboard() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        const container = document.getElementById('radarContainer');
+        container.innerHTML = '';
         
-        let stats = {}; // Para el dashboard
+        let stats = {};
+        const supervisores = ["Adriana", "Citlalli", "Karla", "Leonardo", "Noemi"];
 
-        datos.slice(1).forEach((r, index) => {
-            const fechaObj = new Date(r[3]);
-            if(fechaObj.getMonth() !== mesSeleccionado) return;
-
-            const total = r[13];
-            const color = total >= 90 ? 'verde' : (total >= 70 ? 'amarillo' : 'rojo');
-            
-            // Acumular datos para dashboard
-            if(!stats[r[1]]) stats[r[1]] = { vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, count:0 };
-            stats[r[1]].vis += r[5]; stats[r[1]].chk += r[6]; stats[r[1]].arq += r[7];
-            stats[r[1]].ade += r[8]; stats[r[1]].rot += r[9]; stats[r[1]].asi += r[10];
-            stats[r[1]].pro += r[11]; stats[r[1]].pty += r[12]; stats[r[1]].count++;
-
-            body.innerHTML += `<tr>
-                <td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td>
-                <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
-                <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
-                <td><span class="semaforo ${color}">${total}%</span></td>
-                <td><button class="btn-del" onclick="borrarRegistro(${index + 2})">🗑</button></td>
-            </tr>`;
+        // Filtrar y agrupar datos
+        datosGlobales.slice(1).forEach(r => {
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes) {
+                if(!stats[r[1]]) stats[r[1]] = { vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0, c:0 };
+                const s = stats[r[1]];
+                s.vis+=r[5]; s.chk+=r[6]; s.arq+=r[7]; s.ade+=r[8]; s.rot+=r[9]; s.asi+=r[10]; s.pro+=r[11]; s.pty+=r[12]; s.total+=r[13]; s.c++;
+            }
         });
 
-        // Crear Gráficas
-        for(let supervisor in stats) {
-            const div = document.createElement('div');
-            div.className = 'chart-container';
-            div.innerHTML = `<canvas id="chart-${supervisor}"></canvas>`;
-            dash.appendChild(div);
+        supervisores.forEach(sup => {
+            if(!stats[sup]) return;
+            const s = stats[sup];
+            const avgTotal = (s.total / s.c).toFixed(1);
+            const color = avgTotal >= 90 ? 'var(--verde-neufeld)' : (avgTotal >= 70 ? 'var(--amarillo)' : 'var(--rojo)');
 
-            const s = stats[supervisor];
-            const ctx = document.getElementById(`chart-${supervisor}`).getContext('2d');
-            new Chart(ctx, {
+            const box = document.createElement('div');
+            box.className = 'chart-box';
+            box.innerHTML = `
+                <div class="score-badge" style="background:${color}">${avgTotal}%</div>
+                <h3 style="margin-top:0">${sup}</h3>
+                <canvas id="radar-${sup}"></canvas>
+            `;
+            container.appendChild(box);
+
+            new Chart(document.getElementById(`radar-${sup}`), {
                 type: 'radar',
                 data: {
-                    labels: ['Visita', 'Check', 'Arq', 'Ade', 'Rot', 'Asis', 'Prod', 'Pty'],
+                    labels: [['Visitas', 'Prog.'], ['Checklist', 'Operativo'], ['Arqueo', 'Caja'], ['Control', 'Adeudos'], ['Rotación', 'Personal'], ['Asis.', 'Puntual'], ['Revisión', 'Producto'], ['Prod.', 'Tienda']],
                     datasets: [{
-                        label: supervisor,
-                        data: [s.vis/s.count, s.chk/s.count, s.arq/s.count, s.ade/s.count, s.rot/s.count, s.asi/s.count, s.pro/s.count, s.pty/s.count],
-                        backgroundColor: 'rgba(39, 174, 96, 0.2)', borderColor: '#27ae60', borderWidth: 2
+                        label: 'Promedio',
+                        data: [s.vis/s.c, s.chk/s.c, s.arq/s.c, s.ade/s.c, s.rot/s.c, s.asi/s.c, s.pro/s.c, s.pty/s.c],
+                        backgroundColor: 'rgba(39, 174, 96, 0.2)', borderColor: var(--verde-neufeld), borderWidth: 2
                     }]
                 },
-                options: { scales: { r: { suggestMin: 0, suggestMax: 15 } }, plugins: { title: { display: true, text: `Desempeño de ${supervisor}` } } }
+                options: { 
+                    scales: { r: { min: 0, max: 15, ticks: { display: false } } },
+                    plugins: { legend: { display: false } }
+                }
             });
+        });
+
+        renderComparativa(stats);
+    }
+
+    function renderComparativa(stats) {
+        const ctx = document.getElementById('comparativaChart').getContext('2d');
+        if(comparativaChart) comparativaChart.destroy();
+        
+        const labels = Object.keys(stats);
+        const data = labels.map(l => (stats[l].total / stats[l].c).toFixed(1));
+
+        comparativaChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '% Cumplimiento Promedio',
+                    data: data,
+                    backgroundColor: var(--verde-neufeld),
+                    borderRadius: 5
+                }]
+            },
+            options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+        });
+    }
+
+    function renderTabla() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        const supFiltro = document.getElementById('filtroSup').value;
+        const body = document.getElementById('tablaBody');
+        body.innerHTML = '';
+
+        datosGlobales.slice(1).reverse().forEach((r, i) => {
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes && (supFiltro === "Todos" || r[1] === supFiltro)) {
+                const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
+                body.innerHTML += `
+                    <tr>
+                        <td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td>
+                        <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
+                        <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
+                        <td><span class="semaforo ${color}">${r[13]}%</span></td>
+                        <td><button style="cursor:pointer; border:none; background:none" onclick="borrarRegistro(${datosGlobales.length - i})">🗑️</button></td>
+                    </tr>`;
+            }
+        });
+    }
+
+    async function guardarEnNube() {
+        const s = document.getElementById('sup').value;
+        if(!s) return alert("Selecciona Supervisor");
+        toggleLoading(true, "Guardando Reporte...");
+
+        const reg = {
+            action: 'guardar', s, suc: document.getElementById('sucursal').value, 
+            f: document.getElementById('fecha').value, realizado: true,
+            vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0
+        };
+
+        document.querySelectorAll('.kpi:checked').forEach(i => {
+            reg[i.dataset.r] = parseInt(i.value);
+            reg.total += parseInt(i.value);
+        });
+
+        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+        actualizarTodo();
+    }
+
+    async function borrarRegistro(idFila) {
+        const pass = prompt("Contraseña Administrador:");
+        if(pass === CODIGO_SEGURIDAD) {
+            toggleLoading(true, "Eliminando...");
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({action: 'borrar', idFila}) });
+            actualizarTodo();
         }
     }
 
+    // INICIO
     document.getElementById('fecha').valueAsDate = new Date();
     document.getElementById('filtroMes').value = new Date().getMonth();
-    window.onload = cargarHistorialGlobal;
+    actualizarTodo();
+
+    // Helper para usar colores en JS
+    function var(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 </script>
+
 </body>
 </html>
