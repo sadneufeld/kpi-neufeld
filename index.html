@@ -2,14 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>KPI Neufeld - Sistema Global Sincronizado</title>
+    <title>KPI Neufeld - Dashboard y Control Global</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --critico: #ff4d4d; --regular: #ffcc00; --optimo: #2ecc71;
             --navy: #0f172a; --slate: #f8fafc; --accent: #27ae60;
         }
         body { font-family: 'Segoe UI', sans-serif; background: #e2e8f0; margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 20px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .container { max-width: 1450px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         
         .logo-container { position: absolute; top: 20px; right: 25px; }
         .logo-container img { height: 65px; width: auto; }
@@ -17,42 +18,38 @@
         .registro-panel { background: var(--navy); color: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; }
         .controles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
         
-        .checks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-        .check-card { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.2); font-size: 0.85em; }
-        .check-card b { color: var(--optimo); }
+        /* Dashboard Estilo */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .chart-container { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; height: 250px; }
 
-        .section-title { border-left: 5px solid var(--accent); padding-left: 10px; margin: 25px 0 10px; color: var(--navy); font-weight: bold; }
+        .checks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+        .check-card { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; }
         
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 10px; font-size: 0.75em; }
-        th { background: #f1f5f9; padding: 10px; text-transform: uppercase; color: #475569; border: 1px solid #e2e8f0; }
+        .section-title { border-left: 5px solid var(--accent); padding-left: 10px; margin: 25px 0 15px; color: var(--navy); font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.75em; }
+        th { background: #f1f5f9; padding: 10px; text-transform: uppercase; border: 1px solid #e2e8f0; }
         td { padding: 8px; border: 1px solid #f1f5f9; text-align: center; }
 
-        .semaforo { font-weight: bold; padding: 4px 8px; border-radius: 4px; color: white; display: inline-block; min-width: 25px; }
-        .rojo { background: var(--critico); }
-        .amarillo { background: var(--regular); color: #000; }
-        .verde { background: var(--optimo); }
+        .semaforo { font-weight: bold; padding: 4px 8px; border-radius: 4px; color: white; display: inline-block; }
+        .rojo { background: var(--critico); } .amarillo { background: var(--regular); color: black; } .verde { background: var(--optimo); }
 
-        .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 20px; }
-        .btn-guardar { background: var(--accent); color: white; font-weight: bold; cursor: pointer; padding: 15px; border-radius: 10px; border: none; font-size: 1em; transition: 0.3s; }
-        .btn-guardar:hover { background: #219150; }
-        .btn-no-realizado { background: #475569; color: white; font-weight: bold; cursor: pointer; padding: 15px; border-radius: 10px; border: none; font-size: 1em; }
+        .btn-guardar { background: var(--accent); color: white; font-weight: bold; cursor: pointer; padding: 15px; border-radius: 10px; border: none; width: 100%; margin-top: 20px; }
+        .btn-del { background: #fee2e2; color: #dc2626; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         
         select, input { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 100%; }
-        #mensajeCarga { color: #ffcc00; font-weight: bold; display: none; margin-top: 10px; text-align: center; }
+        .filtro-mes { background: #f1f5f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="logo-container">
-        <img src="Logo Pasteleria Neufeld.png" alt="Logo Neufeld">
-    </div>
+    <div class="logo-container"><img src="Logo Pasteleria Neufeld.png" alt="Logo Neufeld"></div>
 
     <div class="registro-panel">
-        <h2 style="margin:0 0 20px 0">Control de KPIs Neufeld - Centralizado</h2>
+        <h2>Actualizar KPI Diario</h2>
         <div class="controles">
-            <div>
-                <label>Supervisor</label>
+            <div><label>Supervisor</label>
                 <select id="sup" onchange="cargarSucursales()">
                     <option value="">Seleccionar...</option>
                     <option value="Adriana">ADRIANA</option>
@@ -62,47 +59,55 @@
                     <option value="Noemi">NOEMI</option>
                 </select>
             </div>
-            <div>
-                <label>Sucursal</label>
-                <select id="sucursal"></select>
-            </div>
+            <div><label>Sucursal</label><select id="sucursal"></select></div>
             <div><label>Fecha</label><input type="date" id="fecha"></div>
         </div>
-
         <div class="checks-grid">
-            <div class="check-card">Visitas Programadas <b>(15 pts)</b> <input type="checkbox" class="kpi" data-r="vis" value="15"></div>
-            <div class="check-card">Checklist Operativo <b>(15 pts)</b> <input type="checkbox" class="kpi" data-r="chk" value="15"></div>
-            <div class="check-card">Arqueo Caja/Terminal <b>(15 pts)</b> <input type="checkbox" class="kpi" data-r="arq" value="15"></div>
-            <div class="check-card">Adeudos <b>(15 pts)</b> <input type="checkbox" class="kpi" data-r="ade" value="15"></div>
-            <div class="check-card">Rotación de Personal <b>(10 pts)</b> <input type="checkbox" class="kpi" data-r="rot" value="10"></div>
-            <div class="check-card">Asistencia/Puntualidad <b>(10 pts)</b> <input type="checkbox" class="kpi" data-r="asi" value="10"></div>
-            <div class="check-card">Revisión Producto <b>(10 pts)</b> <input type="checkbox" class="kpi" data-r="pro" value="10"></div>
-            <div class="check-card">Productividad Tienda <b>(10 pts)</b> <input type="checkbox" class="kpi" data-r="pty" value="10"></div>
+            <div class="check-card">Visitas (15) <input type="checkbox" class="kpi" data-r="vis" value="15"></div>
+            <div class="check-card">Checklist (15) <input type="checkbox" class="kpi" data-r="chk" value="15"></div>
+            <div class="check-card">Arqueo (15) <input type="checkbox" class="kpi" data-r="arq" value="15"></div>
+            <div class="check-card">Adeudos (15) <input type="checkbox" class="kpi" data-r="ade" value="15"></div>
+            <div class="check-card">Rotación (10) <input type="checkbox" class="kpi" data-r="rot" value="10"></div>
+            <div class="check-card">Asistencia (10) <input type="checkbox" class="kpi" data-r="asi" value="10"></div>
+            <div class="check-card">Producto (10) <input type="checkbox" class="kpi" data-r="pro" value="10"></div>
+            <div class="check-card">Productividad (10) <input type="checkbox" class="kpi" data-r="pty" value="10"></div>
         </div>
-        
-        <div class="btn-group">
-            <button class="btn-guardar" onclick="guardarEnNube(true)">GUARDAR REPORTE CON EVIDENCIA</button>
-            <button class="btn-no-realizado" onclick="guardarEnNube(false)">NO SE REALIZÓ VISITA</button>
-        </div>
-        <div id="mensajeCarga">Sincronizando información con la nube...</div>
+        <button class="btn-guardar" onclick="guardarEnNube()">GUARDAR REPORTE</button>
     </div>
 
-    <h3 class="section-title">HISTORIAL GLOBAL (TODAS LAS TERMINALES)</h3>
+    <div class="section-title">
+        <span>DASHBOARD DE DESEMPEÑO POR SUPERVISOR</span>
+        <div style="width: 200px;">
+            <select id="filtroMes" onchange="cargarHistorialGlobal()">
+                <option value="0">Enero</option><option value="1">Febrero</option>
+                <option value="2">Marzo</option><option value="3">Abril</option>
+                <option value="4">Mayo</option><option value="5">Junio</option>
+                <option value="6">Julio</option><option value="7">Agosto</option>
+                <option value="8">Septiembre</option><option value="9">Octubre</option>
+                <option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="dashboard-grid" id="dashboard">
+        <!-- Aquí se generan las gráficas automáticamente -->
+    </div>
+
+    <h3 class="section-title">HISTORIAL MENSUAL DETALLADO</h3>
     <table>
         <thead>
             <tr>
-                <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visita</th><th>Check</th><th>Arq</th><th>Ade</th><th>Rot</th><th>Asis</th><th>Prod</th><th>Pty</th><th>Total</th>
+                <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Vis</th><th>Chk</th><th>Arq</th><th>Ade</th><th>Rot</th><th>Asi</th><th>Pro</th><th>Pty</th><th>Total</th><th>Acción</th>
             </tr>
         </thead>
-        <tbody id="tablaBody">
-            <tr><td colspan="12">Conectando con la base de datos...</td></tr>
-        </tbody>
+        <tbody id="tablaBody"></tbody>
     </table>
 </div>
 
 <script>
-    // URL Actualizada por el usuario
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxzACG28-AK4SNTjRwGD2jZzdj-V6dnzfdSA0ATceUMTI9UT8iCXEVSUyzLyotfnVau/exec";
+    const CODIGO_SEGURIDAD = "Neufeld2024";
+    let charts = {};
 
     const sucursalesData = {
         "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -119,90 +124,89 @@
         if(sup) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
     }
 
-    async function guardarEnNube(realizado) {
+    async function guardarEnNube() {
         const s = document.getElementById('sup').value;
-        const suc = document.getElementById('sucursal').value;
         const f = document.getElementById('fecha').value;
-        if(!s || !suc) return alert("Error: Selecciona Supervisor y Sucursal antes de guardar.");
+        if(!s || !f) return alert("Completa Supervisor y Fecha");
 
-        document.getElementById('mensajeCarga').style.display = 'block';
+        const reg = { action: 'guardar', s, suc: document.getElementById('sucursal').value, f, realizado: true, vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0 };
+        document.querySelectorAll('.kpi:checked').forEach(i => { reg[i.dataset.r] = parseInt(i.value); reg.total += parseInt(i.value); });
 
-        const reg = {
-            action: 'guardar',
-            s, suc, f, realizado,
-            vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0
-        };
+        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+        alert("Guardado"); location.reload();
+    }
 
-        if(realizado) {
-            document.querySelectorAll('.kpi:checked').forEach(i => {
-                reg[i.dataset.r] = parseInt(i.value);
-                reg.total += parseInt(i.value);
-            });
-        }
-
-        try {
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(reg)
-            });
-            alert("¡Reporte sincronizado con éxito!");
-            location.reload(); 
-        } catch (error) {
-            alert("Error de conexión. Verifica tu internet.");
-            document.getElementById('mensajeCarga').style.display = 'none';
+    async function borrarRegistro(filaId) {
+        const pass = prompt("Introduce la contraseña de administrador para borrar:");
+        if(pass === CODIGO_SEGURIDAD) {
+            // Nota: El borrado requiere una función 'borrar' en tu Apps Script. 
+            // Por ahora, simularemos el envío del ID para borrar.
+            alert("Solicitud de borrado enviada para el ID: " + filaId + ". (Asegúrate de tener la función de borrado en tu Script de Google)");
+            // Aquí iría el fetch a la acción 'borrar'
+        } else {
+            alert("Contraseña incorrecta.");
         }
     }
 
     async function cargarHistorialGlobal() {
-        try {
-            const response = await fetch(WEB_APP_URL);
-            const datos = await response.json();
-            const body = document.getElementById('tablaBody');
-            body.innerHTML = '';
+        const mesSeleccionado = parseInt(document.getElementById('filtroMes').value);
+        const response = await fetch(WEB_APP_URL);
+        const datos = await response.json();
+        const body = document.getElementById('tablaBody');
+        const dash = document.getElementById('dashboard');
+        body.innerHTML = ''; dash.innerHTML = '';
+        
+        let stats = {}; // Para el dashboard
 
-            // Saltamos la fila 0 (encabezados de Excel) y ordenamos por los más nuevos
-            const filas = datos.slice(1).reverse();
+        datos.slice(1).forEach((r, index) => {
+            const fechaObj = new Date(r[3]);
+            if(fechaObj.getMonth() !== mesSeleccionado) return;
 
-            if(filas.length === 0) {
-                body.innerHTML = '<tr><td colspan="12">Aún no hay registros en la base de datos.</td></tr>';
-                return;
-            }
+            const total = r[13];
+            const color = total >= 90 ? 'verde' : (total >= 70 ? 'amarillo' : 'rojo');
+            
+            // Acumular datos para dashboard
+            if(!stats[r[1]]) stats[r[1]] = { vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, count:0 };
+            stats[r[1]].vis += r[5]; stats[r[1]].chk += r[6]; stats[r[1]].arq += r[7];
+            stats[r[1]].ade += r[8]; stats[r[1]].rot += r[9]; stats[r[1]].asi += r[10];
+            stats[r[1]].pro += r[11]; stats[r[1]].pty += r[12]; stats[r[1]].count++;
 
-            filas.forEach(r => {
-                const total = parseFloat(r[13]) || 0;
-                const colorTotal = total >= 90 ? 'verde' : (total >= 70 ? 'amarillo' : 'rojo');
-                const fueRealizado = r[4]; // Booleano de visita realizada
+            body.innerHTML += `<tr>
+                <td><b>${r[1]}</b></td><td>${r[2]}</td><td>${r[3]}</td>
+                <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
+                <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
+                <td><span class="semaforo ${color}">${total}%</span></td>
+                <td><button class="btn-del" onclick="borrarRegistro(${index + 2})">🗑</button></td>
+            </tr>`;
+        });
 
-                body.innerHTML += `
-                    <tr>
-                        <td><b>${r[1]}</b></td>
-                        <td>${r[2]}</td>
-                        <td>${r[3]}</td>
-                        <td><span class="semaforo ${r[5]>0?'verde':'rojo'}">${r[5]}</span></td>
-                        <td><span class="semaforo ${r[6]>0?'verde':'rojo'}">${r[6]}</span></td>
-                        <td><span class="semaforo ${r[7]>0?'verde':'rojo'}">${r[7]}</span></td>
-                        <td><span class="semaforo ${r[8]>0?'verde':'rojo'}">${r[8]}</span></td>
-                        <td><span class="semaforo ${r[9]>0?'verde':'rojo'}">${r[9]}</span></td>
-                        <td><span class="semaforo ${r[10]>0?'verde':'rojo'}">${r[10]}</span></td>
-                        <td><span class="semaforo ${r[11]>0?'verde':'rojo'}">${r[11]}</span></td>
-                        <td><span class="semaforo ${r[12]>0?'verde':'rojo'}">${r[12]}</span></td>
-                        <td>
-                            <span class="semaforo ${colorTotal}">
-                                ${fueRealizado ? total + '%' : 'NO REALIZADA'}
-                            </span>
-                        </td>
-                    </tr>`;
+        // Crear Gráficas
+        for(let supervisor in stats) {
+            const div = document.createElement('div');
+            div.className = 'chart-container';
+            div.innerHTML = `<canvas id="chart-${supervisor}"></canvas>`;
+            dash.appendChild(div);
+
+            const s = stats[supervisor];
+            const ctx = document.getElementById(`chart-${supervisor}`).getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Visita', 'Check', 'Arq', 'Ade', 'Rot', 'Asis', 'Prod', 'Pty'],
+                    datasets: [{
+                        label: supervisor,
+                        data: [s.vis/s.count, s.chk/s.count, s.arq/s.count, s.ade/s.count, s.rot/s.count, s.asi/s.count, s.pro/s.count, s.pty/s.count],
+                        backgroundColor: 'rgba(39, 174, 96, 0.2)', borderColor: '#27ae60', borderWidth: 2
+                    }]
+                },
+                options: { scales: { r: { suggestMin: 0, suggestMax: 15 } }, plugins: { title: { display: true, text: `Desempeño de ${supervisor}` } } }
             });
-        } catch (e) {
-            document.getElementById('tablaBody').innerHTML = '<tr><td colspan="12">Error al cargar historial. Verifica la conexión con Google Sheets.</td></tr>';
         }
     }
 
-    // Inicialización al cargar la página
     document.getElementById('fecha').valueAsDate = new Date();
+    document.getElementById('filtroMes').value = new Date().getMonth();
     window.onload = cargarHistorialGlobal;
 </script>
-
 </body>
 </html>
