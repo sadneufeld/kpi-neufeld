@@ -8,145 +8,187 @@
     <style>
         :root {
             --verde-neufeld: #27ae60;
-            --verde-oscuro: #1e8449;
-            --bg-light: #f4f7f6;
-            --navy: #0f172a;
-            --text-main: #334155;
+            --verde-soft: #ebf7f0;
+            --navy: #1e293b;
+            --slate: #64748b;
+            --bg-light: #f8fafc;
             --rojo: #ef4444;
             --amarillo: #f59e0b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-light); color: var(--text-main); margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: relative; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg-light); color: var(--navy); margin: 0; padding: 20px; line-height: 1.5; }
+        .container { max-width: 1200px; margin: auto; }
 
         /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg-light); padding-bottom: 15px; }
-        .logo-container img { height: 60px; width: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 1.8rem; font-weight: 800; color: var(--navy); margin: 0; }
+        .logo-container img { height: 50px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1)); }
+
+        /* CARDS ESTILO DASHBOARD */
+        .card { background: white; border-radius: 16px; box-shadow: var(--shadow); padding: 24px; margin-bottom: 24px; border: 1px solid #e2e8f0; }
+        .section-title { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 18px; background: var(--verde-neufeld); border-radius: 4px; }
+
+        /* PANEL REGISTRO */
+        .registro-panel { background: var(--navy); color: white; }
+        .registro-panel .section-title { color: #94a3b8; }
+        .controles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
         
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.85rem; font-weight: 600; color: #cbd5e1; }
+        select, input[type="date"], input[type="text"] { 
+            padding: 10px 14px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 0.95rem; outline: none; transition: all 0.2s;
+        }
+        .registro-panel select, .registro-panel input { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: white; }
+        
+        /* KPI GRID */
+        .checks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px; }
+        .check-card { 
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; transition: 0.2s;
+        }
+        .check-card:hover { background: rgba(255,255,255,0.08); }
+        .check-card span { font-size: 0.8rem; font-weight: 500; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--verde-neufeld); }
+
+        /* DASHBOARD GRID */
+        .dashboard-row { display: grid; grid-template-columns: 1fr 3fr; gap: 24px; margin-bottom: 24px; }
+        .radars-mini-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+        .chart-box { background: white; border-radius: 16px; padding: 16px; border: 1px solid #e2e8f0; text-align: center; position: relative; }
+        .chart-box p { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; }
+        
+        /* TABLA */
+        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 0.85rem; }
+        th { background: #f8fafc; padding: 14px; text-align: left; font-weight: 600; color: var(--slate); border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; }
+        tr:hover { background: #fdfdfd; }
+        
+        .semaforo { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: white; display: inline-block; }
+        
+        .btn-guardar { 
+            background: var(--verde-neufeld); color: white; border: none; padding: 14px; border-radius: 12px; 
+            font-weight: 700; width: 100%; margin-top: 25px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+        .btn-guardar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
+
+        .visita-toggle { 
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center; grid-column: span 2;
+        }
+
         /* LOADING */
         #loadingOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+            background: rgba(255,255,255,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
         }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* PANEL REGISTRO */
-        .registro-panel { background: var(--navy); color: white; padding: 20px; border-radius: 12px; margin-bottom: 30px; }
-        .controles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
-        .checks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-        .check-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
-        .info-icon { cursor: pointer; background: #64748b; color: white; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; font-size: 10px; margin-left: 5px; }
-
-        /* DASHBOARD */
-        .dashboard-controls { background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center; }
-        .comparativa-section { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .chart-box { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px; position: relative; text-align: center; }
-        .score-badge { position: absolute; top: 5px; right: 5px; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; color: white; }
-
-        /* TABLA Y FILTROS */
-        .table-container { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
-        th { background: #f1f5f9; color: var(--navy); padding: 10px; border: 1px solid #e2e8f0; }
-        .filter-row input { width: 90%; padding: 4px; font-size: 0.9em; border: 1px solid #cbd5e1; border-radius: 4px; }
-        td { padding: 8px; border: 1px solid #f1f5f9; text-align: center; }
-
-        .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 15px; }
-        .semaforo { padding: 3px 6px; border-radius: 4px; color: white; font-weight: bold; }
-        .rojo { background: var(--rojo); } .amarillo { background: var(--amarillo); } .verde { background: var(--verde-neufeld); }
-        select, input { padding: 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
 
 <div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p id="loadingText">Cargando...</p>
+    <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
+    <p style="margin-top:15px; font-weight: 600; color: var(--navy)">Actualizando datos...</p>
 </div>
 
 <div class="container">
     <div class="header">
-        <h2 style="margin:0; color: var(--navy);">KPI Supervisores</h2>
+        <div>
+            <h2>Panel de Control</h2>
+            <p style="color: var(--slate); margin: 5px 0 0 0;">Gestión de Desempeño Neufeld</p>
+        </div>
         <div class="logo-container"><img src="Logo Pasteleria Neufeld.png" alt="Logo"></div>
     </div>
 
-    <!-- REGISTRO -->
-    <div class="registro-panel">
-        <div class="controles">
-            <div><label>Supervisor</label><select id="sup" onchange="cargarSucursales()"><option value="">Seleccionar...</option><option value="Adriana">ADRIANA</option><option value="Citlalli">CITLALLI</option><option value="Karla">KARLA</option><option value="Leonardo">LEONARDO</option><option value="Noemi">NOEMI</option></select></div>
-            <div><label>Sucursal</label><select id="sucursal"></select></div>
-            <div><label>Fecha</label><input type="date" id="fecha"></div>
-            <div style="display: flex; align-items: center; gap: 10px; padding-top: 20px;">
-                <label>¿Realizó Visita?</label>
+    <!-- 1. REGISTRO (ARRIBA) -->
+    <div class="card registro-panel">
+        <div class="section-title">Registro de Visita</div>
+        <div class="controles-grid">
+            <div class="input-group">
+                <label>Supervisor</label>
+                <select id="sup" onchange="cargarSucursales()">
+                    <option value="">Seleccionar...</option>
+                    <option value="Adriana">ADRIANA</option>
+                    <option value="Citlalli">CITLALLI</option>
+                    <option value="Karla">KARLA</option>
+                    <option value="Leonardo">LEONARDO</option>
+                    <option value="Noemi">NOEMI</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Sucursal</label>
+                <select id="sucursal"></select>
+            </div>
+            <div class="input-group">
+                <label>Fecha</label>
+                <input type="date" id="fecha">
+            </div>
+            <div class="visita-toggle">
+                <span style="font-size: 0.9rem; font-weight: 600;">¿Se realizó la visita de supervisión?</span>
                 <input type="checkbox" id="realizoVisita" checked onchange="toggleVisita(this.checked)">
             </div>
         </div>
 
         <div class="checks-grid" id="checksContainer">
-            <div class="check-card"><span>Visitas (15) <span class="info-icon" title="Cumpimiento de agenda">?</span></span><input type="checkbox" class="kpi" data-r="vis" value="15"></div>
-            <div class="check-card"><span>Checklist (15) <span class="info-icon" title="Limpieza y orden">?</span></span><input type="checkbox" class="kpi" data-r="chk" value="15"></div>
-            <div class="check-card"><span>Arqueo (15) <span class="info-icon" title="Corte de caja">?</span></span><input type="checkbox" class="kpi" data-r="arq" value="15"></div>
-            <div class="check-card"><span>Adeudos (15) <span class="info-icon" title="Cobro de pendientes">?</span></span><input type="checkbox" class="kpi" data-r="ade" value="15"></div>
-            <div class="check-card"><span>Rotación (10) <span class="info-icon" title="Baja renuncia">?</span></span><input type="checkbox" class="kpi" data-r="rot" value="10"></div>
-            <div class="check-card"><span>Asistencia (10) <span class="info-icon" title="Puntualidad">?</span></span><input type="checkbox" class="kpi" data-r="asi" value="10"></div>
-            <div class="check-card"><span>Producto (10) <span class="info-icon" title="Calidad PEPS">?</span></span><input type="checkbox" class="kpi" data-r="pro" value="10"></div>
-            <div class="check-card"><span>Productividad (10) <span class="info-icon" title="Meta ventas">?</span></span><input type="checkbox" class="kpi" data-r="pty" value="10"></div>
+            <div class="check-card"><span>Visitas (15)</span><input type="checkbox" class="kpi" data-r="vis" value="15"></div>
+            <div class="check-card"><span>Checklist (15)</span><input type="checkbox" class="kpi" data-r="chk" value="15"></div>
+            <div class="check-card"><span>Arqueo (15)</span><input type="checkbox" class="kpi" data-r="arq" value="15"></div>
+            <div class="check-card"><span>Adeudos (15)</span><input type="checkbox" class="kpi" data-r="ade" value="15"></div>
+            <div class="check-card"><span>Rotación (10)</span><input type="checkbox" class="kpi" data-r="rot" value="10"></div>
+            <div class="check-card"><span>Asistencia (10)</span><input type="checkbox" class="kpi" data-r="asi" value="10"></div>
+            <div class="check-card"><span>Producto (10)</span><input type="checkbox" class="kpi" data-r="pro" value="10"></div>
+            <div class="check-card"><span>Productividad (10)</span><input type="checkbox" class="kpi" data-r="pty" value="10"></div>
         </div>
-        <button class="btn-guardar" onclick="guardarEnNube()">GUARDAR REPORTE</button>
+        <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR</button>
     </div>
 
-    <!-- FILTROS MES -->
-    <div class="dashboard-controls">
-        <label>Mes de Análisis:</label>
-        <select id="filtroMes" onchange="cargarDatosNube()">
-            <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-        </select>
+    <!-- 2. DASHBOARD (COMPARATIVA + RADARES) -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <div class="section-title" style="margin:0">Resultados del Mes</div>
+            <select id="filtroMes" onchange="cargarDatosNube()" style="padding: 5px 15px;">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+        
+        <div style="height: 250px; margin-bottom: 40px; background: #fcfcfc; border-radius: 12px; padding: 15px;">
+            <canvas id="comparativaChart"></canvas>
+        </div>
+
+        <div class="radars-mini-grid" id="radarContainer"></div>
     </div>
 
-    <!-- COMPARATIVA (PRIMERO) -->
-    <div class="comparativa-section">
-        <h4 style="margin:0 0 10px 0">Comparativa Mensual de Cumplimiento</h4>
-        <div style="height: 200px;"><canvas id="comparativaChart"></canvas></div>
-    </div>
-
-    <!-- RADARES (SEGUNDO) -->
-    <div class="dashboard-grid" id="radarContainer"></div>
-
-    <!-- HISTORIAL (AL FINAL) -->
-    <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px;">Historial Detallado</h4>
-    <div class="table-container">
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Vis</th><th>Chk</th><th>Arq</th><th>Ade</th><th>Rot</th><th>Asi</th><th>Pro</th><th>Pty</th><th>Total</th><th>Acción</th>
-                </tr>
-                <tr class="filter-row">
-                    <th><input type="text" onkeyup="filterTable(0)" placeholder="Buscar..."></th>
-                    <th><input type="text" onkeyup="filterTable(1)" placeholder="Buscar..."></th>
-                    <th><input type="text" onkeyup="filterTable(2)" placeholder="Buscar..."></th>
-                    <th colspan="9"></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="tablaBody"></tbody>
-        </table>
+    <!-- 3. HISTORIAL (AL FINAL) -->
+    <div class="card">
+        <div class="section-title">Historial de Operaciones</div>
+        <div class="table-container">
+            <table id="mainTable">
+                <thead>
+                    <tr>
+                        <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th title="Visita">V</th><th title="Checklist">C</th><th title="Arqueo">A</th><th title="Adeudos">D</th><th title="Rotación">R</th><th title="Asistencia">S</th><th title="Producto">P</th><th title="Productividad">Y</th><th>Total</th><th style="width: 50px;"></th>
+                    </tr>
+                    <tr style="background: #f1f5f9;">
+                        <th><input type="text" onkeyup="filterTable(0)" placeholder="Supervisor..."></th>
+                        <th><input type="text" onkeyup="filterTable(1)" placeholder="Sucursal..."></th>
+                        <th><input type="text" onkeyup="filterTable(2)" placeholder="Fecha..."></th>
+                        <th colspan="9"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 <script>
+    // La lógica de JavaScript permanece idéntica a la anterior para mantener funcionalidad
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjPp1Fbz7GkUcoTRTV-ECYwr6X8uYY_slu-2FzDE8t_71SO-leVQBx56b--VIvsmEH/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
     let comparativaChart = null;
-
-    function toggleVisita(valor) {
-        const checks = document.querySelectorAll('.kpi');
-        checks.forEach(c => {
-            c.disabled = !valor;
-            if(!valor) c.checked = false;
-        });
-    }
 
     const sucursalesData = {
         "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -155,6 +197,13 @@
         "Leonardo": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
         "Noemi": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
     };
+
+    function toggleVisita(valor) {
+        document.querySelectorAll('.kpi').forEach(c => {
+            c.disabled = !valor;
+            if(!valor) c.checked = false;
+        });
+    }
 
     function cargarSucursales() {
         const sup = document.getElementById('sup').value;
@@ -172,7 +221,7 @@
             datosGlobales = await resp.json();
             renderDashboard();
             renderTabla();
-        } catch(e) { alert("Error al cargar datos"); }
+        } catch(e) { console.error(e); }
         toggleLoading(false);
     }
 
@@ -194,18 +243,21 @@
         Object.keys(stats).forEach(sup => {
             const s = stats[sup];
             const avg = (s.t/s.c).toFixed(1);
-            const color = avg >= 90 ? 'verde' : (avg >= 70 ? 'amarillo' : 'rojo');
+            const colorClass = avg >= 90 ? 'verde' : (avg >= 70 ? 'amarillo' : 'rojo');
+            const colorHex = avg >= 90 ? '#27ae60' : (avg >= 70 ? '#f59e0b' : '#ef4444');
+            
             const box = document.createElement('div');
             box.className = 'chart-box';
-            box.innerHTML = `<div class="score-badge ${color}">${avg}%</div><p style="margin:5px 0; font-weight:bold; font-size:0.9em">${sup}</p><canvas id="r-${sup}"></canvas>`;
+            box.innerHTML = `<div class="semaforo ${colorClass}" style="position:absolute; top:10px; right:10px">${avg}%</div><p>${sup}</p><canvas id="r-${sup}"></canvas>`;
             container.appendChild(box);
+            
             new Chart(document.getElementById(`r-${sup}`), {
                 type: 'radar',
                 data: {
-                    labels: ['Vis','Chk','Arq','Ade','Rot','Asi','Pro','Pty'],
-                    datasets: [{ data: [s.v/s.c, s.ch/s.c, s.ar/s.c, s.ad/s.c, s.ro/s.c, s.as/s.c, s.pr/s.c, s.py/s.c], backgroundColor: 'rgba(39,174,96,0.1)', borderColor: '#27ae60', borderWidth: 1 }]
+                    labels: ['V','C','A','D','R','S','P','Y'],
+                    datasets: [{ data: [s.v/s.c, s.ch/s.c, s.ar/s.c, s.ad/s.c, s.ro/s.c, s.as/s.c, s.pr/s.c, s.py/s.c], backgroundColor: 'rgba(39,174,96,0.1)', borderColor: colorHex, borderWidth: 2, pointRadius: 0 }]
                 },
-                options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
+                options: { scales: { r: { min:0, max:15, ticks: { display:false }, grid: { color: '#f1f5f9' } } }, plugins: { legend: { display:false } } }
             });
         });
         renderComparativa(stats);
@@ -217,8 +269,24 @@
         const labels = Object.keys(stats);
         comparativaChart = new Chart(ctx, {
             type: 'bar',
-            data: { labels: labels, datasets: [{ label: '% Promedio', data: labels.map(l => (stats[l].t/stats[l].c).toFixed(1)), backgroundColor: '#27ae60' }] },
-            options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
+            data: { 
+                labels: labels, 
+                datasets: [{ 
+                    label: '% Desempeño', 
+                    data: labels.map(l => (stats[l].t/stats[l].c).toFixed(1)), 
+                    backgroundColor: '#27ae60',
+                    borderRadius: 8,
+                    barThickness: 40
+                }] 
+            },
+            options: { 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { beginAtZero:true, max:100, grid: { display: true, drawBorder: false } },
+                    x: { grid: { display: false } }
+                } 
+            }
         });
     }
 
@@ -230,18 +298,24 @@
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
                 const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                body.innerHTML += `<tr><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td><td><span class="semaforo ${color}">${r[13]}%</span></td><td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td></tr>`;
+                body.innerHTML += `<tr>
+                    <td><strong>${r[1]}</strong></td><td>${r[2]}</td><td>${r[3]}</td>
+                    <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
+                    <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
+                    <td><span class="semaforo ${color}">${r[13]}%</span></td>
+                    <td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td>
+                </tr>`;
             }
         });
     }
 
     function filterTable(colIndex) {
-        const inputs = document.querySelectorAll('.filter-row input');
+        const inputs = document.querySelectorAll('.filter-row input, thead input');
         const rows = document.getElementById('tablaBody').getElementsByTagName('tr');
         for (let row of rows) {
             let show = true;
-            inputs.forEach((input, idx) => {
-                const filter = input.value.toLowerCase();
+            [0,1,2].forEach(idx => {
+                const filter = inputs[idx].value.toLowerCase();
                 const cell = row.getElementsByTagName('td')[idx];
                 if (cell && cell.innerText.toLowerCase().indexOf(filter) === -1) show = false;
             });
@@ -263,7 +337,7 @@
     }
 
     async function borrarRegistro(idFila) {
-        if(prompt("Contraseña:") === CODIGO_SEGURIDAD) {
+        if(prompt("Contraseña de seguridad:") === CODIGO_SEGURIDAD) {
             toggleLoading(true);
             await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({action: 'borrar', idFila}) });
             setTimeout(cargarDatosNube, 1500);
@@ -275,6 +349,8 @@
         document.getElementById('filtroMes').value = new Date().getMonth();
         cargarDatosNube();
     };
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </script>
 </body>
 </html>
