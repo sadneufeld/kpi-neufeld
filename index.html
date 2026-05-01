@@ -133,7 +133,7 @@
         <div class="kpi-grid" id="checksContainer">
             <!-- Renderizado dinámico o estático para mayor control -->
             <label class="kpi-card" id="card-vis">
-                <span class="kpi-label">Visitas</span>
+                <span class="kpi-label">Visita programada</span>
                 <span class="kpi-pts">15 pts</span>
                 <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
             </label>
@@ -153,7 +153,7 @@
                 <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
             </label>
             <label class="kpi-card" id="card-rot">
-                <span class="kpi-label">Rotación</span>
+                <span class="kpi-label">Rotación de personal</span>
                 <span class="kpi-pts">10 pts</span>
                 <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
             </label>
@@ -163,12 +163,12 @@
                 <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
             </label>
             <label class="kpi-card" id="card-pro">
-                <span class="kpi-label">Producto</span>
+                <span class="kpi-label">Conteo de producto</span>
                 <span class="kpi-pts">10 pts</span>
                 <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
             </label>
             <label class="kpi-card" id="card-pty">
-                <span class="kpi-label">Productividad</span>
+                <span class="kpi-label">Productividad en tienda</span>
                 <span class="kpi-pts">10 pts</span>
                 <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
             </label>
@@ -320,7 +320,7 @@
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
                 const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                body.innerHTML += `<tr><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td><td><span class="semaforo ${color}">${r[13]}%</span></td><td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td></tr>`;
+                body.innerHTML += `<tr><td>${r[1]}</td><td>${r[2]}</td><td>${String(r[3]).split('T')[0]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td><td><span class="semaforo ${color}">${r[13]}%</span></td><td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td></tr>`;
             }
         });
     }
