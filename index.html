@@ -292,7 +292,7 @@
             new Chart(document.getElementById(`r-${sup}`), {
                 type: 'radar',
                 data: {
-                    labels: ['Vis','Chk','Arq','Ade','Rot','Asi','Pro','Pty'],
+                    labels: ['Visitas','Check list','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Participación'],
                     datasets: [{ data: [s.v/s.c, s.ch/s.c, s.ar/s.c, s.ad/s.c, s.ro/s.c, s.as/s.c, s.pr/s.c, s.py/s.c], backgroundColor: 'rgba(39,174,96,0.1)', borderColor: '#27ae60', borderWidth: 1.5 }]
                 },
                 options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
