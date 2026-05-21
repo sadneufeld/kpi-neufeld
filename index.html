@@ -3,368 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KPI Supervisores - Neufeld</title>
+    <title>Sistema KPI Neufeld - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     <style>
         :root {
             --verde-neufeld: #27ae60;
             --verde-claro: #e8f6ef;
             --verde-oscuro: #1e8449;
-            --bg-light: #f8fafc;
+            --bg-light: #f4f7f6;
             --navy: #0f172a;
-            --text-main: #334155;
-            --rojo: #ef4444;
-            --amarillo: #f59e0b;
-            --border: #e2e8f0;
+            --white: #ffffff;
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-light); color: var(--text-main); margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 25px rgba(0,0,0,0.05); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: var(--bg-light); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        /* HEADER */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .logo-container img { height: 50px; }
-
-        /* PANEL REGISTRO REDISEÑADO */
-        .registro-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .section-title { font-size: 1.1em; font-weight: 700; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        
-        .controles-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px; background: var(--bg-light); padding: 20px; border-radius: 12px; }
-        .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-group label { font-size: 0.85em; font-weight: 600; color: #64748b; text-transform: uppercase; }
-
-        /* KPI GRID CARDS */
-        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .kpi-card { 
-            position: relative; border: 2px solid var(--border); border-radius: 12px; padding: 15px; cursor: pointer;
-            transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+        /* CABECERA SUPERIOR */
+        header {
+            background-color: var(--navy);
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1001;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .kpi-card:hover { border-color: var(--verde-neufeld); background: var(--verde-claro); }
-        
-        /* Estado seleccionado */
-        .kpi-card.active { border-color: var(--verde-neufeld); background: var(--verde-claro); box-shadow: 0 4px 12px rgba(39,174,96,0.15); }
-        .kpi-card input[type="checkbox"] { position: absolute; opacity: 0; }
-        .kpi-card .kpi-label { font-size: 0.9em; font-weight: 600; color: var(--navy); }
-        .kpi-card .kpi-pts { font-size: 0.75em; color: #64748b; background: #eee; padding: 2px 8px; border-radius: 10px; }
-        .kpi-card.active .kpi-pts { background: var(--verde-neufeld); color: white; }
 
-        /* SWITCH VISITA */
-        .switch-container { display: flex; align-items: center; gap: 12px; font-weight: 600; }
-        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--verde-neufeld); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .toggle-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .app-title { color: white; font-weight: bold; font-size: 1.2rem; }
 
-        /* DASHBOARD & TABLES (Se mantienen) */
-        .dashboard-controls { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center; }
-        .comparativa-section { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .chart-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 10px; position: relative; text-align: center; }
-        .score-badge { position: absolute; top: 5px; right: 5px; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; color: white; }
-        .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-        th { background: #f1f5f9; color: var(--navy); padding: 12px; text-align: center; }
-        td { padding: 10px; border-top: 1px solid var(--border); text-align: center; }
-        .filter-row input { width: 90%; padding: 6px; border: 1px solid var(--border); border-radius: 6px; }
-        .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 20px; font-size: 1em; transition: 0.3s; }
-        .btn-guardar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
-        .semaforo { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; }
-        .rojo { background: var(--rojo); } .amarillo { background: var(--amarillo); } .verde { background: var(--verde-neufeld); }
-        select, input[type="date"] { padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95em; }
-
-        #loadingOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+        /* LOGO ESQUINA DERECHA (Fondo blanco, letras verdes según pedido) */
+        .header-right .logo-container {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
         }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .logo-container img { height: 35px; }
+
+        /* LAYOUT PRINCIPAL */
+        .main-wrapper { display: flex; flex: 1; overflow: hidden; }
+
+        /* MENÚ LATERAL VERTICAL */
+        nav {
+            background-color: var(--white);
+            width: var(--sidebar-width);
+            height: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e2e8f0;
+            z-index: 1000;
+        }
+        nav.collapsed { width: var(--sidebar-collapsed); }
+
+        .nav-items { flex: 1; padding: 20px 0; }
+        .nav-btn {
+            width: 100%;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            border: none;
+            background: none;
+            color: #64748b;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .nav-btn:hover { background: var(--verde-claro); color: var(--verde-neufeld); }
+        .nav-btn.active { background: var(--verde-claro); color: var(--verde-neufeld); border-left: 4px solid var(--verde-neufeld); }
+        .nav-btn .icon { min-width: 30px; font-size: 20px; }
+
+        /* CONTENIDO PRINCIPAL */
+        main { flex: 1; overflow-y: auto; padding: 30px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* COMPONENTES DE DISEÑO */
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        .section-title { font-size: 1.1em; font-weight: 700; margin-bottom: 20px; color: var(--navy); border-bottom: 2px solid var(--verde-claro); padding-bottom: 10px; }
+
+        /* FORMULARIOS Y TABLAS */
+        .grid-filtros { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 0.8em; color: #64748b; font-weight: bold; text-transform: uppercase; }
+        select, input { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th { background: #f8fafc; padding: 12px; text-align: left; font-size: 0.85em; color: #475569; }
+        td { padding: 12px; border-top: 1px solid #f1f5f9; font-size: 0.9em; }
+
+        /* ESTILOS DE GRÁFICAS */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .chart-container { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; position: relative; }
+
+        .btn-submit { background: var(--verde-neufeld); color: white; border: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { background: var(--verde-oscuro); }
+
+        /* OCULTAR TEXTO CUANDO EL MENÚ ESTÁ COLAPSADO */
+        nav.collapsed .btn-text { display: none; }
     </style>
 </head>
 <body>
 
-<div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p>Sincronizando datos...</p>
-</div>
-
-<div class="container">
-    <div class="header">
-        <h2 style="margin:0; color: var(--navy);">KPI Supervisores</h2>
-        <div class="logo-container"><img src="Logo Pasteleria Neufeld.png" alt="Logo"></div>
+<header>
+    <div class="header-left">
+        <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+        <span class="app-title">KPI NEUFELD</span>
     </div>
+    <div class="header-right">
+        <div class="logo-container">
+            <!-- Simulación del logo: Fondo blanco, letras verdes -->
+            <img src="Logo_Neufeld_Blanco_Verde.png" alt="Logo Neufeld" onerror="this.alt='NEUFELD'; this.style.color='#27ae60'; this.style.fontWeight='bold'">
+        </div>
+    </div>
+</header>
 
-    <!-- REGISTRO REDISEÑADO -->
-    <div class="registro-card">
-        <div class="section-title">📝 Registro de Evaluación</div>
-        
-        <div class="controles-top">
-            <div class="input-group">
-                <label>Supervisor</label>
-                <select id="sup" onchange="cargarSucursales()">
-                    <option value="">Seleccionar...</option>
-                    <option value="Adriana">ADRIANA</option>
-                    <option value="Citlalli">CITLALLI</option>
-                    <option value="Karla">KARLA</option>
-                    <option value="Leonardo">LEONARDO</option>
-                    <option value="Noemi">NOEMI</option>
-                </select>
+<div class="main-wrapper">
+    <!-- MENÚ VERTICAL -->
+    <nav id="sidebar">
+        <div class="nav-items">
+            <button class="nav-btn active" onclick="switchTab('registro', this)">
+                <span class="icon">📋</span>
+                <span class="btn-text">Historial y Captura</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('supervisores', this)">
+                <span class="icon">👤</span>
+                <span class="btn-text">Resultados Supervisor</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('sucursales', this)">
+                <span class="icon">🏠</span>
+                <span class="btn-text">Resultados Sucursal</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main>
+        <!-- PESTAÑA 1 -->
+        <div id="registro" class="tab-content active">
+            <div class="card">
+                <div class="section-title">Nueva Evaluación</div>
+                <div class="grid-filtros">
+                    <div class="input-group"><label>Supervisor</label><select id="supSelect"><option>Adriana</option><option>Citlalli</option><option>Karla</option><option>Leonardo</option><option>Noemi</option></select></div>
+                    <div class="input-group"><label>Sucursal</label><select id="sucSelect"><option>ACA - Avila Camacho</option></select></div>
+                    <div class="input-group"><label>Fecha</label><input type="date" id="evalFecha"></div>
+                </div>
+                <button class="btn-submit">Registrar Evaluación</button>
             </div>
-            <div class="input-group">
-                <label>Sucursal</label>
-                <select id="sucursal"></select>
-            </div>
-            <div class="input-group">
-                <label>Fecha de Auditoría</label>
-                <input type="date" id="fecha">
-            </div>
-            <div class="input-group" style="justify-content: center;">
-                <div class="switch-container">
-                    <span>¿Visitó Sucursal?</span>
-                    <label class="switch">
-                        <input type="checkbox" id="realizoVisita" checked onchange="toggleVisita(this.checked)">
-                        <span class="slider"></span>
-                    </label>
+
+            <div class="card">
+                <div class="section-title">Historial Detallado</div>
+                <div class="grid-filtros">
+                    <div class="input-group"><label>Filtrar Sucursal</label><input type="text" placeholder="Buscar..."></div>
+                    <div class="input-group"><label>Mes</label><select><option>Mayo 2026</option></select></div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Checklist</th><th>Arqueo</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Producto</th><th>Total %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historialBody">
+                            <!-- Datos dinámicos aquí -->
+                            <tr><td>Adriana</td><td>ACA - Avila Camacho</td><td>2026-05-04</td><td>15</td><td>12</td><td>15</td><td>15</td><td>10</td><td>10</td><td>10</td><td><b style="color:var(--verde-neufeld)">87%</b></td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="kpi-grid" id="checksContainer">
-            <!-- Renderizado dinámico o estático para mayor control -->
-            <label class="kpi-card" id="card-vis">
-                <span class="kpi-label">Visita programada</span>
-                <span class="kpi-pts">15 pts</span>
-                <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-chk">
-                <span class="kpi-label">Checklist</span>
-                <span class="kpi-pts">15 pts</span>
-                <input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-arq">
-                <span class="kpi-label">Arqueo</span>
-                <span class="kpi-pts">15 pts</span>
-                <input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-ade">
-                <span class="kpi-label">Adeudos</span>
-                <span class="kpi-pts">15 pts</span>
-                <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-rot">
-                <span class="kpi-label">Rotación de personal</span>
-                <span class="kpi-pts">10 pts</span>
-                <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-asi">
-                <span class="kpi-label">Asistencia</span>
-                <span class="kpi-pts">10 pts</span>
-                <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-pro">
-                <span class="kpi-label">Conteo de producto</span>
-                <span class="kpi-pts">10 pts</span>
-                <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
-            </label>
-            <label class="kpi-card" id="card-pty">
-                <span class="kpi-label">Productividad en tienda</span>
-                <span class="kpi-pts">10 pts</span>
-                <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
-            </label>
+        <!-- PESTAÑA 2 -->
+        <div id="supervisores" class="tab-content">
+            <div class="card">
+                <div class="section-title">Cumplimiento Mensual por Supervisor</div>
+                <div style="height: 300px;"><canvas id="chartSupBarras"></canvas></div>
+            </div>
+            <div class="dashboard-grid" id="radarGrid">
+                <!-- Los radares se generarán dinámicamente -->
+            </div>
         </div>
-        
-        <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTE</button>
-    </div>
 
-    <!-- DASHBOARD -->
-    <div class="dashboard-controls">
-        <label style="font-weight: bold;">Filtro de Análisis:</label>
-        <select id="filtroMes" onchange="cargarDatosNube()">
-            <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-        </select>
-    </div>
-
-    <div class="comparativa-section">
-        <h4 style="margin:0 0 15px 0; color: var(--navy);">Comparativa de Cumplimiento por Supervisor</h4>
-        <div style="height: 200px;"><canvas id="comparativaChart"></canvas></div>
-    </div>
-
-    <div class="dashboard-grid" id="radarContainer"></div>
-
-    <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Historial de Evaluaciones</h4>
-    <div class="table-container">
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th></th><th>Participación</th><th>Total</th><th>Acción</th>
-                </tr>
-                <tr class="filter-row">
-                    <th><input type="text" onkeyup="filterTable(0)" placeholder="🔍 Supervisor..."></th>
-                    <th><input type="text" onkeyup="filterTable(1)" placeholder="🔍 Sucursal..."></th>
-                    <th><input type="text" onkeyup="filterTable(2)" placeholder="🔍 Fecha..."></th>
-                    <th colspan="10"></th>
-                </tr>
-            </thead>
-            <tbody id="tablaBody"></tbody>
-        </table>
-    </div>
+        <!-- PESTAÑA 3 -->
+        <div id="sucursales" class="tab-content">
+            <div class="card">
+                <div class="section-title">Análisis por Sucursal</div>
+                <div class="grid-filtros">
+                    <div class="input-group"><label>Seleccionar Sucursal</label><select><option>ACA - Avila Camacho</option></select></div>
+                </div>
+                <div style="height: 300px;"><canvas id="chartSucTendencia"></canvas></div>
+            </div>
+            <div class="card">
+                <div class="section-title">Tabla Comparativa de Filtros</div>
+                <table>
+                    <thead>
+                        <tr><th>Sucursal</th><th>Supervisor</th><th>Promedio Mes</th><th>Evaluaciones</th><th>Estado</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>ACA - Avila Camacho</td><td>Adriana</td><td>88.5%</td><td>4</td><td>✅</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjPp1Fbz7GkUcoTRTV-ECYwr6X8uYY_slu-2FzDE8t_71SO-leVQBx56b--VIvsmEH/exec";
-    const CODIGO_SEGURIDAD = "Neufeld2024";
-    let datosGlobales = [];
-    let comparativaChart = null;
-
-    // Actualizar visual de tarjetas
-    function updateCardStyle(el) {
-        if(el.checked) el.parentElement.classList.add('active');
-        else el.parentElement.classList.remove('active');
+    // FUNCIONES DE NAVEGACIÓN
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
     }
 
-    function toggleVisita(valor) {
-        const checks = document.querySelectorAll('.kpi');
-        const cards = document.querySelectorAll('.kpi-card');
-        checks.forEach(c => {
-            c.disabled = !valor;
-            if(!valor) {
-                c.checked = false;
-                c.parentElement.classList.remove('active');
-                c.parentElement.style.opacity = "0.4";
-            } else {
-                c.parentElement.style.opacity = "1";
-            }
-        });
+    function switchTab(tabId, btn) {
+        // Cambiar botones
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Cambiar vistas
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+
+        // Inicializar gráficas si es necesario
+        if(tabId === 'supervisores') initSupCharts();
+        if(tabId === 'sucursales') initSucCharts();
     }
 
-    const sucursalesData = {
-        "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
-        "Citlalli": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
-        "Karla": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
-        "Leonardo": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
-        "Noemi": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
-    };
-
-    function cargarSucursales() {
-        const sup = document.getElementById('sup').value;
-        const combo = document.getElementById('sucursal');
-        combo.innerHTML = '';
-        if(sup) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
-    }
-
-    function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
-
-    async function cargarDatosNube() {
-        toggleLoading(true);
-        try {
-            const resp = await fetch(WEB_APP_URL);
-            datosGlobales = await resp.json();
-            renderDashboard();
-            renderTabla();
-        } catch(e) { console.error(e); }
-        toggleLoading(false);
-    }
-
-    function renderDashboard() {
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        const container = document.getElementById('radarContainer');
-        container.innerHTML = '';
-        let stats = {};
-
-        datosGlobales.slice(1).forEach(r => {
-            const f = new Date(r[3]);
-            if(f.getMonth() === mes) {
-                if(!stats[r[1]]) stats[r[1]] = { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 };
-                const s = stats[r[1]];
-                s.v+=r[5]; s.ch+=r[6]; s.ar+=r[7]; s.ad+=r[8]; s.ro+=r[9]; s.as+=r[10]; s.pr+=r[11]; s.py+=r[12]; s.t+=r[13]; s.c++;
-            }
-        });
-
-        Object.keys(stats).forEach(sup => {
-            const s = stats[sup];
-            const avg = (s.t/s.c).toFixed(1);
-            const color = avg >= 90 ? 'verde' : (avg >= 70 ? 'amarillo' : 'rojo');
-            const box = document.createElement('div');
-            box.className = 'chart-box';
-            box.innerHTML = `<div class="score-badge ${color}">${avg}%</div><p style="margin:5px 0; font-weight:bold; font-size:0.9em">${sup}</p><canvas id="r-${sup}"></canvas>`;
-            container.appendChild(box);
-            new Chart(document.getElementById(`r-${sup}`), {
-                type: 'radar',
-                data: {
-                    labels: ['Visitas','Check list','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Participación'],
-                    datasets: [{ data: [s.v/s.c, s.ch/s.c, s.ar/s.c, s.ad/s.c, s.ro/s.c, s.as/s.c, s.pr/s.c, s.py/s.c], backgroundColor: 'rgba(39,174,96,0.1)', borderColor: '#27ae60', borderWidth: 1.5 }]
-                },
-                options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
-            });
-        });
-        renderComparativa(stats);
-    }
-
-    function renderComparativa(stats) {
-        const ctx = document.getElementById('comparativaChart');
-        if(comparativaChart) comparativaChart.destroy();
-        const labels = Object.keys(stats);
-        comparativaChart = new Chart(ctx, {
+    // SIMULACIÓN DE GRÁFICAS
+    function initSupCharts() {
+        const ctx = document.getElementById('chartSupBarras').getContext('2d');
+        new Chart(ctx, {
             type: 'bar',
-            data: { labels: labels, datasets: [{ label: '% Promedio Mensual', data: labels.map(l => (stats[l].t/stats[l].c).toFixed(1)), backgroundColor: '#27ae60', borderRadius: 5 }] },
-            options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
+            data: {
+                labels: ['Noemi', 'Adriana', 'Karla', 'Leonardo', 'Citlalli'],
+                datasets: [{
+                    label: '% Cumplimiento',
+                    data: [60.8, 77.5, 81.3, 61.3, 88.3],
+                    backgroundColor: '#27ae60'
+                }]
+            },
+            options: { maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
         });
     }
 
-    function renderTabla() {
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        const body = document.getElementById('tablaBody');
-        body.innerHTML = '';
-        datosGlobales.slice(1).reverse().forEach((r, i) => {
-            const f = new Date(r[3]);
-            if(f.getMonth() === mes) {
-                const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                body.innerHTML += `<tr><td>${r[1]}</td><td>${r[2]}</td><td>${String(r[3]).split('T')[0]}</td><td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td><td><span class="semaforo ${color}">${r[13]}%</span></td><td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td></tr>`;
-            }
+    function initSucCharts() {
+        const ctx = document.getElementById('chartSucTendencia').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                datasets: [{
+                    label: 'ACA - Avila Camacho',
+                    data: [80, 85, 82, 88],
+                    borderColor: '#27ae60',
+                    tension: 0.4
+                }]
+            },
+            options: { maintainAspectRatio: false }
         });
-    }
-
-    function filterTable(colIndex) {
-        const inputs = document.querySelectorAll('.filter-row input');
-        const rows = document.getElementById('tablaBody').getElementsByTagName('tr');
-        for (let row of rows) {
-            let show = true;
-            inputs.forEach((input, idx) => {
-                const filter = input.value.toLowerCase();
-                const cell = row.getElementsByTagName('td')[idx];
-                if (cell && cell.innerText.toLowerCase().indexOf(filter) === -1) show = false;
-            });
-            row.style.display = show ? "" : "none";
-        }
-    }
-
-    async function guardarEnNube() {
-        const s = document.getElementById('sup').value;
-        if(!s) return alert("Por favor selecciona un Supervisor");
-        toggleLoading(true);
-        const visVal = document.getElementById('realizoVisita').checked;
-        const reg = { action: 'guardar', s, suc: document.getElementById('sucursal').value, f: document.getElementById('fecha').value, realizado: visVal, vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0 };
-        if(visVal) {
-            document.querySelectorAll('.kpi:checked').forEach(i => { reg[i.dataset.r] = parseInt(i.value); reg.total += parseInt(i.value); });
-        }
-        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-        setTimeout(cargarDatosNube, 1500);
-    }
-
-    async function borrarRegistro(idFila) {
-        if(prompt("Contraseña de seguridad requerida:") === CODIGO_SEGURIDAD) {
-            toggleLoading(true);
-            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({action: 'borrar', idFila}) });
-            setTimeout(cargarDatosNube, 1500);
-        }
     }
 
     window.onload = () => {
-        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-        document.getElementById('filtroMes').value = new Date().getMonth();
-        cargarDatosNube();
+        document.getElementById('evalFecha').value = new Date().toISOString().split('T')[0];
     };
 </script>
+
 </body>
 </html>
