@@ -149,4 +149,437 @@
         .comparativa-section { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .chart-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; text-align: center; }
-        .score-badge { position: absolute; top: 8px; right: 8px; padding
+        .score-badge { position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; color: white; }
+        
+        .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 1100px; }
+        th { background: #f1f5f9; color: var(--navy); padding: 12px; text-align: center; font-weight: 700; }
+        td { padding: 11px 12px; border-top: 1px solid var(--border); text-align: center; }
+        tr:hover { background-color: #f8fafc; }
+        .filter-row input { width: 90%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+        
+        .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1em; transition: 0.3s; letter-spacing: 0.5px; }
+        .btn-guardar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
+        .semaforo { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; }
+        .rojo { background: var(--rojo); } .amarillo { background: var(--amarillo); } .verde { background: var(--verde-neufeld); }
+        select, input[type="date"] { padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95em; outline: none; background-color: #ffffff; }
+
+        #loadingOverlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8); z-index: 5000; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        nav.collapsed .btn-text { display: none; }
+        @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="font-weight: bold; margin-top: 10px;">Sincronizando datos...</p>
+</div>
+
+<div class="header">
+    <div class="header-left">
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+        <h2>KPI Supervisores</h2>
+    </div>
+    <div class="header-right">
+        <div class="logo-container">
+            <img src="Logo Pasteleria Neufeld.png" alt="Logo">
+        </div>
+    </div>
+</div>
+
+<div class="main-wrapper">
+    <nav id="sidebar">
+        <div class="nav-items">
+            <button class="nav-btn active" onclick="switchTab('tab-registro', this)">
+                <span class="icon">📋</span>
+                <span class="btn-text">Historial e Inicios</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-supervisores', this)">
+                <span class="icon">👤</span>
+                <span class="btn-text">Resultados Supervisor</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-sucursales', this)">
+                <span class="icon">🏠</span>
+                <span class="btn-text">Resultados Sucursal</span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        
+        <div class="dashboard-controls">
+            <label style="font-weight: bold;">Filtro de Análisis General (Mes):</label>
+            <select id="filtroMes" onchange="cargarDatosNube()">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+
+        <div id="tab-registro" class="tab-content active">
+            <div class="registro-card">
+                <div class="section-title">📝 Registro de Evaluación</div>
+                <div class="controles-top">
+                    <div class="input-group">
+                        <label>Supervisor</label>
+                        <select id="sup" onchange="cargarSucursales()">
+                            <option value="">Seleccionar...</option>
+                            <option value="Adriana">ADRIANA</option>
+                            <option value="Citlalli">CITLALLI</option>
+                            <option value="Karla">KARLA</option>
+                            <option value="Leonardo">LEONARDO</option>
+                            <option value="Noemi">NOEMI</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Sucursal</label>
+                        <select id="sucursal"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Fecha de Auditoría</label>
+                        <input type="date" id="fecha">
+                    </div>
+                    <div class="input-group">
+                        <div class="switch-container">
+                            <span>¿Visitó Sucursal?</span>
+                            <label class="switch">
+                                <input type="checkbox" id="realizoVisita" checked onchange="toggleVisita(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" id="checksContainer">
+                    <label class="kpi-card" id="card-vis">
+                        <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Visitas</span>
+                        <span class="kpi-pts">15 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-chk">
+                        <input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Checklist</span>
+                        <span class="kpi-pts">15 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-arq">
+                        <input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Arqueo</span>
+                        <span class="kpi-pts">15 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-ade">
+                        <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Adeudos</span>
+                        <span class="kpi-pts">15 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-rot">
+                        <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Rotación</span>
+                        <span class="kpi-pts">10 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-asi">
+                        <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Asistencia</span>
+                        <span class="kpi-pts">10 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-pro">
+                        <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Producto</span>
+                        <span class="kpi-pts">10 pts</span>
+                    </label>
+                    <label class="kpi-card" id="card-pty">
+                        <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
+                        <span class="kpi-label">Productividad</span>
+                        <span class="kpi-pts">10 pts</span>
+                    </label>
+                </div>
+                <button class="btn-guardar" onclick="guardarEnNube()">GUARDAR REPORTE</button>
+            </div>
+
+            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy); margin-top: 30px;">Historial de Evaluaciones</h4>
+            <div class="table-container">
+                <table id="mainTable">
+                    <thead>
+                        <tr>
+                            <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total</th><th>Acción</th>
+                        </tr>
+                        <tr class="filter-row" id="filterRowTab1">
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Supervisor..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Sucursal..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Fecha..."></th>
+                            <th colspan="10"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-supervisores" class="tab-content">
+            <div class="comparativa-section">
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Gráfica de Promedio que Lleva en el Mes</h4>
+                <div style="height: 240px;"><canvas id="comparativaChart"></canvas></div>
+            </div>
+
+            <h4 style="margin:20px 0 15px 0; color: var(--navy);">Promedio de Cada Punto a Evaluar por Supervisor</h4>
+            <div class="dashboard-grid" id="radarContainer"></div>
+        </div>
+
+        <div id="tab-sucursales" class="tab-content">
+            <div class="comparativa-section">
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Gráfica General de Desempeño de Sucursales</h4>
+                <div style="height: 260px;"><canvas id="sucursalesBarChart"></canvas></div>
+            </div>
+
+            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales</h4>
+            <div class="table-container">
+                <table id="sucursalesTable">
+                    <thead>
+                        <tr>
+                            <th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes</th><th>Visitas Realizadas</th><th>Último Registro</th>
+                        </tr>
+                        <tr class="filter-row" id="filterRowTab3">
+                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Sucursal..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Supervisor..."></th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sucursalesTablaBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjPp1Fbz7GkUcoTRTV-ECYwr6X8uYY_slu-2FzDE8t_71SO-leVQBx56b--VIvsmEH/exec";
+    const CODIGO_SEGURIDAD = "Neufeld2024";
+    let datosGlobales = [];
+    let comparativaChart = null;
+    let sucursalesBarChart = null;
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
+    }
+
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        
+        if(datosGlobales.length > 0) {
+            procesarYRenderizarTodo();
+        }
+    }
+
+    function updateCardStyle(el) {
+        if(el.checked) el.parentElement.classList.add('active');
+        else el.parentElement.classList.remove('active');
+    }
+
+    function toggleVisita(valor) {
+        const checks = document.querySelectorAll('.kpi');
+        checks.forEach(c => {
+            c.disabled = !valor;
+            if(!valor) {
+                c.checked = false;
+                c.parentElement.classList.remove('active');
+                c.parentElement.style.opacity = "0.4";
+            } else {
+                c.parentElement.style.opacity = "1";
+            }
+        });
+    }
+
+    const sucursalesData = {
+        "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
+        "Citlalli": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
+        "Karla": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
+        "Leonardo": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
+        "Noemi": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
+    };
+
+    function cargarSucursales() {
+        const sup = document.getElementById('sup').value;
+        const combo = document.getElementById('sucursal');
+        combo.innerHTML = '';
+        if(sup) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
+    }
+
+    function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
+
+    async function cargarDatosNube() {
+        toggleLoading(true);
+        try {
+            const resp = await fetch(WEB_APP_URL);
+            datosGlobales = await resp.json();
+            procesarYRenderizarTodo();
+        } catch(e) { console.error(e); }
+        toggleLoading(false);
+    }
+
+    function procesarYRenderizarTodo() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        let stats = {};
+        let statsSucursal = {};
+
+        datosGlobales.slice(1).forEach(r => {
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes) {
+                if(!stats[r[1]]) stats[r[1]] = { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 };
+                const s = stats[r[1]];
+                s.v+=r[5]; s.ch+=r[6]; s.ar+=r[7]; s.ad+=r[8]; s.ro+=r[9]; s.as+=r[10]; s.pr+=r[11]; s.py+=r[12]; s.t+=r[13]; s.c++;
+
+                if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: r[1], ultimaFecha: r[3] };
+                statsSucursal[r[2]].totalScore += r[13];
+                statsSucursal[r[2]].conteo++;
+                if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
+                    statsSucursal[r[2]].ultimaFecha = r[3];
+                }
+            }
+        });
+
+        renderOp1Historial();
+        renderOp2Supervisores(stats);
+        renderOp3Sucursales(statsSucursal);
+    }
+
+    function renderOp1Historial() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        const body = document.getElementById('tablaBody');
+        body.innerHTML = '';
+        
+        datosGlobales.slice(1).reverse().forEach((r, i) => {
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes) {
+                const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
+                body.innerHTML += `<tr>
+                    <td style="font-weight:600;">${r[1]}</td>
+                    <td>${r[2]}</td>
+                    <td>${String(r[3]).split('T')[0]}</td>
+                    <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
+                    <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
+                    <td><span class="semaforo ${color}">${r[13]}%</span></td>
+                    <td><button onclick="borrarRegistro(${datosGlobales.length - i})" style="border:none; background:none; cursor:pointer">🗑️</button></td>
+                </tr>`;
+            }
+        });
+    }
+
+    function renderOp2Supervisores(stats) {
+        const container = document.getElementById('radarContainer');
+        container.innerHTML = '';
+        const labels = Object.keys(stats);
+
+        const ctxBar = document.getElementById('comparativaChart');
+        if(comparativaChart) comparativaChart.destroy();
+        comparativaChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ label: '% Promedio Mensual', data: labels.map(l => (stats[l].t/stats[l].c).toFixed(1)), backgroundColor: '#27ae60', borderRadius: 5 }] },
+            options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
+        });
+
+        labels.forEach(sup => {
+            const s = stats[sup];
+            const avg = (s.t/s.c).toFixed(1);
+            const color = avg >= 90 ? 'verde' : (avg >= 70 ? 'amarillo' : 'rojo');
+            const box = document.createElement('div');
+            box.className = 'chart-box';
+            box.innerHTML = `<div class="score-badge ${color}">${avg}%</div><p style="margin:5px 0; font-weight:bold; font-size:0.9em">${sup}</p><canvas id="r-${sup}"></canvas>`;
+            container.appendChild(box);
+            
+            new Chart(document.getElementById(`r-${sup}`), {
+                type: 'radar',
+                data: {
+                    labels: ['Visitas','Check list','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Participación'],
+                    datasets: [{ data: [s.v/s.c, s.ch/s.c, s.ar/s.c, s.ad/s.c, s.ro/s.c, s.as/s.c, s.pr/s.c, s.py/s.c], backgroundColor: 'rgba(39,174,96,0.1)', borderColor: '#27ae60', borderWidth: 1.5 }]
+                },
+                options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
+            });
+        });
+    }
+
+    function renderOp3Sucursales(statsSucursal) {
+        const body = document.getElementById('sucursalesTablaBody');
+        body.innerHTML = '';
+        const sucursalesLabels = Object.keys(statsSucursal);
+        const promediosSucursales = sucursalesLabels.map(s => (statsSucursal[s].totalScore / statsSucursal[s].conteo).toFixed(1));
+
+        const ctxSucBar = document.getElementById('sucursalesBarChart');
+        if(sucursalesBarChart) sucursalesBarChart.destroy();
+        sucursalesBarChart = new Chart(ctxSucBar, {
+            type: 'bar',
+            data: { labels: sucursalesLabels, datasets: [{ label: '% Promedio Tienda', data: promediosSucursales, backgroundColor: '#0f172a', borderRadius: 4 }] },
+            options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
+        });
+
+        sucursalesLabels.forEach((suc, index) => {
+            const data = statsSucursal[suc];
+            const promedio = promediosSucursales[index];
+            const colorSemaforo = promedio >= 90 ? 'verde' : (promedio >= 70 ? 'amarillo' : 'rojo');
+
+            body.innerHTML += `<tr>
+                <td style="font-weight:600; text-align:left;">${suc}</td>
+                <td>${data.supervisor}</td>
+                <td><span class="semaforo ${colorSemaforo}">${promedio}%</span></td>
+                <td>${data.conteo}</td>
+                <td>${String(data.ultimaFecha).split('T')[0]}</td>
+            </tr>`;
+        });
+    }
+
+    function filterTable(filterRowId, tbodyId) {
+        const inputs = document.querySelectorAll(`#${filterRowId} input`);
+        const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
+        
+        for (let row of rows) {
+            let show = true;
+            let activeInputsIndex = 0;
+            inputs.forEach((input, idx) => {
+                const filter = input.value.toLowerCase();
+                const cell = row.getElementsByTagName('td')[activeInputsIndex];
+                if (filter && cell && cell.innerText.toLowerCase().indexOf(filter) === -1) {
+                    show = false;
+                }
+                activeInputsIndex++;
+            });
+            row.style.display = show ? "" : "none";
+        }
+    }
+
+    async function guardarEnNube() {
+        const s = document.getElementById('sup').value;
+        if(!s) return alert("Por favor selecciona un Supervisor");
+        toggleLoading(true);
+        const visVal = document.getElementById('realizoVisita').checked;
+        const reg = { action: 'guardar', s, suc: document.getElementById('sucursal').value, f: document.getElementById('fecha').value, realizado: visVal, vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0 };
+        if(visVal) {
+            document.querySelectorAll('.kpi:checked').forEach(i => { reg[i.dataset.r] = parseInt(i.value); reg.total += parseInt(i.value); });
+        }
+        await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+        setTimeout(cargarDatosNube, 1500);
+    }
+
+    async function borrarRegistro(idFila) {
+        if(prompt("Contraseña de seguridad requerida:") === CODIGO_SEGURIDAD) {
+            toggleLoading(true);
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({action: 'borrar', idFila}) });
+            setTimeout(cargarDatosNube, 1500);
+        }
+    }
+
+    window.onload = () => {
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+        document.getElementById('filtroMes').value = new Date().getMonth();
+        cargarDatosNube();
+    };
+</script>
+</body>
+</html>
