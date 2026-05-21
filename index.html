@@ -319,7 +319,7 @@
 
         <div id="tab-sucursales" class="tab-content">
             <div class="comparativa-section">
-                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño</h4>
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Gráfica General de Desempeño de Sucursales</h4>
                 
                 <div class="filtros-grafica-sucursal">
                     <div style="display:flex; flex-direction:column; gap:4px;">
@@ -341,7 +341,7 @@
                     </div>
                 </div>
 
-                <div style="height: 280px; position: relative;"><canvas id="sucursalesLineChart"></canvas></div>
+                <div style="height: 280px; position: relative;"><canvas id="sucursalesBarChartReal"></canvas></div>
             </div>
 
             <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales</h4>
@@ -370,7 +370,7 @@
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
     let comparativaChart = null;
-    let sucursalesLineChart = null; // Variable global para la gráfica lineal
+    let sucursalesBarChartReal = null; // Variable global asignada para la gráfica de barras general
 
     const sucursalesData = {
         "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -447,51 +447,33 @@
         const mes = parseInt(document.getElementById('filtroMes').value);
         let stats = {};
         let statsSucursal = {};
-        let registrosGrafica = [];
-
-        const zonaFiltro = document.getElementById('filtroGraficaZona').value;
-        const sucursalFiltro = document.getElementById('filtroGraficaSucursal').value;
 
         datosGlobales.slice(1).forEach(r => {
             if(!r[3]) return; 
             const f = new Date(r[3]);
             
-            // Forzar validación correcta sobre el mes seleccionado
+            // Evaluar correspondencia estricta por mes
             if(f.getMonth() === mes) {
-                // 1. Estadísticas para Supervisor (Pestaña 2)
+                // 1. Estadísticas para Pestaña 2 (Supervisores)
                 if(!stats[r[1]]) stats[r[1]] = { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 };
                 const s = stats[r[1]];
                 s.v+=r[5]; s.ch+=r[6]; s.ar+=r[7]; s.ad+=r[8]; s.ro+=r[9]; s.as+=r[10]; s.pr+=r[11]; s.py+=r[12]; s.t+=r[13]; s.c++;
 
-                // 2. Estadísticas Generales para la Tabla de Sucursales (Pestaña 3)
-                if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: r[1], ultimaFecha: r[3] };
-                statsSucursal[r[2]].totalScore += r[13];
+                // 2. Acumuladores de Sucursales (Pestaña 3) basándose en auditorías con datos
+                if(!statsSucursal[r[2]]) {
+                    statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: r[1], ultimaFecha: r[3] };
+                }
+                statsSucursal[r[2]].totalScore += parseFloat(r[13]);
                 statsSucursal[r[2]].conteo++;
                 if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
                     statsSucursal[r[2]].ultimaFecha = r[3];
                 }
-
-                // 3. Capturar información para los puntos dinámicos del gráfico lineal
-                let pasaZona = (zonaFiltro === 'TODOS' || r[1] === zonaFiltro);
-                let pasaSucursal = (sucursalFiltro === 'TODAS' || r[2] === sucursalFiltro);
-                
-                if (pasaZona && pasaSucursal) {
-                    registrosGrafica.push({
-                        fechaTexto: String(r[3]).split('T')[0],
-                        fechaObj: f,
-                        sucursal: r[2],
-                        puntaje: parseFloat(r[13])
-                    });
-                }
             }
         });
 
-        // Ordenamos los puntos de manera cronológica (Eje X Acostado)
-        registrosGrafica.sort((a, b) => a.fechaObj - b.fechaObj);
-
         renderOp1Historial();
         renderOp2Supervisores(stats);
-        renderOp3SucursalesYLineal(statsSucursal, registrosGrafica);
+        renderOp3SucursalesBarras(statsSucursal);
     }
 
     function renderOp1Historial() {
@@ -553,58 +535,66 @@
         });
     }
 
-    // FUNCIÓN DE RENDERIZADO COMPLETAMENTE CORREGIDA PARA LA GRÁFICA DE PUNTOS
-    function renderOp3SucursalesYLineal(statsSucursal, registrosGrafica) {
+    // IMPLEMENTACIÓN E INTEGRACIÓN DE LA NUEVA GRÁFICA DE BARRAS GENERAL COMPARTIDA
+    function renderOp3SucursalesBarras(statsSucursal) {
         const body = document.getElementById('sucursalesTablaBody');
         if(!body) return;
         body.innerHTML = '';
         
-        const sucursalLabelsTable = Object.keys(statsSucursal);
+        const sucursalesKeys = Object.keys(statsSucursal);
+        const zonaFiltro = document.getElementById('filtroGraficaZona').value;
+        const sucursalFiltro = document.getElementById('filtroGraficaSucursal').value;
 
-        // Renderizar Tabla Comparativa
-        sucursalLabelsTable.forEach(suc => {
+        let listaParaGrafica = [];
+
+        // 1. Llenar tabla e ir preparando datos filtrados para la gráfica de barras general
+        sucursalesKeys.forEach(suc => {
             const data = statsSucursal[suc];
-            const promedio = (data.totalScore / data.conteo).toFixed(1);
-            const colorSemaforo = promedio >= 90 ? 'verde' : (promedio >= 70 ? 'amarillo' : 'rojo');
+            const promedioReal = (data.totalScore / data.conteo).toFixed(1);
+            const colorSemaforo = promedioReal >= 90 ? 'verde' : (promedioReal >= 70 ? 'amarillo' : 'rojo');
 
+            // Renderizar la tabla de forma completa siempre
             body.innerHTML += `<tr>
                 <td style="font-weight:600; text-align:left;">${suc}</td>
                 <td>${data.supervisor}</td>
-                <td><span class="semaforo ${colorSemaforo}">${promedio}%</span></td>
+                <td><span class="semaforo ${colorSemaforo}">${promedioReal}%</span></td>
                 <td>${data.conteo}</td>
                 <td>${String(data.ultimaFecha).split('T')[0]}</td>
             </tr>`;
+
+            // Aplicar filtros cruzados dinámicos de Zona y Sucursal para la gráfica
+            let cumpleZona = (zonaFiltro === 'TODOS' || data.supervisor === zonaFiltro);
+            let cumpleSucursal = (sucursalFiltro === 'TODAS' || suc === sucursalFiltro);
+
+            if(cumpleZona && cumpleSucursal) {
+                listaParaGrafica.push({
+                    nombreSucursal: suc,
+                    porcentaje: parseFloat(promedioReal)
+                });
+            }
         });
 
-        // Construir / Actualizar Gráfica de Puntos
-        const ctxLine = document.getElementById('sucursalesLineChart');
-        if(ctxLine) {
-            // CORRECCIÓN CLAVE: Destruir la variable global correcta si ya existía
-            if(sucursalesLineChart) sucursalesLineChart.destroy(); 
-            
-            const sucursalFiltroActivo = document.getElementById('filtroGraficaSucursal').value;
-            
-            const etiquetasEjeX = registrosGrafica.map(r => r.fechaTexto);
-            const valoresEjeY = registrosGrafica.map(r => r.puntaje);
-            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Puntaje: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
+        // Ordenar la gráfica de mayor a menor cumplimiento de forma automática
+        listaParaGrafica.sort((a, b) => b.porcentaje - a.porcentaje);
 
-            // Instanciar nueva gráfica lineal sobre la variable correcta
-            sucursalesLineChart = new Chart(ctxLine, {
-                type: 'line',
+        // 2. Dibujar / Re-renderizar la gráfica de barras general
+        const ctxBarReal = document.getElementById('sucursalesBarChartReal');
+        if(ctxBarReal) {
+            if(sucursalesBarChartReal) sucursalesBarChartReal.destroy();
+
+            const etiquetasX = listaParaGrafica.map(item => item.nombreSucursal);
+            const datosY = listaParaGrafica.map(item => item.porcentaje);
+
+            sucursalesBarChartReal = new Chart(ctxBarReal, {
+                type: 'bar',
                 data: {
-                    labels: etiquetasEjeX,
+                    labels: etiquetasX,
                     datasets: [{
-                        label: 'Evolución de Auditoría (%)',
-                        data: valoresEjeY,
-                        borderColor: '#0f172a',
-                        backgroundColor: '#27ae60',
-                        borderWidth: 2.5,
-                        pointBackgroundColor: '#27ae60',
-                        pointBorderColor: '#0f172a',
-                        pointRadius: 6,
-                        pointHoverRadius: 9,
-                        tension: 0.1, 
-                        fill: false
+                        label: '% Promedio Tienda Real',
+                        data: datosY,
+                        backgroundColor: '#0f172a', // Color institucional oscuro para resaltar las barras
+                        borderRadius: 6,
+                        borderWidth: 1
                     }]
                 },
                 options: {
@@ -613,20 +603,11 @@
                         y: {
                             beginAtZero: true,
                             max: 100,
-                            title: { display: true, text: 'Puntaje de Auditoría (Eje Lateral)', font: { weight: 'bold' } }
-                        },
-                        x: {
-                            title: { display: true, text: 'Fechas de las Visitas (Eje Acostado)', font: { weight: 'bold' } }
+                            ticks: { callback: function(value) { return value + '%'; } }
                         }
                     },
                     plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return tooltipsInformacion[context.dataIndex];
-                                }
-                            }
-                        }
+                        legend: { display: true, position: 'top' }
                     }
                 }
             });
