@@ -46,7 +46,6 @@
         }
         .header-left { display: flex; align-items: center; gap: 20px; }
         
-        /* TRES LÍNEAS EN COLOR NEGRO */
         .toggle-sidebar-btn { 
             background: none; 
             border: none; 
@@ -58,7 +57,6 @@
             padding: 0;
         }
         
-        /* TÍTULO DE LA APP EN COLOR NEGRO */
         .header h2 { 
             margin: 0; 
             color: #000000; 
@@ -69,7 +67,6 @@
         .logo-container { display: flex; align-items: center; }
         .logo-container img { height: 45px; }
 
-        /* LAYOUT PRINCIPAL CON MENÚ LATERAL */
         .main-wrapper { display: flex; flex: 1; overflow: hidden; width: 100%; }
 
         /* MENÚ LATERAL VERTICAL IZQUIERDO */
@@ -106,20 +103,23 @@
         .nav-btn.active { background: var(--verde-claro); color: var(--verde-neufeld); border-left-color: var(--verde-neufeld); }
         .nav-btn .icon { min-width: 35px; font-size: 18px; display: inline-block; }
 
-        /* ÁREA DE CONTENIDO EN PANTALLA */
+        /* ÁREA DE CONTENIDO */
         main { flex: 1; overflow-y: auto; padding: 25px; box-sizing: border-box; }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* SECCIÓN REGISTRO Y SELECCIÓN */
+        /* SECCIÓN REGISTRO */
         .registro-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .section-title { font-size: 1.1em; font-weight: 700; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
         .controles-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 25px; background: var(--bg-light); padding: 20px; border-radius: 12px; align-items: flex-end; }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-size: 0.85em; font-weight: 600; color: #64748b; text-transform: uppercase; }
 
-        /* RENDEREADO DE LOS RUBROS / KPI CARDS */
+        /* FILTROS ADICIONALES GRÁFICA DE PUNTOS */
+        .filtros-grafica-sucursal { display: flex; gap: 15px; background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 15px; align-items: center; flex-wrap: wrap; }
+
+        /* RUBROS / KPI CARDS */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; margin-bottom: 20px; }
         .kpi-card { 
             position: relative; border: 2px solid var(--border); background-color: #ffffff; border-radius: 12px; padding: 15px; cursor: pointer;
@@ -128,7 +128,6 @@
         .kpi-card:hover { border-color: var(--verde-neufeld); background: var(--verde-claro); }
         .kpi-card.active { border-color: var(--verde-neufeld); background: var(--verde-claro); box-shadow: 0 4px 12px rgba(39,174,96,0.15); }
         
-        /* Ocultar input manteniendo click interactivo */
         .kpi-card input[type="checkbox"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; }
         .kpi-card .kpi-label { font-size: 0.9em; font-weight: 600; color: var(--navy); z-index: 1; }
         .kpi-card .kpi-pts { font-size: 0.75em; color: #64748b; background: #eee; padding: 2px 8px; border-radius: 10px; font-weight: 600; z-index: 1; }
@@ -225,7 +224,7 @@
                 <div class="controles-top">
                     <div class="input-group">
                         <label>Supervisor</label>
-                        <select id="sup" onchange="cargarSucursales()">
+                        <select id="sup" onchange="cargarSucursalesFormulario()">
                             <option value="">Seleccionar...</option>
                             <option value="Adriana">ADRIANA</option>
                             <option value="Citlalli">CITLALLI</option>
@@ -322,15 +321,35 @@
                 <h4 style="margin:0 0 15px 0; color: var(--navy);">Comparativa de Cumplimiento por Supervisor</h4>
                 <div style="height: 240px;"><canvas id="comparativaChart"></canvas></div>
             </div>
-
             <h4 style="margin:20px 0 15px 0; color: var(--navy);">Promedio de Cada Punto a Evaluar por Supervisor</h4>
             <div class="dashboard-grid" id="radarContainer"></div>
         </div>
 
         <div id="tab-sucursales" class="tab-content">
             <div class="comparativa-section">
-                <h4 style="margin:0 0 15px 0; color: var(--navy);">Gráfica General de Desempeño de Sucursales</h4>
-                <div style="height: 260px;"><canvas id="sucursalesBarChart"></canvas></div>
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño</h4>
+                
+                <div class="filtros-grafica-sucursal">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Zona (Supervisor):</label>
+                        <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
+                            <option value="TODOS">-- Ver Todas las Zonas --</option>
+                            <option value="Adriana">Zona Adriana</option>
+                            <option value="Citlalli">Zona Citlalli</option>
+                            <option value="Karla">Zona Karla</option>
+                            <option value="Leonardo">Zona Leonardo</option>
+                            <option value="Noemi">Zona Noemi</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Sucursal Específica:</label>
+                        <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')">
+                            <option value="TODAS">-- Todas las Sucursales --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="height: 280px;"><canvas id="sucursalesLineChart"></canvas></div>
             </div>
 
             <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales</h4>
@@ -359,22 +378,24 @@
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
     let comparativaChart = null;
-    let sucursalesBarChart = null;
+    let sucursalesLineChart = null;
 
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('collapsed');
-    }
+    const sucursalesData = {
+        "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
+        "Citlalli": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
+        "Karla": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
+        "Leonardo": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
+        "Noemi": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
+    };
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
 
     function switchTab(tabId, btn) {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
-        
-        if(datosGlobales.length > 0) {
-            procesarYRenderizarTodo();
-        }
+        if(datosGlobales.length > 0) procesarYRenderizarTodo();
     }
 
     function updateCardStyle(el) {
@@ -396,19 +417,25 @@
         });
     }
 
-    const sucursalesData = {
-        "Adriana": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
-        "Citlalli": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
-        "Karla": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
-        "Leonardo": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
-        "Noemi": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
-    };
-
-    function cargarSucursales() {
+    function cargarSucursalesFormulario() {
         const sup = document.getElementById('sup').value;
         const combo = document.getElementById('sucursal');
         combo.innerHTML = '';
         if(sup) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
+    }
+
+    // Actualiza la lista desplegable de sucursales según la zona elegida en los Resultados de Sucursal
+    function actualizarFiltrosGrafica(origen) {
+        const zonaSel = document.getElementById('filtroGraficaZona').value;
+        const comboSuc = document.getElementById('filtroGraficaSucursal');
+        
+        if (origen === 'zona') {
+            comboSuc.innerHTML = '<option value="TODAS">-- Todas las Sucursales --</option>';
+            if (zonaSel !== 'TODOS' && sucursalesData[zonaSel]) {
+                sucursalesData[zonaSel].forEach(s => comboSuc.add(new Option(s, s)));
+            }
+        }
+        procesarYRenderizarTodo();
     }
 
     function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
@@ -427,26 +454,49 @@
         const mes = parseInt(document.getElementById('filtroMes').value);
         let stats = {};
         let statsSucursal = {};
+        let registrosGrafica = [];
+
+        // Filtros específicos activos para la pestaña 3
+        const zonaFiltro = document.getElementById('filtroGraficaZona').value;
+        const sucursalFiltro = document.getElementById('filtroGraficaSucursal').value;
 
         datosGlobales.slice(1).forEach(r => {
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
+                // Procesar Estadísticas por Supervisor (Pestaña 2)
                 if(!stats[r[1]]) stats[r[1]] = { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 };
                 const s = stats[r[1]];
                 s.v+=r[5]; s.ch+=r[6]; s.ar+=r[7]; s.ad+=r[8]; s.ro+=r[9]; s.as+=r[10]; s.pr+=r[11]; s.py+=r[12]; s.t+=r[13]; s.c++;
 
+                // Procesar Estadísticas de Sucursales para la Tabla (Pestaña 3)
                 if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: r[1], ultimaFecha: r[3] };
                 statsSucursal[r[2]].totalScore += r[13];
                 statsSucursal[r[2]].conteo++;
                 if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
                     statsSucursal[r[2]].ultimaFecha = r[3];
                 }
+
+                // Filtrar registros destinados estrictamente para armar los puntos de la gráfica
+                let pasaZona = (zonaFiltro === 'TODOS' || r[1] === zonaFiltro);
+                let pasaSucursal = (sucursalFiltro === 'TODAS' || r[2] === sucursalFiltro);
+                
+                if (pasaZona && pasaSucursal) {
+                    registrosGrafica.push({
+                        fechaTexto: String(r[3]).split('T')[0],
+                        fechaObj: f,
+                        sucursal: r[2],
+                        puntaje: r[13]
+                    });
+                }
             }
         });
 
+        // Ordenar registros de forma ascendente por fecha para dibujar la línea temporal de izquierda a derecha
+        registrosGrafica.sort((a, b) => a.fechaObj - b.fechaObj);
+
         renderOp1Historial();
         renderOp2Supervisores(stats);
-        renderOp3Sucursales(statsSucursal);
+        renderOp3SucursalesYLineal(statsSucursal, registrosGrafica);
     }
 
     function renderOp1Historial() {
@@ -507,26 +557,18 @@
         });
     }
 
-    function renderOp3Sucursales(statsSucursal) {
+    // RENDERIZADO DE TABLA Y LA NUEVA GRÁFICA DE PUNTOS TEMPORAL
+    function renderOp3SucursalesYLineal(statsSucursal, registrosGrafica) {
         const body = document.getElementById('sucursalesTablaBody');
         if(!body) return;
         body.innerHTML = '';
-        const sucursalesLabels = Object.keys(statsSucursal);
-        const promediosSucursales = sucursalesLabels.map(s => (statsSucursal[s].totalScore / statsSucursal[s].conteo).toFixed(1));
+        
+        const sucursalLabelsTable = Object.keys(statsSucursal);
 
-        const ctxSucBar = document.getElementById('sucursalesBarChart');
-        if(ctxSucBar) {
-            if(sucursalesBarChart) sucursalesBarChart.destroy();
-            sucursalesBarChart = new Chart(ctxSucBar, {
-                type: 'bar',
-                data: { labels: sucursalesLabels, datasets: [{ label: '% Promedio Tienda', data: promediosSucursales, backgroundColor: '#0f172a', borderRadius: 4 }] },
-                options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
-            });
-        }
-
-        sucursalesLabels.forEach((suc, index) => {
+        // 1. Renderizar Tabla Comparativa Estática debajo
+        sucursalLabelsTable.forEach(suc => {
             const data = statsSucursal[suc];
-            const promedio = promediosSucursales[index];
+            const promedio = (data.totalScore / data.conteo).toFixed(1);
             const colorSemaforo = promedio >= 90 ? 'verde' : (promedio >= 70 ? 'amarillo' : 'rojo');
 
             body.innerHTML += `<tr>
@@ -537,6 +579,61 @@
                 <td>${String(data.ultimaFecha).split('T')[0]}</td>
             </tr>`;
         });
+
+        // 2. Construir la Gráfica Lineal de Evolución de Puntos
+        const ctxLine = document.getElementById('sucursalesLineChart');
+        if(ctxLine) {
+            if(sucursalesBarChart) sucursalesBarChart.destroy(); // Destruimos gráfica previa
+            
+            // Si filtramos una sola sucursal, la etiqueta del punto muestra la fecha, si es zona muestra (Sucursal - Fecha)
+            const sucursalFiltroActivo = document.getElementById('filtroGraficaSucursal').value;
+            
+            const etiquetasEjeX = registrosGrafica.map(r => r.fechaTexto);
+            const valoresEjeY = registrosGrafica.map(r => r.puntaje);
+            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Puntaje: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
+
+            sucursalesBarChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: etiquetasEjeX,
+                    datasets: [{
+                        label: 'Evolución de Auditoría (%)',
+                        data: valoresEjeY,
+                        borderColor: '#0f172a',
+                        backgroundColor: '#27ae60',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#27ae60',
+                        pointBorderColor: '#0f172a',
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        tension: 0.15, // Suavizado de curvas entre puntos
+                        fill: false
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Puntaje Asignado (Lateral)', font: { weight: 'bold' } }
+                        },
+                        x: {
+                            title: { display: true, text: 'Fechas de Visitas (Horizontal)', font: { weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return tooltipsInformacion[context.dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     function filterTable(filterRowId, tbodyId) {
