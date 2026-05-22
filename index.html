@@ -133,7 +133,6 @@
         .chart-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; text-align: center; }
         .score-badge { position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; color: white; }
         
-        /* Estilos del Ranking Top 10 */
         .ranking-container { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
         .ranking-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 15px; }
         .ranking-item { display: flex; align-items: center; gap: 12px; background: var(--bg-light); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border); }
@@ -144,6 +143,13 @@
         .ranking-info { flex: 1; min-width: 0; }
         .ranking-name { font-weight: 600; font-size: 0.85em; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ranking-score { font-size: 0.8em; font-weight: bold; color: var(--verde-neufeld); }
+
+        /* Contenedores de Horarios */
+        .semana-bloque { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
+        .semana-titulo { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--verde-claro); display: flex; justify-content: space-between; }
+        .horario-input-celda { width: 94%; padding: 6px; border: 1px solid transparent; border-radius: 4px; font-size: 0.85rem; text-align: center; background: transparent; }
+        .horario-input-celda:focus { border-color: var(--verde-neufeld); background: #ffffff; outline: none; box-shadow: 0 0 4px rgba(39,174,96,0.2); }
+        .horario-select-descanso { width: 100%; padding: 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.8rem; background-color: #fafafa; }
 
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 1100px; }
@@ -201,7 +207,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.1</div>
+    <div class="app-version-tag">Versión 1.1.2</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -216,6 +222,10 @@
             <button class="nav-btn" onclick="switchTab('tab-sucursales', this)">
                 <span class="icon">🏠</span>
                 <span class="btn-text">Resultados Sucursal</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-horarios', this)">
+                <span class="icon">📅</span>
+                <span class="btn-text">Horarios</span>
             </button>
         </div>
     </nav>
@@ -381,6 +391,28 @@
                 </table>
             </div>
         </div>
+
+        <div id="tab-horarios" class="tab-content">
+            <div class="filtros-grafica-sucursal" style="background: white; margin-bottom: 20px;">
+                <div style="display:flex; flex-direction:column; gap:4px; min-width: 250px;">
+                    <label style="font-size:0.85rem; font-weight:bold; color:var(--navy);">Filtrar por Supervisor:</label>
+                    <select id="filtroHorarioSupervisor" onchange="renderizarBloquesHorarios()">
+                        <option value="TODOS">-- Todos los Supervisores --</option>
+                        <option value="ADRIANA">Adriana</option>
+                        <option value="CITLALLI">Citlalli</option>
+                        <option value="KARLA">Karla</option>
+                        <option value="LEONARDO">Leonardo</option>
+                        <option value="NOEMI">Noemi</option>
+                    </select>
+                </div>
+                <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; font-style: italic;">
+                    💡 Los cambios y textos de los horarios se guardan automáticamente.
+                </div>
+            </div>
+
+            <div id="contenedorBloquesHorarios">
+                </div>
+        </div>
     </main>
 </div>
 
@@ -391,6 +423,8 @@
     let comparativaChart = null;
     let sucursalesLineChart = null; 
     let radaresInstancias = {};
+
+    const listadoSupervisores = ["ADRIANA", "CITLALLI", "KARLA", "LEONARDO", "NOEMI"];
 
     const sucursalesData = {
         "ADRIANA": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -447,7 +481,10 @@
     }
 
     function procesarYRenderizarTodo() {
-        if (!datosGlobales || datosGlobales.length <= 1) return;
+        if (!datosGlobales || datosGlobales.length <= 1) {
+            renderizarBloquesHorarios();
+            return;
+        }
 
         const mes = parseInt(document.getElementById('filtroMes').value);
         let statsSupervisores = {
@@ -520,6 +557,7 @@
         renderOp2Supervisores(statsSupervisores);
         renderOp3SucursalesYLineal(statsSucursal, registrosGraficaLineal);
         renderRankingTop10(statsSucursal);
+        renderizarBloquesHorarios();
     }
 
     function renderOp1Historial() {
@@ -692,7 +730,6 @@
         if (!container) return;
         container.innerHTML = '';
 
-        // Transformar objeto de estadísticas a un array con el promedio calculado
         let listaSucursales = Object.keys(statsSucursal).map(suc => {
             return {
                 nombre: suc,
@@ -700,7 +737,6 @@
             };
         });
 
-        // Ordenar de mayor a menor según el promedio y tomar las primeras 10
         listaSucursales.sort((a, b) => b.promedio - a.promedio);
         let top10 = listaSucursales.slice(0, 10);
 
@@ -728,6 +764,150 @@
         });
     }
 
+    /* --- LÓGICA EXCLUSIVA PARA LA GENERACIÓN DE HORARIOS (MIERCOLES A MARTES) --- */
+    function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
+        let semanas = [];
+        // Buscar el primer miércoles que define el inicio o coincidencia del mes
+        let fechaPivote = new Date(ano, mesIndice, 1);
+        
+        // Retroceder hasta encontrar el miércoles anterior más cercano para armar ciclos completos de Mié-Mar
+        while(fechaPivote.getDay() !== 3) {
+            fechaPivote.setDate(fechaPivote.getDate() - 1);
+        }
+
+        // Generar rangos hasta sobrepasar el mes de análisis
+        for (let k = 0; k < 6; k++) {
+            let inicioSemana = new Date(fechaPivote);
+            let finSemana = new Date(fechaPivote);
+            finSemana.setDate(finSemana.getDate() + 6);
+
+            // Criterio: La semana debe tener al menos un día dentro del mes actual seleccionado
+            if (inicioSemana.getMonth() === mesIndice || finSemana.getMonth() === mesIndice) {
+                semanas.push({ inicio: inicioSemana, fin: finSemana });
+            }
+            
+            // Avanzar a la siguiente semana
+            fechaPivote.setDate(fechaPivote.getDate() + 7);
+        }
+        return semanas;
+    }
+
+    function renderizarBloquesHorarios() {
+        const contenedor = document.getElementById('contenedorBloquesHorarios');
+        if(!contenedor) return;
+        contenedor.innerHTML = '';
+
+        const mesSeleccionado = parseInt(document.getElementById('filtroMes').value);
+        const supervisorFiltrado = document.getElementById('filtroHorarioSupervisor').value;
+        const anoActual = new Date().getFullYear();
+
+        // Obtener los rangos de fechas (miércoles a martes)
+        const semanas = obtenerSemanasMesMiercolesAMartes(anoActual, mesSeleccionado);
+        const diasSemanaNombres = ["Mié", "Jue", "Vie", "Sáb", "Dom", "Lun", "Mar"];
+
+        semanas.forEach((semana, indiceSemana) => {
+            const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+            const strFin = banana = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+            
+            const bloque = document.createElement('div');
+            bloque.className = 'semana-bloque';
+            
+            let htmlTitulo = `<div class="semana-titulo">
+                <span>📅 Semana ${indiceSemana + 1}: del ${strInicio} al ${strFin}</span>
+                <span style="font-size:0.8rem; color:var(--verde-neufeld);">Horario Semanal</span>
+            </div>`;
+            
+            let htmlTablaHeader = `<div class="table-container" style="margin-top:0;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:140px; background:#e2e8f0;">Supervisor</th>`;
+            
+            // Construir dinámicamente las columnas de los 7 días con su fecha numérica
+            let listaFechasDias = [];
+            for(let d=0; d<7; d++) {
+                let dTmp = new Date(semana.inicio);
+                dTmp.setDate(dTmp.getDate() + d);
+                listaFechasDias.push(dTmp.getDate());
+                htmlTablaHeader += `<th style="width:90px;">${diasSemanaNombres[d]} ${dTmp.getDate()}</th>`;
+            }
+
+            htmlTablaHeader += `
+                            <th style="width:110px; background:#f8fafc;">Descanso</th>
+                            <th style="width:120px;">Apertura</th>
+                            <th style="width:120px;">Cierre</th>
+                            <th>Anotaciones / Junta</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            let supsAMostrar = supervisorFiltrado === "TODOS" ? listadoSupervisores : [supervisorFiltrado];
+            let filasContenido = "";
+
+            supsAMostrar.forEach(sup => {
+                const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
+
+                // Cargar valores desde el almacenamiento local persistente (localStorage)
+                let valDescanso = localStorage.getItem(`${idLlaveBase}_descanso`) || "";
+                let valApertura = localStorage.getItem(`${idLlaveBase}_apertura`) || "";
+                let valCierre = localStorage.getItem(`${idLlaveBase}_cierre`) || "";
+                let valNotas = localStorage.getItem(`${idLlaveBase}_notas`) || "";
+
+                filasContenido += `<tr>
+                    <td style="font-weight:700; text-align:left; color:var(--navy); background:#f8fafc;">${sup}</td>`;
+
+                // Celdas para cada uno de los 7 días correspondientes
+                for(let d=0; d<7; d++) {
+                    let valDia = localStorage.getItem(`${idLlaveBase}_dia_${d}`) || "";
+                    filasContenido += `<td>
+                        <input type="text" class="horario-input-celda" 
+                            placeholder="-" value="${valDia}"
+                            onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}', this.value)">
+                    </td>`;
+                }
+
+                // Selector de Descanso
+                filasContenido += `<td style="background:#f8fafc;">
+                    <select class="horario-select-descanso" onchange="guardarCeldaHorario('${idLlaveBase}_descanso', this.value)">
+                        <option value="">--</option>
+                        ${diasSemanaNombres.map(dName => `<option value="${dName}" ${valDescanso === dName ? 'selected' : ''}>${dName}</option>`).join('')}
+                    </select>
+                </td>`;
+
+                // Celda Apertura
+                filasContenido += `<td>
+                    <input type="text" class="horario-input-celda" placeholder="Apertura..." value="${valApertura}" onchange="guardarCeldaHorario('${idLlaveBase}_apertura', this.value)">
+                </td>`;
+                
+                // Celda Cierre
+                filasContenido += `<td>
+                    <input type="text" class="horario-input-celda" placeholder="Cierre..." value="${valCierre}" onchange="guardarCeldaHorario('${idLlaveBase}_cierre', this.value)">
+                </td>`;
+
+                // Celda Notas / Junta
+                filasContenido += `<td>
+                    <input type="text" class="horario-input-celda" style="text-align:left;" placeholder="Anotaciones generales o juntas..." value="${valNotas}" onchange="guardarCeldaHorario('${idLlaveBase}_notas', this.value)">
+                </td>`;
+
+                filasContenido += `</tr>`;
+            });
+
+            let htmlTablaCierre = `</tbody></table></div>`;
+            
+            bloque.innerHTML = htmlTitulo + htmlTablaHeader + filasContenido + htmlTablaCierre;
+            contenedor.appendChild(bloque);
+        });
+
+        if (semanas.length === 0) {
+            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No se pudieron procesar semanas para este mes.</p>`;
+        }
+    }
+
+    // Guardado persistente automático en localStorage
+    function guardarCeldaHorario(llaveStorage, valor) {
+        localStorage.setItem(llaveStorage, valor);
+    }
+
     function filterTable(filterRowId, tbodyId) {
         const inputs = document.querySelectorAll(`#${filterRowId} input`);
         const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
@@ -747,7 +927,6 @@
         }
     }
 
-    // Nueva función intermedia para pedir contraseña antes de proceder al guardado
     function guardarEnNubeConValidacion() {
         const s = document.getElementById('sup').value;
         if(!s) return alert("Por favor selecciona un Supervisor");
@@ -769,7 +948,7 @@
             s, 
             suc: document.getElementById('sucursal').value, 
             f: document.getElementById('fecha').value, 
-            realizado: true, // Por defecto siempre registra la visita activa
+            realizado: true, 
             vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0,
             califTienda: califTiendaInput ? califTiendaInput : "" 
         };
@@ -781,7 +960,6 @@
         
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
         
-        // Limpieza de campos post-guardado
         document.getElementById('califTienda').value = '';
         document.querySelectorAll('.kpi').forEach(c => { c.checked = false; c.parentElement.classList.remove('active'); });
         
