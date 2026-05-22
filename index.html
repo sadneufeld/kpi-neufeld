@@ -270,6 +270,10 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyp4US04tdcDm3Kxgbz3D7XgpJIb20deIh8oM6ZYNfq_OGdsxgJjsDpFD1-g7xXlPeh/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
+    
+    // Instancias globales de los gráficos para poder destruirlos/actualizarlos limpiamente
+    let chartSupervisores = null;
+    let chartSucursales = null;
 
     const sucursalesData = {
         "ADRIANA": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -325,6 +329,7 @@
         if (!datosGlobales || datosGlobales.length <= 1) return;
         renderOp1Historial();
         inyectarSucursalesFiltroGrafica();
+        renderGraficasSupervisores();
     }
 
     function renderOp1Historial() {
@@ -332,17 +337,18 @@
         const body = document.getElementById('tablaBody');
         body.innerHTML = '';
         
-        datosGlobales.slice(1).reverse().forEach((r, idxOriginal) => {
+        // Mapeamos con su índice real original antes de invertir el orden visual
+        const filasFiltradas = datosGlobales.slice(1).map((r, i) => ({ datos: r, idReal: i + 2 }));
+        filasFiltradas.reverse();
+
+        filasFiltradas.forEach(item => {
+            const r = item.datos;
             if(!r[3]) return;
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
                 const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                
-                // Leemos la nueva columna de calificación (Normalmente la Columna N / Índice 14 en el arreglo si agregaste la columna al final del renglón básico)
                 const califTiendaValor = r[14] !== undefined && r[14] !== null && r[14] !== "" ? r[14] + "%" : "N/A";
                 
-                const realIdFila = datosGlobales.length - idxOriginal;
-
                 body.innerHTML += `<tr>
                     <td style="font-weight:600;">${r[1].toString().toUpperCase()}</td>
                     <td>${r[2]}</td>
@@ -352,7 +358,7 @@
                     <td><span class="semaforo ${color}">${r[13]}%</span></td>
                     <td style="font-weight: bold; color: var(--navy);">${califTiendaValor}</td>
                     <td>
-                        <button class="btn-action" onclick="borrarRegistro(${realIdFila})" title="Eliminar">🗑️</button>
+                        <button class="btn-action" onclick="borrarRegistro(${item.idReal})" title="Eliminar">🗑️</button>
                     </td>
                 </tr>`;
             }
@@ -395,24 +401,112 @@
         const zona = document.getElementById('filtroGraficaZona').value;
         const sucursal = document.getElementById('filtroGraficaSucursal').value;
         const body = document.getElementById('sucursalesTablaBody');
-        
         body.innerHTML = '';
         
+        // Agrupar datos por sucursal para promediar si hay más de una auditoría en el mes
+        let agpSucursales = {};
+
         datosGlobales.slice(1).forEach(r => {
             if(!r[3]) return;
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
-                const cumpleZona = (zona === "TODOS" || r[1].toString().toUpperCase() === zona);
-                const cumpleSucursal = (sucursal === "TODAS" || r[2] === sucursal);
+                const supNom = r[1].toString().toUpperCase();
+                const sucNom = r[2];
+                const cumpleZona = (zona === "TODOS" || supNom === zona);
+                const cumpleSucursal = (sucursal === "TODAS" || sucNom === sucursal);
                 
                 if(cumpleZona && cumpleSucursal) {
-                    const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                    body.innerHTML += `<tr>
-                        <td>${r[2]}</td>
-                        <td>${r[1].toString().toUpperCase()}</td>
-                        <td><span class="semaforo ${color}">${r[13]}%</span></td>
-                    </tr>`;
+                    if (!agpSucursales[sucNom]) {
+                        agpSucursales[sucNom] = { supervisor: supNom, sum: 0, count: 0 };
+                    }
+                    agpSucursales[sucNom].sum += parseFloat(r[13]);
+                    agpSucursales[sucNom].count++;
                 }
+            }
+        });
+
+        // Preparar vectores para la gráfica de barras
+        const labelsGrafica = [];
+        const valoresGrafica = [];
+
+        Object.keys(agpSucursales).forEach(suc => {
+            const prom = Math.round(agpSucursales[suc].sum / agpSucursales[suc].count);
+            const color = prom >= 90 ? 'verde' : (prom >= 70 ? 'amarillo' : 'rojo');
+            
+            labelsGrafica.push(suc);
+            valoresGrafica.push(prom);
+
+            body.innerHTML += `<tr>
+                <td>${suc}</td>
+                <td>${agpSucursales[suc].supervisor}</td>
+                <td><span class="semaforo ${color}">${prom}%</span></td>
+            </tr>`;
+        });
+
+        // Renderizar o actualizar gráfica de barras de Sucursales
+        const ctx = document.getElementById('sucursalesBarChartReal').getContext('2d');
+        if (chartSucursales) { chartSucursales.destroy(); }
+        
+        chartSucursales = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labelsGrafica,
+                datasets: [{
+                    label: '% Promedio Tienda',
+                    data: valoresGrafica,
+                    backgroundColor: '#0f172a',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { min: 0, max: 100 } }
+            }
+        });
+    }
+
+    function renderGraficasSupervisores() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        let supsData = {
+            "ADRIANA": { sum: 0, count: 0 },
+            "CITLALLI": { sum: 0, count: 0 },
+            "KARLA": { sum: 0, count: 0 },
+            "LEONARDO": { sum: 0, count: 0 },
+            "NOEMI": { sum: 0, count: 0 }
+        };
+
+        datosGlobales.slice(1).forEach(r => {
+            if(!r[3]) return;
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes) {
+                const nombre = r[1].toString().toUpperCase();
+                if(supsData[nombre] !== undefined) {
+                    supsData[nombre].sum += parseFloat(r[13]);
+                    supsData[nombre].count++;
+                }
+            }
+        });
+
+        const labels = Object.keys(supsData);
+        const promedios = labels.map(l => supsData[l].count > 0 ? Math.round(supsData[l].sum / supsData[l].count) : 0);
+
+        const ctx = document.getElementById('comparativaChart').getContext('2d');
+        if(chartSupervisores) { chartSupervisores.destroy(); }
+
+        chartSupervisores = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Desempeño General por Supervisor (%)',
+                    data: promedios,
+                    backgroundColor: ['#27ae60', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'],
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { min: 0, max: 100 } }
             }
         });
     }
@@ -431,7 +525,6 @@
             f: document.getElementById('fecha').value, 
             realizado: visVal, 
             vis:0, chk:0, arq:0, ade:0, rot:0, asi:0, pro:0, pty:0, total:0,
-            // ENVIAMOS EL NUEVO CAMPO HACIA GOOGLE SHEETS
             califTienda: califTiendaInput ? califTiendaInput : "" 
         };
 
@@ -441,7 +534,6 @@
 
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
         
-        // Limpiamos el nuevo campo de calificación
         document.getElementById('califTienda').value = '';
         document.querySelectorAll('.kpi').forEach(c => { c.checked = false; c.parentElement.classList.remove('active'); });
         
