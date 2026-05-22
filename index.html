@@ -16,34 +16,74 @@
             --rojo: #ef4444;
             --amarillo: #f59e0b;
             --border: #e2e8f0;
+            --sidebar-width: 260px;
+            --sidebar-collapsed: 70px;
         }
 
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            background-color: #f4f6f9; 
+            background-color: var(--bg-light); 
             color: var(--text-main); 
             margin: 0; 
             padding: 0;
             display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
+
+        .header { 
+            background-color: #ffffff;
+            height: 70px;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 30px;
+            z-index: 1001;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        
+        .toggle-sidebar-btn { 
+            background: none; 
+            border: none; 
+            color: #000000; 
+            font-size: 24px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            padding: 0;
+        }
+        
+        .header h2 { 
+            margin: 0; 
+            color: #000000; 
+            font-size: 1.3rem; 
+            font-weight: 600; 
+        }
+        
+        .logo-container { display: flex; align-items: center; }
+        .logo-container img { height: 45px; }
+
+        .main-wrapper { display: flex; flex: 1; overflow: hidden; width: 100%; }
 
         nav {
-            width: 240px;
-            background-color: #ffffff;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-right: 1px solid var(--border);
+            background-color: white;
+            width: var(--sidebar-width);
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
-            padding-top: 20px;
-            z-index: 100;
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            flex-shrink: 0;
         }
-
+        nav.collapsed { width: var(--sidebar-collapsed); }
+        .nav-items { flex: 1; padding: 20px 0; display: flex; flex-direction: column; gap: 5px; }
         .nav-btn {
             width: 100%;
-            padding: 15px 20px;
+            padding: 15px 22px;
             display: flex;
             align-items: center;
             border: none;
@@ -51,229 +91,291 @@
             color: #64748b;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.95em;
             transition: 0.2s;
+            overflow: hidden;
+            white-space: nowrap;
             text-align: left;
             border-left: 4px solid transparent;
         }
         .nav-btn:hover { background: var(--verde-claro); color: var(--verde-neufeld); }
         .nav-btn.active { background: var(--verde-claro); color: var(--verde-neufeld); border-left-color: var(--verde-neufeld); }
-        .nav-btn .icon { margin-right: 12px; font-size: 1.1em; }
+        .nav-btn .icon { min-width: 35px; font-size: 18px; display: inline-block; }
 
-        .main-content {
-            margin-left: 240px;
-            flex: 1;
-            padding: 30px;
-            min-height: 100vh;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 15px;
-        }
-        .header-top h2 { margin: 0; color: #000000; font-size: 1.4rem; font-weight: 700; }
-        .header-top img { height: 45px; }
-
+        main { flex: 1; overflow-y: auto; padding: 25px; box-sizing: border-box; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .registro-card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 12px rgba(0,0,0,0.01); }
-        .controles-top { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; align-items: flex-end; }
-        .input-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
-        .input-group label { font-size: 0.8em; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .registro-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .section-title { font-size: 1.1em; font-weight: 700; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .controles-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 25px; background: var(--bg-light); padding: 20px; border-radius: 12px; align-items: flex-end; }
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-group label { font-size: 0.85em; font-weight: 600; color: #64748b; text-transform: uppercase; }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        .filtros-grafica-sucursal { display: flex; gap: 15px; background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; border: 1px solid var(--border); }
+
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; margin-bottom: 20px; }
         .kpi-card { 
-            position: relative; border: 1px solid var(--border); background-color: #ffffff; border-radius: 8px; padding: 18px; cursor: pointer;
-            transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+            position: relative; border: 2px solid var(--border); background-color: #ffffff; border-radius: 12px; padding: 15px; cursor: pointer;
+            transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.01);
         }
         .kpi-card:hover { border-color: var(--verde-neufeld); background: var(--verde-claro); }
-        .kpi-card.active { border-color: var(--verde-neufeld); background: var(--verde-claro); }
-        .kpi-card input[type="checkbox"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; }
-        .kpi-card .kpi-label { font-size: 0.9em; font-weight: 600; color: var(--navy); }
-        .kpi-card .kpi-pts { font-size: 0.75em; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .kpi-card.active { border-color: var(--verde-neufeld); background: var(--verde-claro); box-shadow: 0 4px 12px rgba(39,174,96,0.15); }
         
-        .switch-container { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.9em; height: 40px; }
+        .kpi-card input[type="checkbox"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; margin: 0; cursor: pointer; }
+        .kpi-card .kpi-label { font-size: 0.9em; font-weight: 600; color: var(--navy); z-index: 1; }
+        .kpi-card .kpi-pts { font-size: 0.75em; color: #64748b; background: #eee; padding: 2px 8px; border-radius: 10px; font-weight: 600; z-index: 1; }
+        .kpi-card.active .kpi-pts { background: var(--verde-neufeld); color: white; }
+
+        .switch-container { display: flex; align-items: center; gap: 12px; font-weight: 600; height: 40px; }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: var(--verde-neufeld); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid var(--border); background: white; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 1000px; }
-        th { background: #f8fafc; color: var(--navy); padding: 12px; text-align: center; font-weight: 700; border-bottom: 1px solid var(--border); }
-        td { padding: 12px; border-top: 1px solid var(--border); text-align: center; }
+        .dashboard-controls { background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; gap: 20px; align-items: center; }
+        .comparativa-section { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .chart-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 15px; position: relative; text-align: center; }
+        .score-badge { position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 5px; font-weight: bold; font-size: 0.8em; color: white; }
         
-        .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 1em; }
-        .btn-guardar:hover { background: var(--verde-oscuro); }
-        .semaforo { padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; }
+        .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 1100px; }
+        th { background: #f1f5f9; color: var(--navy); padding: 12px; text-align: center; font-weight: 700; }
+        td { padding: 11px 12px; border-top: 1px solid var(--border); text-align: center; }
+        tr:hover { background-color: #f8fafc; }
+        .filter-row input { width: 90%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+        
+        .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1em; transition: 0.3s; letter-spacing: 0.5px; }
+        .btn-guardar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
+        .semaforo { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; }
         .rojo { background: var(--rojo); } .amarillo { background: var(--amarillo); } .verde { background: var(--verde-neufeld); }
-        
-        select, input[type="date"], input[type="text"], input[type="number"] { padding: 9px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.95em; outline: none; box-sizing: border-box; }
-        .btn-action { background: none; border: none; cursor: pointer; font-size: 1.15em; padding: 2px 6px; }
+        select, input[type="date"], input[type="number"] { padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95em; outline: none; background-color: #ffffff; box-sizing: border-box; }
 
         #loadingOverlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.85); z-index: 50000; justify-content: center; align-items: center; flex-direction: column;
+            background: rgba(255,255,255,0.8); z-index: 5000; justify-content: center; align-items: center; flex-direction: column;
         }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        nav.collapsed .btn-text { display: none; }
+        @media (max-width: 992px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .kpi-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div id="loadingOverlay">
     <div class="spinner"></div>
-    <p style="font-weight: bold; margin-top: 10px; font-size: 0.9em;">Sincronizando con la nube...</p>
+    <p style="font-weight: bold; margin-top: 10px;">Sincronizando datos...</p>
 </div>
 
-<nav>
-    <button class="nav-btn active" onclick="switchTab('tab-registro', this)">
-        <span class="icon">📋</span>Historial e Inicios
-    </button>
-    <button class="nav-btn" onclick="switchTab('tab-supervisores', this)">
-        <span class="icon">👤</span>Resultados Supervisor
-    </button>
-    <button class="nav-btn" onclick="switchTab('tab-sucursales', this)">
-        <span class="icon">🏠</span>Resultados Sucursal
-    </button>
-</nav>
-
-<div class="main-content">
-    <div class="header-top">
+<div class="header">
+    <div class="header-left">
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
         <h2>KPI Supervisores</h2>
-        <img src="Logo Pasteleria Neufeld.png" alt="Logo Neufeld">
     </div>
-    
-    <div class="registro-card" style="padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
-        <label style="font-weight: bold; font-size: 0.95em;">Filtro de Análisis General (Mes):</label>
-        <select id="filtroMes" onchange="procesarYRenderizarTodo()" style="width: 150px;">
-            <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-        </select>
+    <div class="logo-container">
+        <img src="Logo Pasteleria Neufeld.png" alt="Logo">
     </div>
+</div>
 
-    <div id="tab-registro" class="tab-content active">
-        <div class="registro-card">
-            <div style="font-weight: 700; font-size: 1.1em; margin-bottom: 20px; color: var(--navy);">📝 Registro de Evaluación</div>
-            
-            <div class="controles-top">
-                <div class="input-group">
-                    <label>Supervisor</label>
-                    <select id="sup" onchange="cargarSucursalesFormulario()">
-                        <option value="">Seleccionar...</option>
-                        <option value="ADRIANA">Adriana</option>
-                        <option value="CITLALLI">Citlalli</option>
-                        <option value="KARLA">Karla</option>
-                        <option value="LEONARDO">Leonardo</option>
-                        <option value="NOEMI">Noemi</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Sucursal</label>
-                    <select id="sucursal"><option value="">Selecciona un supervisor...</option></select>
-                </div>
-                <div class="input-group">
-                    <label>Fecha de Auditoría</label>
-                    <input type="date" id="fecha">
-                </div>
-                <div class="input-group" style="max-width: 180px;">
-                    <label>Calificación Tienda (%)</label>
-                    <input type="number" id="califTienda" min="0" max="100" placeholder="Ej: 95">
-                </div>
-                <div class="input-group" style="flex: 0; min-width: 140px;">
-                    <div class="switch-container">
-                        <span>¿Visitó Sucursal?</span>
-                        <label class="switch">
-                            <input type="checkbox" id="realizoVisita" checked onchange="toggleVisita(this.checked)">
-                            <span class="slider"></span>
-                        </label>
+<div class="main-wrapper">
+    <nav id="sidebar">
+        <div class="nav-items">
+            <button class="nav-btn active" onclick="switchTab('tab-registro', this)">
+                <span class="icon">📋</span>
+                <span class="btn-text">Historial e Inicios</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-supervisores', this)">
+                <span class="icon">👤</span>
+                <span class="btn-text">Resultados Supervisor</span>
+            </button>
+            <button class="nav-btn" onclick="switchTab('tab-sucursales', this)">
+                <span class="icon">🏠</span>
+                <span class="btn-text">Resultados Sucursal</span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <div class="dashboard-controls">
+            <label style="font-weight: bold;">Filtro de Análisis General (Mes):</label>
+            <select id="filtroMes" onchange="procesarYRenderizarTodo()">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+
+        <div id="tab-registro" class="tab-content active">
+            <div class="registro-card">
+                <div class="section-title">📝 Registro de Evaluación</div>
+                <div class="controles-top">
+                    <div class="input-group">
+                        <label>Supervisor</label>
+                        <select id="sup" onchange="cargarSucursalesFormulario()">
+                            <option value="">Seleccionar...</option>
+                            <option value="ADRIANA">Adriana</option>
+                            <option value="CITLALLI">Citlalli</option>
+                            <option value="KARLA">Karla</option>
+                            <option value="LEONARDO">Leonardo</option>
+                            <option value="NOEMI">Noemi</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Sucursal</label>
+                        <select id="sucursal"></select>
+                    </div>
+                    <div class="input-group">
+                        <label>Fecha de Auditoría</label>
+                        <input type="date" id="fecha">
+                    </div>
+                    <div class="input-group">
+                        <label>Calificación Tienda (%)</label>
+                        <input type="number" id="califTienda" min="0" max="100" placeholder="Ej: 92">
+                    </div>
+                    <div class="input-group">
+                        <div class="switch-container">
+                            <span>¿Visitó Sucursal?</span>
+                            <label class="switch">
+                                <input type="checkbox" id="realizoVisita" checked onchange="toggleVisita(this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
+
+                <div class="kpi-grid" id="checksContainer">
+                    <label class="kpi-card" id="card-vis">
+                        <span class="kpi-label">Visita programada</span>
+                        <span class="kpi-pts">15 pts</span>
+                        <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-chk">
+                        <span class="kpi-label">Checklist</span>
+                        <span class="kpi-pts">15 pts</span>
+                        <input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-arq">
+                        <span class="kpi-label">Arqueo</span>
+                        <span class="kpi-pts">15 pts</span>
+                        <input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-ade">
+                        <span class="kpi-label">Adeudos</span>
+                        <span class="kpi-pts">15 pts</span>
+                        <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-rot">
+                        <span class="kpi-label">Rotación de personal</span>
+                        <span class="kpi-pts">10 pts</span>
+                        <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-asi">
+                        <span class="kpi-label">Asistencia</span>
+                        <span class="kpi-pts">10 pts</span>
+                        <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-pro">
+                        <span class="kpi-label">Conteo de producto</span>
+                        <span class="kpi-pts">10 pts</span>
+                        <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
+                    </label>
+                    <label class="kpi-card" id="card-pty">
+                        <span class="kpi-label">Productividad en tienda</span>
+                        <span class="kpi-pts">10 pts</span>
+                        <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
+                    </label>
+                </div>
+                <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTE</button>
             </div>
 
-            <div class="kpi-grid" id="checksContainer">
-                <label class="kpi-card"><span class="kpi-label">Visita programada</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Checklist</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Arqueo</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Adeudos</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Rotación de personal</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Asistencia</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Conteo de producto</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)"></label>
-                <label class="kpi-card"><span class="kpi-label">Productividad en tienda</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)"></label>
-            </div>
-            <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTE</button>
-        </div>
-
-        <div class="table-container">
-            <table id="mainTable">
-                <thead>
-                    <tr>
-                        <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total KPI</th>
-                        <th>Calif. Tienda</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="tab-supervisores" class="tab-content">
-        <div class="registro-card"><canvas id="comparativaChart" height="150"></canvas></div>
-        <div id="radarContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;"></div>
-    </div>
-
-    <div id="tab-sucursales" class="tab-content">
-        <div class="registro-card" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; padding: 15px 20px; margin-bottom: 20px;">
-            <div class="input-group" style="max-width: 250px;">
-                <label>Filtrar por Zona (Supervisor)</label>
-                <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
-                    <option value="TODOS">Todas las Zonas</option>
-                    <option value="ADRIANA">Zona ADRIANA</option>
-                    <option value="CITLALLI">Zona CITLALLI</option>
-                    <option value="KARLA">Zona KARLA</option>
-                    <option value="LEONARDO">Zona LEONARDO</option>
-                    <option value="NOEMI">Zona NOEMI</option>
-                </select>
-            </div>
-            <div class="input-group" style="max-width: 250px;">
-                <label>Filtrar por Sucursal Específica</label>
-                <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')">
-                    <option value="TODAS">Todas las Sucursales</option>
-                </select>
+            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy); margin-top: 30px;">Historial de Evaluaciones</h4>
+            <div class="table-container">
+                <table id="mainTable">
+                    <thead>
+                        <tr>
+                            <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total KPI</th>
+                            <th>Calif. Tienda</th>
+                            <th>Acción</th>
+                        </tr>
+                        <tr class="filter-row" id="filterRowTab1">
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Supervisor..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Sucursal..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Fecha..."></th>
+                            <th colspan="11"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody"></tbody>
+                </table>
             </div>
         </div>
-        <div class="registro-card">
-            <canvas id="sucursalesBarChartReal" height="200"></canvas>
+
+        <div id="tab-supervisores" class="tab-content">
+            <div class="comparativa-section">
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Comparativa de Cumplimiento por Supervisor</h4>
+                <div style="height: 240px;"><canvas id="comparativaChart"></canvas></div>
+            </div>
+            <h4 style="margin:20px 0 15px 0; color: var(--navy);">Promedio de Cada Punto a Evaluar por Supervisor</h4>
+            <div class="dashboard-grid" id="radarContainer"></div>
         </div>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr><th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes</th></tr>
-                </thead>
-                <tbody id="sucursalesTablaBody"></tbody>
-            </table>
+
+        <div id="tab-sucursales" class="tab-content">
+            <div class="comparativa-section">
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño</h4>
+                
+                <div class="filtros-grafica-sucursal">
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Zona (Supervisor):</label>
+                        <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
+                            <option value="TODOS">-- Ver Todas las Zonas --</option>
+                            <option value="ADRIANA">Zona Adriana</option>
+                            <option value="CITLALLI">Zona Citlalli</option>
+                            <option value="KARLA">Zona Karla</option>
+                            <option value="LEONARDO">Zona Leonardo</option>
+                            <option value="NOEMI">Zona Noemi</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Sucursal Específica:</label>
+                        <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')">
+                            <option value="TODAS">-- Todas las Sucursales --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="height: 280px; position: relative;"><canvas id="sucursalesLineChart"></canvas></div>
+            </div>
+
+            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales</h4>
+            <div class="table-container">
+                <table id="sucursalesTable">
+                    <thead>
+                        <tr>
+                            <th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes</th><th>Visitas Realizadas</th><th>Último Registro</th>
+                        </tr>
+                        <tr class="filter-row" id="filterRowTab3">
+                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Sucursal..."></th>
+                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Supervisor..."></th>
+                            <th colspan="3"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="sucursalesTablaBody"></tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </main>
 </div>
 
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyp4US04tdcDm3Kxgbz3D7XgpJIb20deIh8oM6ZYNfq_OGdsxgJjsDpFD1-g7xXlPeh/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
-    
-    // Instancias globales de los gráficos para poder destruirlos/actualizarlos limpiamente
-    let chartSupervisores = null;
-    let chartSucursales = null;
+    let comparativaChart = null;
+    let sucursalesLineChart = null; 
+    let radaresInstancias = {};
 
     const sucursalesData = {
         "ADRIANA": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -282,6 +384,8 @@
         "LEONARDO": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
         "NOEMI": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
     };
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
 
     function switchTab(tabId, btn) {
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -296,21 +400,37 @@
     }
 
     function toggleVisita(valor) {
-        document.querySelectorAll('.kpi').forEach(c => {
+        const checks = document.querySelectorAll('.kpi');
+        checks.forEach(c => {
             c.disabled = !valor;
-            if(!valor) { c.checked = false; c.parentElement.classList.remove('active'); }
+            if(!valor) {
+                c.checked = false;
+                c.parentElement.classList.remove('active');
+                c.parentElement.style.opacity = "0.4";
+            } else {
+                c.parentElement.style.opacity = "1";
+            }
         });
     }
 
     function cargarSucursalesFormulario() {
-        const sup = document.getElementById('sup').value; 
+        const sup = document.getElementById('sup').value;
         const combo = document.getElementById('sucursal');
         combo.innerHTML = '';
-        if(sup && sucursalesData[sup]) {
-            sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
-        } else {
-            combo.add(new Option("Selecciona un supervisor...", ""));
+        if(sup && sucursalesData[sup]) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
+    }
+
+    function actualizarFiltrosGrafica(origen) {
+        const zonaSel = document.getElementById('filtroGraficaZona').value;
+        const comboSuc = document.getElementById('filtroGraficaSucursal');
+        
+        if (origen === 'zona') {
+            comboSuc.innerHTML = '<option value="TODAS">-- Todas las Sucursales --</option>';
+            if (zonaSel !== 'TODOS' && sucursalesData[zonaSel]) {
+                sucursalesData[zonaSel].forEach(s => comboSuc.add(new Option(s, s)));
+            }
         }
+        procesarYRenderizarTodo();
     }
 
     function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
@@ -327,9 +447,61 @@
 
     function procesarYRenderizarTodo() {
         if (!datosGlobales || datosGlobales.length <= 1) return;
+
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        let statsSupervisores = {
+            "ADRIANA": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
+            "CITLALLI": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
+            "KARLA": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
+            "LEONARDO": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
+            "NOEMI": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 }
+        };
+        let statsSucursal = {};
+        let registrosGraficaLineal = [];
+
+        const zonaFiltro = document.getElementById('filtroGraficaZona').value;
+        const sucursalFiltro = document.getElementById('filtroGraficaSucursal').value;
+
+        datosGlobales.slice(1).forEach(r => {
+            if(!r[3]) return; 
+            const f = new Date(r[3]);
+            
+            if(f.getMonth() === mes) {
+                const supNom = r[1].toString().toUpperCase();
+                
+                if(statsSupervisores[supNom]) {
+                    const s = statsSupervisores[supNom];
+                    s.v += r[5]; s.ch += r[6]; s.ar += r[7]; s.ad += r[8]; 
+                    s.ro += r[9]; s.as += r[10]; s.pr += r[11]; s.py += r[12]; 
+                    s.t += r[13]; s.c++;
+                }
+
+                if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: supNom, ultimaFecha: r[3] };
+                statsSucursal[r[2]].totalScore += r[13];
+                statsSucursal[r[2]].conteo++;
+                if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
+                    statsSucursal[r[2]].ultimaFecha = r[3];
+                }
+
+                let pasaZona = (zonaFiltro === 'TODOS' || supNom === zonaFiltro);
+                let pasaSucursal = (sucursalFiltro === 'TODAS' || r[2] === sucursalFiltro);
+                
+                if (pasaZona && pasaSucursal) {
+                    registrosGraficaLineal.push({
+                        fechaTexto: String(r[3]).split('T')[0],
+                        fechaObj: f,
+                        sucursal: r[2],
+                        puntaje: parseFloat(r[13])
+                    });
+                }
+            }
+        });
+
+        registrosGraficaLineal.sort((a, b) => a.fechaObj - b.fechaObj);
+
         renderOp1Historial();
-        inyectarSucursalesFiltroGrafica();
-        renderGraficasSupervisores();
+        renderOp2Supervisores(statsSupervisores);
+        renderOp3SucursalesYLineal(statsSucursal, registrosGraficaLineal);
     }
 
     function renderOp1Historial() {
@@ -337,11 +509,10 @@
         const body = document.getElementById('tablaBody');
         body.innerHTML = '';
         
-        // Mapeamos con su índice real original antes de invertir el orden visual
-        const filasFiltradas = datosGlobales.slice(1).map((r, i) => ({ datos: r, idReal: i + 2 }));
-        filasFiltradas.reverse();
+        const filasMapeadas = datosGlobales.slice(1).map((r, i) => ({ datos: r, idReal: i + 2 }));
+        filasMapeadas.reverse();
 
-        filasFiltradas.forEach(item => {
+        filasMapeadas.forEach(item => {
             const r = item.datos;
             if(!r[3]) return;
             const f = new Date(r[3]);
@@ -357,170 +528,168 @@
                     <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
                     <td><span class="semaforo ${color}">${r[13]}%</span></td>
                     <td style="font-weight: bold; color: var(--navy);">${califTiendaValor}</td>
-                    <td>
-                        <button class="btn-action" onclick="borrarRegistro(${item.idReal})" title="Eliminar">🗑️</button>
-                    </td>
+                    <td><button onclick="borrarRegistro(${item.idReal})" style="border:none; background:none; cursor:pointer">🗑️</button></td>
                 </tr>`;
             }
         });
     }
 
-    function inyectarSucursalesFiltroGrafica() {
-        const zonaSeleccionada = document.getElementById('filtroGraficaZona').value;
-        const comboSucursal = document.getElementById('filtroGraficaSucursal');
-        
-        const valorActual = comboSucursal.value || "TODAS";
-        comboSucursal.innerHTML = '<option value="TODAS">Todas las Sucursales</option>';
-        
-        if (zonaSeleccionada === "TODOS") {
-            Object.keys(sucursalesData).forEach(z => {
-                sucursalesData[z].forEach(s => comboSucursal.add(new Option(s, s)));
+    function renderOp2Supervisores(stats) {
+        const container = document.getElementById('radarContainer');
+        if(!container) return;
+        container.innerHTML = '';
+        const labels = Object.keys(stats);
+
+        const ctxBar = document.getElementById('comparativaChart');
+        if(ctxBar) {
+            if(comparativaChart) comparativaChart.destroy();
+            comparativaChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: { 
+                    labels: labels, 
+                    datasets: [{ 
+                        label: '% Promedio Mensual', 
+                        data: labels.map(l => stats[l].c > 0 ? (stats[l].t/stats[l].c).toFixed(1) : 0), 
+                        backgroundColor: '#27ae60', 
+                        borderRadius: 5 
+                    }] 
+                },
+                options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
             });
-        } else if (sucursalesData[zonaSeleccionada]) {
-            sucursalesData[zonaSeleccionada].forEach(s => comboSucursal.add(new Option(s, s)));
         }
-        
-        if([...comboSucursal.options].some(o => o.value === valorActual)) {
-            comboSucursal.value = valorActual;
-        }
-        
-        actualizarTablaYSucursales();
+
+        labels.forEach(sup => {
+            const s = stats[sup];
+            const avg = s.c > 0 ? (s.t/s.c).toFixed(1) : "0.0";
+            const color = parseFloat(avg) >= 90 ? 'verde' : (parseFloat(avg) >= 70 ? 'amarillo' : 'rojo');
+            
+            const box = document.createElement('div');
+            box.className = 'chart-box';
+            box.innerHTML = `<div class="score-badge ${color}">${avg}%</div><p style="margin:5px 0; font-weight:bold; font-size:0.9em">${sup}</p><canvas id="r-${sup}"></canvas>`;
+            container.appendChild(box);
+            
+            const divisor = s.c > 0 ? s.c : 1;
+            
+            new Chart(document.getElementById(`r-${sup}`), {
+                type: 'radar',
+                data: {
+                    labels: ['Visitas','Checklist','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Productividad'],
+                    datasets: [{ 
+                        data: [s.v/divisor, s.ch/divisor, s.ar/divisor, s.ad/divisor, s.rot/divisor, s.as/divisor, s.pr/divisor, s.py/divisor], 
+                        backgroundColor: 'rgba(39,174,96,0.1)', 
+                        borderColor: '#27ae60', 
+                        borderWidth: 1.5 
+                    }]
+                },
+                options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
+            });
+        });
     }
 
-    function actualizarFiltrosGrafica(tipo) {
-        if (tipo === 'zona') {
-            document.getElementById('filtroGraficaSucursal').value = "TODAS";
-            inyectarSucursalesFiltroGrafica();
-        } else {
-            actualizarTablaYSucursales();
-        }
-    }
-
-    function actualizarTablaYSucursales() {
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        const zona = document.getElementById('filtroGraficaZona').value;
-        const sucursal = document.getElementById('filtroGraficaSucursal').value;
+    function renderOp3SucursalesYLineal(statsSucursal, registrosGrafica) {
         const body = document.getElementById('sucursalesTablaBody');
+        if(!body) return;
         body.innerHTML = '';
         
-        // Agrupar datos por sucursal para promediar si hay más de una auditoría en el mes
-        let agpSucursales = {};
+        const sucursalLabelsTable = Object.keys(statsSucursal);
 
-        datosGlobales.slice(1).forEach(r => {
-            if(!r[3]) return;
-            const f = new Date(r[3]);
-            if(f.getMonth() === mes) {
-                const supNom = r[1].toString().toUpperCase();
-                const sucNom = r[2];
-                const cumpleZona = (zona === "TODOS" || supNom === zona);
-                const cumpleSucursal = (sucursal === "TODAS" || sucNom === sucursal);
-                
-                if(cumpleZona && cumpleSucursal) {
-                    if (!agpSucursales[sucNom]) {
-                        agpSucursales[sucNom] = { supervisor: supNom, sum: 0, count: 0 };
-                    }
-                    agpSucursales[sucNom].sum += parseFloat(r[13]);
-                    agpSucursales[sucNom].count++;
-                }
-            }
-        });
-
-        // Preparar vectores para la gráfica de barras
-        const labelsGrafica = [];
-        const valoresGrafica = [];
-
-        Object.keys(agpSucursales).forEach(suc => {
-            const prom = Math.round(agpSucursales[suc].sum / agpSucursales[suc].count);
-            const color = prom >= 90 ? 'verde' : (prom >= 70 ? 'amarillo' : 'rojo');
-            
-            labelsGrafica.push(suc);
-            valoresGrafica.push(prom);
+        sucursalLabelsTable.forEach(suc => {
+            const data = statsSucursal[suc];
+            const promedio = (data.totalScore / data.conteo).toFixed(1);
+            const colorSemaforo = promedio >= 90 ? 'verde' : (promedio >= 70 ? 'amarillo' : 'rojo');
 
             body.innerHTML += `<tr>
-                <td>${suc}</td>
-                <td>${agpSucursales[suc].supervisor}</td>
-                <td><span class="semaforo ${color}">${prom}%</span></td>
+                <td style="font-weight:600; text-align:left;">${suc}</td>
+                <td>${data.supervisor}</td>
+                <td><span class="semaforo ${colorSemaforo}">${promedio}%</span></td>
+                <td>${data.conteo}</td>
+                <td>${String(data.ultimaFecha).split('T')[0]}</td>
             </tr>`;
         });
 
-        // Renderizar o actualizar gráfica de barras de Sucursales
-        const ctx = document.getElementById('sucursalesBarChartReal').getContext('2d');
-        if (chartSucursales) { chartSucursales.destroy(); }
-        
-        chartSucursales = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labelsGrafica,
-                datasets: [{
-                    label: '% Promedio Tienda',
-                    data: valoresGrafica,
-                    backgroundColor: '#0f172a',
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { min: 0, max: 100 } }
-            }
-        });
+        const ctxLine = document.getElementById('sucursalesLineChart');
+        if(ctxLine) {
+            if(sucursalesLineChart) sucursalesLineChart.destroy(); 
+            
+            const sucursalFiltroActivo = document.getElementById('filtroGraficaSucursal').value;
+            const etiquetasEjeX = registrosGrafica.map(r => r.fechaTexto);
+            const valoresEjeY = registrosGrafica.map(r => r.puntaje);
+            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Puntaje: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
+
+            sucursalesLineChart = new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: etiquetasEjeX,
+                    datasets: [{
+                        label: 'Evolución de Auditoría (%)',
+                        data: valoresEjeY,
+                        borderColor: '#0f172a',
+                        backgroundColor: '#27ae60',
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#27ae60',
+                        pointBorderColor: '#0f172a',
+                        pointRadius: 6,
+                        pointHoverRadius: 9,
+                        tension: 0.1, 
+                        fill: false
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Puntaje de Auditoría', font: { weight: 'bold' } }
+                        },
+                        x: {
+                            title: { display: true, text: 'Fechas de las Visitas', font: { weight: 'bold' } }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return tooltipsInformacion[context.dataIndex];
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
-    function renderGraficasSupervisores() {
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        let supsData = {
-            "ADRIANA": { sum: 0, count: 0 },
-            "CITLALLI": { sum: 0, count: 0 },
-            "KARLA": { sum: 0, count: 0 },
-            "LEONARDO": { sum: 0, count: 0 },
-            "NOEMI": { sum: 0, count: 0 }
-        };
-
-        datosGlobales.slice(1).forEach(r => {
-            if(!r[3]) return;
-            const f = new Date(r[3]);
-            if(f.getMonth() === mes) {
-                const nombre = r[1].toString().toUpperCase();
-                if(supsData[nombre] !== undefined) {
-                    supsData[nombre].sum += parseFloat(r[13]);
-                    supsData[nombre].count++;
+    function filterTable(filterRowId, tbodyId) {
+        const inputs = document.querySelectorAll(`#${filterRowId} input`);
+        const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
+        
+        for (let row of rows) {
+            let show = true;
+            let activeInputsIndex = 0;
+            inputs.forEach((input, idx) => {
+                const filter = input.value.toLowerCase();
+                const cell = row.getElementsByTagName('td')[activeInputsIndex];
+                if (filter && cell && cell.innerText.toLowerCase().indexOf(filter) === -1) {
+                    show = false;
                 }
-            }
-        });
-
-        const labels = Object.keys(supsData);
-        const promedios = labels.map(l => supsData[l].count > 0 ? Math.round(supsData[l].sum / supsData[l].count) : 0);
-
-        const ctx = document.getElementById('comparativaChart').getContext('2d');
-        if(chartSupervisores) { chartSupervisores.destroy(); }
-
-        chartSupervisores = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Desempeño General por Supervisor (%)',
-                    data: promedios,
-                    backgroundColor: ['#27ae60', '#3498db', '#9b59b6', '#f1c40f', '#e67e22'],
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: { y: { min: 0, max: 100 } }
-            }
-        });
+                activeInputsIndex++;
+            });
+            row.style.display = show ? "" : "none";
+        }
     }
 
     async function guardarEnNube() {
         const s = document.getElementById('sup').value;
         if(!s) return alert("Por favor selecciona un Supervisor");
-        
         toggleLoading(true);
+        
         const visVal = document.getElementById('realizoVisita').checked;
         const califTiendaInput = document.getElementById('califTienda').value;
 
         const reg = { 
-            action: 'guardar', s, 
+            action: 'guardar', 
+            s, 
             suc: document.getElementById('sucursal').value, 
             f: document.getElementById('fecha').value, 
             realizado: visVal, 
@@ -531,7 +700,7 @@
         if(visVal) {
             document.querySelectorAll('.kpi:checked').forEach(i => { reg[i.dataset.r] = parseInt(i.value); reg.total += parseInt(i.value); });
         }
-
+        
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
         
         document.getElementById('califTienda').value = '';
