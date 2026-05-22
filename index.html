@@ -27,7 +27,6 @@
             display: flex;
         }
 
-        /* CORRECCIÓN DE CAPAS DEL MENÚ LATERAL */
         nav {
             width: 240px;
             background-color: #ffffff;
@@ -39,7 +38,7 @@
             display: flex;
             flex-direction: column;
             padding-top: 20px;
-            z-index: 100; /* Asegura que se pueda hacer clic siempre */
+            z-index: 100;
         }
 
         .nav-btn {
@@ -61,7 +60,6 @@
         .nav-btn.active { background: var(--verde-claro); color: var(--verde-neufeld); border-left-color: var(--verde-neufeld); }
         .nav-btn .icon { margin-right: 12px; font-size: 1.1em; }
 
-        /* CONTENEDOR PRINCIPAL */
         .main-content {
             margin-left: 240px;
             flex: 1;
@@ -91,7 +89,6 @@
         .input-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
         .input-group label { font-size: 0.8em; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* SECCIÓN DE AUDITORÍA EN TIENDA */
         .seccion-auditoria-sucursal {
             background: #ffffff;
             border: 1px dashed var(--verde-neufeld);
@@ -115,13 +112,13 @@
             box-sizing: border-box;
         }
 
-        /* VENTANA MODAL FLOTANTE */
+        /* MODAL FLOTANTE */
         .modal-detalles {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6);
-            z-index: 99999; /* Por encima de todo */
+            z-index: 99999;
             justify-content: center;
             align-items: center;
         }
@@ -139,7 +136,6 @@
         .modal-comments-box { background: #f8fafc; padding: 12px; border-radius: 6px; font-size: 0.95em; min-height: 70px; border: 1px solid var(--border); color: var(--navy); white-space: pre-wrap; }
         .btn-modal-cerrar { background: var(--navy); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 20px; }
 
-        /* KPI GRID Y ESTILOS DE TABLAS */
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
         .kpi-card { 
             position: relative; border: 1px solid var(--border); background-color: #ffffff; border-radius: 8px; padding: 18px; cursor: pointer;
@@ -211,7 +207,6 @@
 </nav>
 
 <div class="main-content">
-    
     <div class="header-top">
         <h2>KPI Supervisores</h2>
         <img src="Logo Pasteleria Neufeld.png" alt="Logo Neufeld">
@@ -272,38 +267,14 @@
             </div>
 
             <div class="kpi-grid" id="checksContainer">
-                <label class="kpi-card">
-                    <span class="kpi-label">Visita programada</span><span class="kpi-pts">15 pts</span>
-                    <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Checklist</span><span class="kpi-pts">15 pts</span>
-                    <input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Arqueo</span><span class="kpi-pts">15 pts</span>
-                    <input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Adeudos</span><span class="kpi-pts">15 pts</span>
-                    <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Rotación de personal</span><span class="kpi-pts">10 pts</span>
-                    <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Asistencia</span><span class="kpi-pts">10 pts</span>
-                    <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Conteo de producto</span><span class="kpi-pts">10 pts</span>
-                    <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
-                </label>
-                <label class="kpi-card">
-                    <span class="kpi-label">Productividad en tienda</span><span class="kpi-pts">10 pts</span>
-                    <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
-                </label>
+                <label class="kpi-card"><span class="kpi-label">Visita programada</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Checklist</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Arqueo</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Adeudos</span><span class="kpi-pts">15 pts</span><input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Rotación de personal</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Asistencia</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Conteo de producto</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)"></label>
+                <label class="kpi-card"><span class="kpi-label">Productividad en tienda</span><span class="kpi-pts">10 pts</span><input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)"></label>
             </div>
             <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTE</button>
         </div>
@@ -311,9 +282,7 @@
         <div class="table-container">
             <table id="mainTable">
                 <thead>
-                    <tr>
-                        <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total KPI</th><th>Acciones</th>
-                    </tr>
+                    <tr><th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total KPI</th><th>Acciones</th></tr>
                 </thead>
                 <tbody id="tablaBody"></tbody>
             </table>
@@ -326,12 +295,36 @@
     </div>
 
     <div id="tab-sucursales" class="tab-content">
+        <div class="registro-card" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; padding: 15px 20px; margin-bottom: 20px;">
+            <div class="input-group" style="max-width: 250px;">
+                <label>Filtrar por Zona (Supervisor)</label>
+                <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
+                    <option value="TODOS">Todas las Zonas</option>
+                    <option value="ADRIANA">Zona ADRIANA</option>
+                    <option value="CITLALLI">Zona CITLALLI</option>
+                    <option value="KARLA">Zona KARLA</option>
+                    <option value="LEONARDO">Zona LEONARDO</option>
+                    <option value="NOEMI">Zona NOEMI</option>
+                </select>
+            </div>
+            <div class="input-group" style="max-width: 250px;">
+                <label>Filtrar por Sucursal Específica</label>
+                <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')">
+                    <option value="TODAS">Todas las Sucursales</option>
+                </select>
+            </div>
+        </div>
         <div class="registro-card">
-            <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')"><option value="TODOS">Todas las Zonas</option></select>
-            <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')"><option value="TODAS">Todas las Sucursales</option></select>
             <canvas id="sucursalesBarChartReal" height="200"></canvas>
         </div>
-        <div class="table-container"><table><tbody id="sucursalesTablaBody"></tbody></table></div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr><th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes</th></tr>
+                </thead>
+                <tbody id="sucursalesTablaBody"></tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -339,8 +332,6 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwjPp1Fbz7GkUcoTRTV-ECYwr6X8uYY_slu-2FzDE8t_71SO-leVQBx56b--VIvsmEH/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
-    let comparativaChart = null;
-    let sucursalesBarChartReal = null;
 
     const sucursalesData = {
         "ADRIANA": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
@@ -402,26 +393,28 @@
     function procesarYRenderizarTodo() {
         if (!datosGlobales || datosGlobales.length <= 1) return;
         renderOp1Historial();
+        inyectarSucursalesFiltroGrafica();
     }
 
-    // CORRECCIÓN DE INDEXACIÓN DE COLUMNAS DE GOOGLE SHEETS
+    // SOLUCIÓN AL PROBLEMA 1: AJUSTE EXACTO DE ÍNDICES DE RESPUESTA
     function renderOp1Historial() {
         const mes = parseInt(document.getElementById('filtroMes').value);
         const body = document.getElementById('tablaBody');
         body.innerHTML = '';
         
-        // Mapeo dinámico y seguro al reversar filas del Sheets
         datosGlobales.slice(1).reverse().forEach((r, idxOriginal) => {
             if(!r[3]) return;
             const f = new Date(r[3]);
             if(f.getMonth() === mes) {
                 const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
                 
-                // Mapeo exacto basado en las columnas finales enviadas por POST
-                const califTienda = (r[14] !== undefined && r[14] !== null && r[14] !== "") ? r[14].toString().replace(/'|"/g, "") : "N/A";
-                const comentarioTienda = (r[15] !== undefined && r[15] !== null && r[15] !== "") ? r[15].toString().replace(/'|"/g, "") : "Sin comentarios registrados.";
+                // Mapeo corregido basándonos en que se insertan después del total de puntos (índice 13)
+                // Si tu hoja guardó Calificación en Columna O es r[14], si es P es r[15]
+                let califTienda = r[14] !== undefined && r[14] !== null && r[14] !== "" ? r[14].toString().replace(/'|"/g, "") : "N/A";
+                let comentarioTienda = r[15] !== undefined && r[15] !== null && r[15] !== "" ? r[15].toString().replace(/'|"/g, "") : "Sin comentarios registrados.";
                 
-                // Índice real invertido para ejecutar la eliminación correcta
+                if(!califTienda.includes('%') && califTienda !== "N/A") califTienda += "%";
+
                 const realIdFila = datosGlobales.length - idxOriginal;
 
                 body.innerHTML += `<tr>
@@ -432,10 +425,70 @@
                     <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
                     <td><span class="semaforo ${color}">${r[13]}%</span></td>
                     <td>
-                        <button class="btn-action" onclick="abrirModal('${califTienda}', '${comentarioTienda}')" title="Ver comentarios">👁️</button>
+                        <button class="btn-action" onclick="abrirModal('${califTienda}', '${comentarioTienda}')" title="Ver detalles">👁️</button>
                         <button class="btn-action" onclick="borrarRegistro(${realIdFila})" title="Eliminar">🗑️</button>
                     </td>
                 </tr>`;
+            }
+        });
+    }
+
+    // SOLUCIÓN AL PROBLEMA 2: INYECCIÓN DINÁMICA DE ELEMENTOS DE FILTRADO
+    function inyectarSucursalesFiltroGrafica() {
+        const zonaSeleccionada = document.getElementById('filtroGraficaZona').value;
+        const comboSucursal = document.getElementById('filtroGraficaSucursal');
+        
+        const valorActual = comboSucursal.value || "TODAS";
+        comboSucursal.innerHTML = '<option value="TODAS">Todas las Sucursales</option>';
+        
+        if (zonaSeleccionada === "TODOS") {
+            Object.keys(sucursalesData).forEach(z => {
+                sucursalesData[z].forEach(s => comboSucursal.add(new Option(s, s)));
+            });
+        } else if (sucursalesData[zonaSeleccionada]) {
+            sucursalesData[zonaSeleccionada].forEach(s => comboSucursal.add(new Option(s, s)));
+        }
+        
+        if([...comboSucursal.options].some(o => o.value === valorActual)) {
+            comboSucursal.value = valorActual;
+        }
+        
+        actualizarTablaYSucursales();
+    }
+
+    function actualizarFiltrosGrafica(tipo cambiado) {
+        if (cambiado === 'zona') {
+            document.getElementById('filtroGraficaSucursal').value = "TODAS";
+            inyectarSucursalesFiltroGrafica();
+        } else {
+            actualizarTablaYSucursales();
+        }
+    }
+
+    function actualizarTablaYSucursales() {
+        const mes = parseInt(document.getElementById('filtroMes').value);
+        const zona = document.getElementById('filtroGraficaZona').value;
+        const sucursal = document.getElementById('filtroGraficaSucursal').value;
+        const body = document.getElementById('sucursalesTablaBody');
+        
+        body.innerHTML = '';
+        
+        // Renderizado del resumen de sucursales en la tercera pestaña
+        datosGlobales.slice(1).forEach(r => {
+            if(!r[3]) return;
+            const f = new Date(r[3]);
+            if(f.getMonth() === mes) {
+                const cumpleZona = (zona === "TODOS" || r[1].toString().toUpperCase() === zona);
+                const cumpleSucursal = (sucursal === "TODAS" || r[2] === sucursal);
+                
+                if(cumpleZona && cumpleSucursal) {
+                    const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
+                    body.innerHTML += `<tr>
+                        <td>${r[2]}</td>
+                        <td>${r[1].toString().toUpperCase()}</td>
+                        <td><span class="semaforo ${color}">${r[13]}%</span></td>
+                    </tr>`;
+                }
             }
         });
     }
