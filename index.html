@@ -1,3 +1,8 @@
+¡Claro que sí! He tomado tu último código y le agregué un pequeño texto discreto en la esquina inferior izquierda que indica la versión actual (`v1.1.0`). Cada vez que necesites actualizar el código, solo cambias ese texto en el archivo para asegurarte de que tus usuarios ya estén viendo la versión nueva.
+
+Aquí tienes el código completo modificado:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -66,7 +71,7 @@
         .logo-container { display: flex; align-items: center; }
         .logo-container img { height: 45px; }
 
-        .main-wrapper { display: flex; flex: 1; overflow: hidden; width: 100%; }
+        .main-wrapper { display: flex; flex: 1; overflow: hidden; width: 100%; position: relative; }
 
         nav {
             background-color: white;
@@ -162,6 +167,20 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         nav.collapsed .btn-text { display: none; }
+
+        /* Estilo para la etiqueta de versión fija en la esquina inferior izquierda */
+        .app-version-tag {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            z-index: 1005;
+            pointer-events: none; /* No estorba los clics en la interfaz */
+            user-select: none;
+        }
+
         @media (max-width: 992px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .kpi-grid { grid-template-columns: 1fr; } }
     </style>
@@ -184,6 +203,8 @@
 </div>
 
 <div class="main-wrapper">
+    <div class="app-version-tag">Versión 1.1.0</div>
+
     <nav id="sidebar">
         <div class="nav-items">
             <button class="nav-btn active" onclick="switchTab('tab-registro', this)">
@@ -289,7 +310,7 @@
                         <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
                     </label>
                 </div>
-                <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTE</button>
+                <button class="btn-guardar" onclick="guardarEnNube()">FINALIZAR Y GUARDAR REPORTES</button>
             </div>
 
             <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy); margin-top: 30px;">Historial de Evaluaciones</h4>
@@ -324,7 +345,7 @@
 
         <div id="tab-sucursales" class="tab-content">
             <div class="comparativa-section">
-                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño</h4>
+                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño (Calificación Tienda)</h4>
                 
                 <div class="filtros-grafica-sucursal">
                     <div style="display:flex; flex-direction:column; gap:4px;">
@@ -349,12 +370,12 @@
                 <div style="height: 280px; position: relative;"><canvas id="sucursalesLineChart"></canvas></div>
             </div>
 
-            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales</h4>
+            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales (Promedio Calificación Tienda)</h4>
             <div class="table-container">
                 <table id="sucursalesTable">
                     <thead>
                         <tr>
-                            <th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes</th><th>Visitas Realizadas</th><th>Último Registro</th>
+                            <th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes (Tienda)</th><th>Visitas Realizadas</th><th>Último Registro</th>
                         </tr>
                         <tr class="filter-row" id="filterRowTab3">
                             <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Sucursal..."></th>
@@ -450,11 +471,11 @@
 
         const mes = parseInt(document.getElementById('filtroMes').value);
         let statsSupervisores = {
-            "ADRIANA": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
-            "CITLALLI": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
-            "KARLA": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
-            "LEONARDO": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 },
-            "NOEMI": { v:0, ch:0, ar:0, ad:0, ro:0, as:0, pr:0, py:0, t:0, c:0 }
+            "ADRIANA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
+            "CITLALLI": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
+            "KARLA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
+            "LEONARDO": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
+            "NOEMI": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 }
         };
         let statsSucursal = {};
         let registrosGraficaLineal = [];
@@ -471,13 +492,29 @@
                 
                 if(statsSupervisores[supNom]) {
                     const s = statsSupervisores[supNom];
-                    s.v += r[5]; s.ch += r[6]; s.ar += r[7]; s.ad += r[8]; 
-                    s.ro += r[9]; s.as += r[10]; s.pr += r[11]; s.py += r[12]; 
-                    s.t += r[13]; s.c++;
+                    s.v += parseFloat(r[5] || 0); 
+                    s.ch += parseFloat(r[6] || 0); 
+                    s.ar += parseFloat(r[7] || 0); 
+                    s.ad += parseFloat(r[8] || 0); 
+                    s.rot += parseFloat(r[9] || 0); 
+                    s.as += parseFloat(r[10] || 0); 
+                    s.pr += parseFloat(r[11] || 0); 
+                    s.py += parseFloat(r[12] || 0); 
+                    s.t += parseFloat(r[13] || 0); 
+                    s.c++;
+                }
+
+                let valorTiendaRaw = r[14];
+                if (typeof valorTiendaRaw === 'string') {
+                    valorTiendaRaw = valorTiendaRaw.replace('%', '').trim();
+                }
+                let califTiendaNumerica = parseFloat(valorTiendaRaw);
+                if (isNaN(califTiendaNumerica)) {
+                    califTiendaNumerica = 0; 
                 }
 
                 if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: supNom, ultimaFecha: r[3] };
-                statsSucursal[r[2]].totalScore += r[13];
+                statsSucursal[r[2]].totalScore += califTiendaNumerica;
                 statsSucursal[r[2]].conteo++;
                 if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
                     statsSucursal[r[2]].ultimaFecha = r[3];
@@ -491,7 +528,7 @@
                         fechaTexto: String(r[3]).split('T')[0],
                         fechaObj: f,
                         sucursal: r[2],
-                        puntaje: parseFloat(r[13])
+                        puntaje: califTiendaNumerica 
                     });
                 }
             }
@@ -548,7 +585,7 @@
                 data: { 
                     labels: labels, 
                     datasets: [{ 
-                        label: '% Promedio Mensual', 
+                        label: '% Promedio Mensual KPIs Supervisor', 
                         data: labels.map(l => stats[l].c > 0 ? (stats[l].t/stats[l].c).toFixed(1) : 0), 
                         backgroundColor: '#27ae60', 
                         borderRadius: 5 
@@ -575,7 +612,16 @@
                 data: {
                     labels: ['Visitas','Checklist','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Productividad'],
                     datasets: [{ 
-                        data: [s.v/divisor, s.ch/divisor, s.ar/divisor, s.ad/divisor, s.rot/divisor, s.as/divisor, s.pr/divisor, s.py/divisor], 
+                        data: [
+                            (s.v/divisor).toFixed(1), 
+                            (s.ch/divisor).toFixed(1), 
+                            (s.ar/divisor).toFixed(1), 
+                            (s.ad/divisor).toFixed(1), 
+                            (s.rot/divisor).toFixed(1), 
+                            (s.as/divisor).toFixed(1), 
+                            (s.pr/divisor).toFixed(1), 
+                            (s.py/divisor).toFixed(1)
+                        ], 
                         backgroundColor: 'rgba(39,174,96,0.1)', 
                         borderColor: '#27ae60', 
                         borderWidth: 1.5 
@@ -614,14 +660,14 @@
             const sucursalFiltroActivo = document.getElementById('filtroGraficaSucursal').value;
             const etiquetasEjeX = registrosGrafica.map(r => r.fechaTexto);
             const valoresEjeY = registrosGrafica.map(r => r.puntaje);
-            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Puntaje: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
+            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Calif. Tienda: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
 
             sucursalesLineChart = new Chart(ctxLine, {
                 type: 'line',
                 data: {
                     labels: etiquetasEjeX,
                     datasets: [{
-                        label: 'Evolución de Auditoría (%)',
+                        label: 'Evolución de Calificación Tienda (%)',
                         data: valoresEjeY,
                         borderColor: '#0f172a',
                         backgroundColor: '#27ae60',
@@ -640,7 +686,7 @@
                         y: {
                             beginAtZero: true,
                             max: 100,
-                            title: { display: true, text: 'Puntaje de Auditoría', font: { weight: 'bold' } }
+                            title: { display: true, text: 'Puntaje de Tienda (%)', font: { weight: 'bold' } }
                         },
                         x: {
                             title: { display: true, text: 'Fechas de las Visitas', font: { weight: 'bold' } }
