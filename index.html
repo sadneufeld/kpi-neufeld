@@ -148,8 +148,13 @@
         .semana-contenedor-general { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 35px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.04); }
         .semana-header-titulo { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         
-        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(660px, 1fr)); gap: 25px; }
-        @media(max-width: 768px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
+        /* Modificado a 2 columnas fijas si hay espacio en pantallas grandes */
+        .grid-bloques-supervisores { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 25px; 
+        }
+        @media(max-width: 1024px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
 
         .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); transition: transform 0.2s; }
         .supervisor-horario-card:hover { transform: translateY(-2px); }
@@ -174,7 +179,6 @@
             box-shadow: 0 0 0 3px rgba(39,174,96,0.12);
         }
 
-        /* Selector de Horas por Media Hora: Más llamativo e imponente */
         .horario-time-dropdown {
             padding: 6px 8px;
             border: 1px solid var(--border);
@@ -182,7 +186,7 @@
             border-radius: 8px;
             font-size: 0.95rem;
             color: var(--navy);
-            font-weight: 700; /* Texto de horas más marcado */
+            font-weight: 700;
             outline: none;
             cursor: pointer;
             transition: all 0.2s;
@@ -196,7 +200,6 @@
         .rango-horas { display: flex; align-items: center; gap: 6px; justify-content: center; }
         .rango-horas span { font-size: 0.85rem; color: #64748b; font-weight: bold; }
         
-        /* Visualización Limpia de Texto de Sucursales */
         .text-visualizador-container {
             display: inline-flex;
             align-items: center;
@@ -204,18 +207,17 @@
             gap: 6px;
             font-weight: 700;
             color: var(--verde-oscuro);
-            font-size: 0.95rem; /* Letras más grandes */
+            font-size: 0.95rem;
             text-align: center;
             width: 100%;
             min-height: 32px;
         }
         
-        /* Lapicito oculto por defecto, aparece sutilmente al hacer hover en la celda */
         .btn-editar-plumita {
             background: #f1f5f9;
             border: none;
             cursor: pointer;
-            font-size: 0.7rem; /* Icono más pequeño y elegante */
+            font-size: 0.7rem;
             width: 20px;
             height: 20px;
             border-radius: 50%;
@@ -224,10 +226,10 @@
             align-items: center;
             justify-content: center;
             color: #64748b;
-            opacity: 0; /* Oculto */
+            opacity: 0;
         }
         td:hover .btn-editar-plumita {
-            opacity: 1; /* Aparece al pasar el mouse por la celda */
+            opacity: 1;
         }
         .btn-editar-plumita:hover {
             background: var(--verde-claro);
@@ -247,21 +249,25 @@
             box-shadow: 0 0 0 3px rgba(39,174,96,0.15);
         }
 
-        /* Estilo para Filas del Estatus Especial (Descanso, Vacaciones, etc.) */
-        tr.fila-descanso-activa { background-color: #f8fafc !important; transition: all 0.3s ease; }
-        .celda-descanso-texto {
-            font-weight: 700;
-            color: #475569;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-size: 0.88rem;
-            text-align: center;
-            background: #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 0;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        /* Estilo Modificado para celdas combinadas de descansos utilizando Verde Neufeld Claro */
+        tr.fila-descanso-activa { 
+            background-color: var(--verde-claro) !important; 
+            transition: all 0.3s ease; 
         }
-        
+        .celda-descanso-texto { 
+            font-weight: 800; 
+            color: var(--verde-oscuro); 
+            letter-spacing: 0.6px; 
+            text-transform: uppercase; 
+            font-size: 0.9rem; 
+            text-align: center; 
+            background: rgba(39, 174, 96, 0.18); /* Tonalidad translúcida del verde corporativo */
+            border: 1px solid rgba(39, 174, 96, 0.3);
+            border-radius: 8px; 
+            padding: 8px 0; 
+            box-shadow: 0 2px 4px rgba(39, 174, 96, 0.05); 
+        }
+
         .table-container-horario { overflow-x: auto; border: none; }
         .table-horario { width: 100%; border-collapse: collapse; font-size: 0.88em; }
         .table-horario th { background: #f8fafc; color: #64748b; padding: 14px 12px; text-align: center; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
@@ -278,861 +284,322 @@
         .btn-guardar { background: var(--verde-neufeld); color: white; border: none; padding: 16px; border-radius: 12px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1em; transition: 0.3s; letter-spacing: 0.5px; }
         .btn-guardar:hover { background: var(--verde-oscuro); transform: translateY(-1px); }
         .semaforo { padding: 4px 8px; border-radius: 6px; color: white; font-weight: bold; }
-        .rojo { background: var(--rojo); } .amarillo { background: var(--amarillo); } .verde { background: var(--verde-neufeld); }
+        .rojo { background: var(--rojo); }
+        .amarillo { background: var(--amarillo); }
+        .verde { background: var(--verde-neufeld); }
         select, input[type="date"], input[type="number"] { padding: 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.95em; outline: none; background-color: #ffffff; box-sizing: border-box; }
-
-        #loadingOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); z-index: 5000; justify-content: center; align-items: center; flex-direction: column;
-        }
+        
+        #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); z-index: 5000; justify-content: center; align-items: center; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--verde-neufeld); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
         nav.collapsed .btn-text { display: none; }
-        .app-version-tag { position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: #94a3b8; font-weight: 500; z-index: 1005; pointer-events: none; user-select: none; }
-
-        @media (max-width: 992px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 576px) { .kpi-grid { grid-template-columns: 1fr; } }
+        .app-version-tag { position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: #94a3b8; font-weight: 500; z-index: 10; }
     </style>
 </head>
 <body>
 
-<div id="loadingOverlay">
-    <div class="spinner"></div>
-    <p style="font-weight: bold; margin-top: 10px;">Sincronizando datos...</p>
-</div>
-
-<div class="header">
-    <div class="header-left">
-        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
-        <h2>KPI Supervisores</h2>
+    <div id=\"loadingOverlay\">
+        <div class=\"spinner\"></div>
+        <p style=\"margin-top:15px; font-weight:600; color:var(--navy);\">Cargando datos de la nube...</p>
     </div>
-    <div class="logo-container">
-        <img src="Logo Pasteleria Neufeld.png" alt="Logo">
+
+    <div class=\"header\">
+        <div class=\"header-left\">
+            <button class=\"toggle-sidebar-btn\" onclick=\"toggleSidebar()\">☰</button>
+            <div class=\"logo-container\">
+                <img src=\"https://neufeld.com.mx/wp-content/uploads/2021/09/Logo-Neufeld-Oficial-Plano.png\" alt=\"Logo Neufeld\">
+            </div>
+            <h2>Tablero de Control - Operaciones</h2>
+        </div>
     </div>
-</div>
 
-<div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.4.5</div>
-
-    <nav id="sidebar">
-        <div class="nav-items">
-            <button class="nav-btn active" onclick="switchTab('tab-registro', this)">
-                <span class="icon">📋</span>
-                <span class="btn-text">Registros</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-supervisores', this)">
-                <span class="icon">👤</span>
-                <span class="btn-text">Resultados Supervisor</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-sucursales', this)">
-                <span class="icon">🏠</span>
-                <span class="btn-text">Resultados Sucursal</span>
-            </button>
-            <button class="nav-btn" onclick="switchTab('tab-horarios', this)">
-                <span class="icon">📅</span>
-                <span class="btn-text">Horarios</span>
-            </button>
-        </div>
-    </nav>
-
-    <main>
-        <div class="dashboard-controls">
-            <label style="font-weight: bold;">Filtro de Análisis General (Mes):</label>
-            <select id="filtroMes" onchange="procesarYRenderizarTodo()">
-                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-            </select>
-        </div>
-
-        <div id="tab-registro" class="tab-content active">
-            <div class="registro-card">
-                <div class="section-title">📝 Registro de Evaluación</div>
-                <div class="controles-top">
-                    <div class="input-group">
-                        <label>Supervisor</label>
-                        <select id="sup" onchange="cargarSucursalesFormulario()">
-                            <option value="">Seleccionar...</option>
-                            <option value="ADRIANA">Adriana</option>
-                            <option value="CITLALLI">Citlalli</option>
-                            <option value="KARLA">Karla</option>
-                            <option value="LEONARDO">Leonardo</option>
-                            <option value="NOEMI">Noemi</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Sucursal</label>
-                        <select id="sucursal"></select>
-                    </div>
-                    <div class="input-group">
-                        <label>Fecha de Auditoría</label>
-                        <input type="date" id="fecha">
-                    </div>
-                    <div class="input-group">
-                        <label>Calificación Tienda (%)</label>
-                        <input type="number" id="califTienda" min="0" max="100" placeholder="Ej: 92">
-                    </div>
-                </div>
-
-                <div class="kpi-grid" id="checksContainer">
-                    <label class="kpi-card" id="card-vis">
-                        <span class="kpi-label">Visita programada</span>
-                        <span class="kpi-pts">15 pts</span>
-                        <input type="checkbox" class="kpi" data-r="vis" value="15" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-chk">
-                        <span class="kpi-label">Checklist</span>
-                        <span class="kpi-pts">15 pts</span>
-                        <input type="checkbox" class="kpi" data-r="chk" value="15" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-arq">
-                        <span class="kpi-label">Arqueo</span>
-                        <span class="kpi-pts">15 pts</span>
-                        <input type="checkbox" class="kpi" data-r="arq" value="15" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-ade">
-                        <span class="kpi-label">Adeudos</span>
-                        <span class="kpi-pts">15 pts</span>
-                        <input type="checkbox" class="kpi" data-r="ade" value="15" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-rot">
-                        <span class="kpi-label">Rotación de personal</span>
-                        <span class="kpi-pts">10 pts</span>
-                        <input type="checkbox" class="kpi" data-r="rot" value="10" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-asi">
-                        <span class="kpi-label">Asistencia</span>
-                        <span class="kpi-pts">10 pts</span>
-                        <input type="checkbox" class="kpi" data-r="asi" value="10" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-pro">
-                        <span class="kpi-label">Conteo de producto</span>
-                        <span class="kpi-pts">10 pts</span>
-                        <input type="checkbox" class="kpi" data-r="pro" value="10" onchange="updateCardStyle(this)">
-                    </label>
-                    <label class="kpi-card" id="card-pty">
-                        <span class="kpi-label">Productividad en tienda</span>
-                        <span class="kpi-pts">10 pts</span>
-                        <input type="checkbox" class="kpi" data-r="pty" value="10" onchange="updateCardStyle(this)">
-                    </label>
-                </div>
-                <button class="btn-guardar" onclick="guardarEnNubeConValidacion()">FINALIZAR Y GUARDAR REPORTE</button>
+    <div class=\"main-wrapper\">
+        <nav id=\"sidebar\">
+            <div class=\"nav-items\">
+                <button class=\"nav-btn active\" onclick=\"switchTab('registro')\">
+                    <span class=\"icon\">📝</span><span class=\"btn-text\">Registrar Visita</span>
+                </button>
+                <button class=\"nav-btn\" onclick=\"switchTab('horarios')\">
+                    <span class=\"icon\">📅</span><span class=\"btn-text\">Horarios Semanales</span>
+                </button>
+                <button class=\"nav-btn\" onclick=\"switchTab('dashboard')\">
+                    <span class=\"icon\">📊</span><span class=\"btn-text\">Dashboard KPIs</span>
+                </button>
+                <button class=\"nav-btn\" onclick=\"switchTab('registros')\">
+                    <span class=\"icon\">🗂️</span><span class=\"btn-text\">Historial Completo</span>
+                </button>
             </div>
+            <div class=\"app-version-tag\">v4.8 - Estable</div>
+        </nav>
 
-            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy); margin-top: 30px;">Historial de Evaluaciones</h4>
-            <div class="table-container">
-                <table id="mainTable">
-                    <thead>
-                        <tr>
-                            <th>Supervisor</th><th>Sucursal</th><th>Fecha</th><th>Visitas</th><th>Check list</th><th>Arqueos</th><th>Adeudos</th><th>Rotación</th><th>Asistencia</th><th>Conteo</th><th>Participación</th><th>Total KPI</th>
-                            <th>Calif. Tienda</th>
-                            <th>Acción</th>
-                        </tr>
-                        <tr class="filter-row" id="filterRowTab1">
-                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Supervisor..."></th>
-                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Sucursal..."></th>
-                            <th><input type="text" onkeyup="filterTable('filterRowTab1', 'tablaBody')" placeholder="🔍 Fecha..."></th>
-                            <th colspan="11"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="tab-supervisores" class="tab-content">
-            <div class="comparativa-section">
-                <h4 style="margin:0 0 15px 0; color: var(--navy);">Comparativa de Cumplimiento por Supervisor</h4>
-                <div style="height: 240px;"><canvas id="comparativaChart"></canvas></div>
-            </div>
-            <h4 style="margin:20px 0 15px 0; color: var(--navy);">Promedio de Cada Punto a Evaluar por Supervisor</h4>
-            <div class="dashboard-grid" id="radarContainer"></div>
-        </div>
-
-        <div id="tab-sucursales" class="tab-content">
-            <div class="ranking-container">
-                <h4 style="margin:0 0 5px 0; color: var(--navy); display: flex; align-items: center; gap: 8px;">🏆 Top 10 Sucursales con Mejor Calificación Final <span style="font-size: 0.8em; font-weight: normal; color: #64748b;">(Promedio del Mes Seleccionado)</span></h4>
-                <div class="ranking-grid" id="rankingSucursalesContainer"></div>
-            </div>
-
-            <div class="comparativa-section">
-                <h4 style="margin:0 0 15px 0; color: var(--navy);">Histórico y Tendencia de Desempeño (Calificación Tienda)</h4>
-                
-                <div class="filtros-grafica-sucursal">
-                    <div style="display:flex; flex-direction:column; gap:4px;">
-                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Zona (Supervisor):</label>
-                        <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
-                            <option value="TODOS">-- Ver Todas las Zonas --</option>
-                            <option value="ADRIANA">Zona Adriana</option>
-                            <option value="CITLALLI">Zona Citlalli</option>
-                            <option value="KARLA">Zona Karla</option>
-                            <option value="LEONARDO">Zona Leonardo</option>
-                            <option value="NOEMI">Zona Noemi</option>
-                        </select>
+        <main>
+            <div id=\"registro\" class=\"tab-content active\">
+                <div class=\"registro-card\">
+                    <div class=\"section-title\"><span>📥</span> Formulario de Auditoría Corta</div>
+                    <div class=\"controles-top\">
+                        <div class=\"input-group\">
+                            <label>Supervisor</label>
+                            <select id=\"sup\">
+                                <option value=\"\">Selecciona...</option>
+                                <option value=\"ALEXIS BENAVIDES\">ALEXIS BENAVIDES</option>
+                                <option value=\"DIANA SANDOVAL\">DIANA SANDOVAL</option>
+                                <option value=\"FRANCISCO JAVIER\">FRANCISCO JAVIER</option>
+                                <option value=\"GUSTAVO MEZA\">GUSTAVO MEZA</option>
+                                <option value=\"ISABEL AGUIÑAGA\">ISABEL AGUIÑAGA</option>
+                                <option value=\"MIGUEL ÁNGEL\">MIGUEL ÁNGEL</option>
+                                <option value=\"RAÚL VALADEZ\">RAÚL VALADEZ</option>
+                            </select>
+                        </div>
+                        <div class=\"input-group\">
+                            <label>Sucursal</label>
+                            <select id=\"sucursal\"></select>
+                        </div>
+                        <div class=\"input-group\">
+                            <label>Fecha de Visita</label>
+                            <input type=\"date\" id=\"fecha\">
+                        </div>
+                        <div class=\"input-group\">
+                            <label>Calificación de Tienda (0-100)</label>
+                            <input type=\"number\" id=\"califTienda\" min=\"0\" max=\"100\" placeholder=\"Ej. 85\">
+                        </div>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:4px;">
-                        <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Sucursal Específica:</label>
-                        <select id="filtroGraficaSucursal" onchange="actualizarFiltrosGrafica('sucursal')">
-                            <option value="TODAS">-- Todas las Sucursales --</option>
-                        </select>
+
+                    <div class=\"section-title\"><span>✅</span> Evaluación de Indicadores Obligatorios</div>
+                    <div class=\"kpi-grid\">
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"vis\" value=\"10\">
+                            <span class=\"kpi-label\">Uniforme y Presentación</span>
+                            <span class=\"kpi-pts\">10 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"chk\" value=\"10\">
+                            <span class=\"kpi-label\">Checklist Lleno</span>
+                            <span class=\"kpi-pts\">10 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"arq\" value=\"15\">
+                            <span class=\"kpi-label\">Arqueo Correcto</span>
+                            <span class=\"kpi-pts\">15 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"ade\" value=\"15\">
+                            <span class=\"kpi-label\">Alineación a LayOut</span>
+                            <span class=\"kpi-pts\">15 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"rot\" value=\"15\">
+                            <span class=\"kpi-label\">Rotación e Higiene</span>
+                            <span class=\"kpi-pts\">15 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"asi\" value=\"15\">
+                            <span class=\"kpi-label\">Asistencia Completa</span>
+                            <span class=\"kpi-pts\">15 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"pro\" value=\"10\">
+                            <span class=\"kpi-label\">Promociones Activas</span>
+                            <span class=\"kpi-pts\">10 Pts</span>
+                        </div>
+                        <div class=\"kpi-card\" onclick=\"toggleKpi(this)\">
+                            <input type=\"checkbox\" class=\"kpi\" data-r=\"pty\" value=\"10\">
+                            <span class=\"kpi-label\">Proyección Completa</span>
+                            <span class=\"kpi-pts\">10 Pts</span>
+                        </div>
                     </div>
-                </div>
-
-                <div style="height: 280px; position: relative;"><canvas id="sucursalesLineChart"></canvas></div>
-            </div>
-
-            <h4 style="border-left: 4px solid var(--verde-neufeld); padding-left: 10px; color: var(--navy);">Tabla Comparativa de Sucursales (Promedio Calificación Tienda)</h4>
-            <div class="table-container">
-                <table id="sucursalesTable">
-                    <thead>
-                        <tr>
-                            <th>Sucursal</th><th>Supervisor a Cargo</th><th>Promedio % Mes (Tienda)</th><th>Visitas Realizadas</th><th>Último Registro</th>
-                        </tr>
-                        <tr class="filter-row" id="filterRowTab3">
-                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Sucursal..."></th>
-                            <th><input type="text" onkeyup="filterTable('filterRowTab3', 'sucursalesTablaBody')" placeholder="🔍 Supervisor..."></th>
-                            <th colspan="3"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="sucursalesTablaBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="tab-horarios" class="tab-content">
-            <div class="filtros-grafica-sucursal">
-                <div style="display:flex; flex-direction:column; gap:6px; min-width: 280px;">
-                    <label style="font-size:0.85rem; font-weight:bold; color:var(--navy);">Filtrar Vista por Supervisor:</label>
-                    <select id="filtroHorarioSupervisor" onchange="renderizarBloquesHorarios()" style="width: 100%;">
-                        <option value="TODOS">-- Todos los Supervisores --</option>
-                        <option value="ADRIANA">Adriana</option>
-                        <option value="CITLALLI">Citlalli</option>
-                        <option value="KARLA">Karla</option>
-                        <option value="LEONARDO">Leonardo</option>
-                        <option value="NOEMI">Noemi</option>
-                    </select>
-                </div>
-                <div style="font-size: 0.85rem; color: #475569; margin-left: auto; background: var(--bg-light); padding: 12px 18px; border-radius: 10px; border-left: 4px solid var(--verde-neufeld); max-width: 550px;">
-                    💡 <strong>Edición Ejecutiva:</strong> Pasa el mouse sobre Apertura/Cierre para revelar el lápiz (✏️) de redacción libre. Las horas ahora se seleccionan ágilmente en bloques fijos de 30 minutos.
+                    <button class=\"btn-guardar\" onclick=\"guardarEnNube()\">Subir Auditoría a Cloud Sheets</button>
                 </div>
             </div>
 
-            <div id="contenedorBloquesHorarios"></div>
-        </div>
-    </main>
-</div>
+            <div id=\"horarios\" class=\"tab-content\">
+                <div class=\"semana-contenedor-general\">
+                    <div class=\"semana-header-titulo\">
+                        <span>📅</span> Planificación Horaria Semanal de la Supervisión
+                    </div>
+                    <div id=\"contenedorBloquesHorarios\" class=\"grid-bloques-supervisores\">
+                        </div>
+                    <button class=\"btn-guardar\" style=\"margin-top:25px;\" onclick=\"guardarHorariosNube()\">Guardar Matriz de Horarios en la Nube</button>
+                </div>
+            </div>
 
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyp4US04tdcDm3Kxgbz3D7XgpJIb20deIh8oM6ZYNfq_OGdsxgJjsDpFD1-g7xXlPeh/exec";
-    const CODIGO_SEGURIDAD = "Neufeld2024";
-    let datosGlobales = [];
-    let comparativaChart = null;
-    let sucursalesLineChart = null; 
+            <div id=\"dashboard\" class=\"tab-content\">
+                <div class=\"filtros-grafica-sucursal\">
+                    <div class=\"input-group\" style=\"flex:1; min-width:200px;\">
+                        <label>Filtrar Sucursal Específica en Gráficas</label>
+                        <select id=\"sucursalGraficaFiltro\" onchange=\"renderizarTodasLasGraficas()\"></select>
+                    </div>
+                </div>
+                <div class=\"comparativa-section\">
+                    <div class=\"section-title\"><span>📈</span> Análisis Comparativo General</div>
+                    <div style=\"height: 340px; position: relative;\">
+                        <canvas id=\"chartComparativo\"></canvas>
+                    </div>
+                </div>
+                <div class=\"ranking-container\">
+                    <div class=\"section-title\"><span>🏆</span> Escalafón de Desempeño (Promedios Reales)</div>
+                    <div id=\"rankingList\" class=\"ranking-grid\"></div>
+                </div>
+                <div class=\"section-title\"><span>📌</span> Desglose Individual de Rendimientos</div>
+                <div id=\"dashboardGrid\" class=\"dashboard-grid\"></div>
+            </div>
 
-    const listadoSupervisores = ["ADRIANA", "CITLALLI", "KARLA", "LEONARDO", "NOEMI"];
+            <div id=\"registros\" class=\"tab-content\">
+                <div class=\"registro-card\" style=\"padding:15px;\">
+                    <div class=\"section-title\"><span>📂</span> Historial Consolidado de Visitas</div>
+                    <div class=\"table-container\">
+                        <table id=\"tablaDatos\">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Supervisor</th>
+                                    <th>Sucursal</th>
+                                    <th>Fecha</th>
+                                    <th>Puntaje</th>
+                                    <th>Semaforización</th>
+                                    <th>Calif. Tienda</th>
+                                    <th>Acción</th>
+                                </tr>
+                                <tr class=\"filter-row\">
+                                    <th></th>
+                                    <th><input type=\"text\" id=\"f_sup\" placeholder=\"Buscar...\" onkeyup=\"filtrarTabla()\"></th>
+                                    <th><input type=\"text\" id=\"f_suc\" placeholder=\"Buscar...\" onkeyup=\"filtrarTabla()\"></th>
+                                    <th><input type=\"text\" id=\"f_fec\" placeholder=\"Buscar...\" onkeyup=\"filtrarTabla()\"></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
-    const sucursalesData = {
-        "ADRIANA": ["ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
-        "CITLALLI": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
-        "KARLA": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
-        "LEONARDO": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
-        "NOEMI": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
-    };
-
-    // Arreglo de opciones cada 30 minutos para agilizar la selección
-    const opcionesMediaHora = [
-        "", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", 
-        "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
-        "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", 
-        "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+    <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbybMCH_w7D92H7K0O_59b_z9-kUvofRk-Z4N80R6j3zG6Z_402p9Fq27_v1yFwB7eI/exec";
+    const CODIGO_SEGURIDAD = "1994";
+    let baseDatosMemoria = [];
+    let matrizHorariosGlobal = [];
+    const listaDiasSemanales = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+    const listaSupervisoresUnicos = ["ALEXIS BENAVIDES","DIANA SANDOVAL","FRANCISCO JAVIER","GUSTAVO MEZA","ISABEL AGUIÑAGA","MIGUEL ÁNGEL","RAÚL VALADEZ"];
+    
+    const listaSucursalesUnicas = [
+        "ALAMEDAS", "AMÉRICAS", "AVIACIÓN", "AVILA CAMACHO", "AZTECAS", "BELENES", "BUGAMBILIAS", 
+        "CAPILLA DE GUADALUPE", "CHAPALITA", "CIRCUNVALACIÓN", "CRUZ DEL SUR", "FEDERALISMO", 
+        "GALLO", "HUENTITÁN", "JARDINES ALCALDE", "LA SANTIAGO", "LÁZARO CÁRDENAS", "LOPEZ MATEOS", 
+        "MAESTRANZA", "MERCADO DEL MAR", "NACIONES UNIDAS", "OBLATOS", "PATRIA", "PLAZA PATRIA", 
+        "PROVIDENCIA", "RIO NILO", "SAN ISIDRO", "SAN JOSÉ DEL VALLE", "SAN PATRICIO", "SANTA TERE", 
+        "SAYULA", "TLAQUEPAQUE", "TONALÁ", "VALLE IMPERIAL", "ZAPOTLANEJO"
     ];
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+        rellenarSelectsSucursales();
+        switchTab('registro');
+        cargarDatosNube();
+    });
 
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('collapsed');
     }
 
-    function updateCardStyle(el) {
-        if(el.checked) el.parentElement.classList.add('active');
-        else el.parentElement.classList.remove('active');
-    }
-
-    function cargarSucursalesFormulario() {
-        const sup = document.getElementById('sup').value;
-        const combo = document.getElementById('sucursal');
-        combo.innerHTML = '';
-        if(sup && sucursalesData[sup]) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
-    }
-
-    function actualizarFiltrosGrafica(origen) {
-        const zonaSel = document.getElementById('filtroGraficaZona').value;
-        const comboSuc = document.getElementById('filtroGraficaSucursal');
+    function rellenarSelectsSucursales() {
+        const s1 = document.getElementById('sucursal');
+        const s2 = document.getElementById('sucursalGraficaFiltro');
         
-        if (origen === 'zona') {
-            comboSuc.innerHTML = '<option value="TODAS">-- Todas las Sucursales --</option>';
-            if (zonaSel !== 'TODOS' && sucursalesData[zonaSel]) {
-                sucursalesData[zonaSel].forEach(s => comboSuc.add(new Option(s, s)));
-            }
-        }
-        procesarYRenderizarTodo();
+        s1.innerHTML = "";
+        s2.innerHTML = "<option value=\"TODAS\">-- TODAS LAS SUCURSALES --</option>";
+        
+        listaSucursalesUnicas.sort().forEach(s => {
+            s1.innerHTML += `<option value="${s}">${s}</option>`;
+            s2.innerHTML += `<option value="${s}">${s}</option>`;
+        });
     }
 
-    function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
+    function switchTab(id) {
+        document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(e => e.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        
+        const btnActivo = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(id));
+        if(btnActivo) btnActivo.classList.add('active');
+    }
+
+    function toggleKpi(card) {
+        const cb = card.querySelector('input[type="checkbox"]');
+        cb.checked = !cb.checked;
+        card.classList.toggle('active', cb.checked);
+    }
+
+    function toggleLoading(sh) {
+        document.getElementById('loadingOverlay').style.display = sh ? 'flex' : 'none';
+    }
 
     async function cargarDatosNube() {
         toggleLoading(true);
         try {
-            const resp = await fetch(WEB_APP_URL);
-            datosGlobales = await resp.json();
-            procesarYRenderizarTodo();
-        } catch(e) { console.error(e); }
-        toggleLoading(false);
-    }
-
-    function procesarYRenderizarTodo() {
-        if (!datosGlobales || datosGlobales.length <= 1) {
-            renderizarBloquesHorarios();
-            return;
-        }
-
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        let statsSupervisores = {
-            "ADRIANA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
-            "CITLALLI": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
-            "KARLA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
-            "LEONARDO": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
-            "NOEMI": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 }
-        };
-        let statsSucursal = {};
-        let registrosGraficaLineal = [];
-
-        const zonaFiltro = document.getElementById('filtroGraficaZona').value;
-        const sucursalFiltro = document.getElementById('filtroGraficaSucursal').value;
-
-        datosGlobales.slice(1).forEach(r => {
-            if(!r[3]) return; 
-            const f = new Date(r[3]);
+            const r = await fetch(`${WEB_APP_URL}?action=leer`);
+            const d = await r.json();
+            baseDatosMemoria = d.registros || [];
+            matrizHorariosGlobal = d.horarios || [];
             
-            if(f.getMonth() === mes) {
-                const supNom = r[1].toString().toUpperCase();
-                
-                if(statsSupervisores[supNom]) {
-                    const s = statsSupervisores[supNom];
-                    s.v += parseFloat(r[5] || 0); 
-                    s.ch += parseFloat(r[6] || 0); 
-                    s.ar += parseFloat(r[7] || 0); 
-                    s.ad += parseFloat(r[8] || 0); 
-                    s.rot += parseFloat(r[9] || 0); 
-                    s.as += parseFloat(r[10] || 0); 
-                    s.pr += parseFloat(r[11] || 0); 
-                    s.py += parseFloat(r[12] || 0); 
-                    s.t += parseFloat(r[13] || 0); 
-                    s.c++;
-                }
-
-                let valorTiendaRaw = r[14];
-                if (typeof valorTiendaRaw === 'string') {
-                    valorTiendaRaw = valorTiendaRaw.replace('%', '').trim();
-                }
-                let califTiendaNumerica = parseFloat(valorTiendaRaw);
-                if (isNaN(califTiendaNumerica)) califTiendaNumerica = 0;
-
-                if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: supNom, ultimaFecha: r[3] };
-                statsSucursal[r[2]].totalScore += califTiendaNumerica;
-                statsSucursal[r[2]].conteo++;
-                if(new Date(r[3]) > new Date(statsSucursal[r[2]].ultimaFecha)) {
-                    statsSucursal[r[2]].ultimaFecha = r[3];
-                }
-
-                let pasaZona = (zonaFiltro === 'TODOS' || supNom === zonaFiltro);
-                let pasaSucursal = (sucursalFiltro === 'TODAS' || r[2] === sucursalFiltro);
-                
-                if (pasaZona && pasaSucursal) {
-                    registrosGraficaLineal.push({
-                        fechaTexto: String(r[3]).split('T')[0],
-                        fechaObj: f,
-                        sucursal: r[2],
-                        puntaje: califTiendaNumerica 
-                    });
-                }
-            }
-        });
-
-        registrosGraficaLineal.sort((a, b) => a.fechaObj - b.fechaObj);
-
-        renderOp1Historial();
-        renderOp2Supervisores(statsSupervisores);
-        renderOp3SucursalesYLineal(statsSucursal, registrosGraficaLineal);
-        renderRankingTop10(statsSucursal);
-        renderizarBloquesHorarios();
+            inyectarHistorialTabla();
+            renderizarTodasLasGraficas();
+            construirBloquesHorariosUI();
+        } catch(e) {
+            console.error("Fallo de red:", e);
+        } finally {
+            toggleLoading(false);
+        }
     }
 
-    function renderOp1Historial() {
-        const mes = parseInt(document.getElementById('filtroMes').value);
-        const body = document.getElementById('tablaBody');
-        body.innerHTML = '';
-        
-        const filasMapeadas = datosGlobales.slice(1).map((r, i) => ({ datos: r, idReal: i + 2 }));
-        filasMapeadas.reverse();
-
-        filasMapeadas.forEach(item => {
-            const r = item.datos;
-            if(!r[3]) return;
-            const f = new Date(r[3]);
-            if(f.getMonth() === mes) {
-                const color = r[13] >= 90 ? 'verde' : (r[13] >= 70 ? 'amarillo' : 'rojo');
-                const califTiendaValor = r[14] !== undefined && r[14] !== null && r[14] !== "" ? r[14] + "%" : "N/A";
-                
-                body.innerHTML += `<tr>
-                    <td style="font-weight:600;">${r[1].toString().toUpperCase()}</td>
-                    <td>${r[2]}</td>
-                    <td>${String(r[3]).split('T')[0]}</td>
-                    <td>${r[5]}</td><td>${r[6]}</td><td>${r[7]}</td><td>${r[8]}</td>
-                    <td>${r[9]}</td><td>${r[10]}</td><td>${r[11]}</td><td>${r[12]}</td>
-                    <td><span class="semaforo ${color}">${r[13]}%</span></td>
-                    <td style="font-weight: bold; color: var(--navy);">${califTiendaValor}</td>
-                    <td><button onclick="borrarRegistro(${item.idReal})" style="border:none; background:none; cursor:pointer">🗑️</button></td>
+    function inyectarHistorialTabla() {
+        const tbody = document.querySelector("#tablaDatos tbody");
+        tbody.innerHTML = "";
+        baseDatosMemoria.forEach(r => {
+            let badge = `<span class=\"semaforo rojo\">Critico</span>`;
+            if(r.total >= 85) badge = `<span class=\"semaforo verde\">Excelente</span>`;
+            else if(r.total >= 70) badge = `<span class=\"semaforo amarillo\">Regular</span>`;
+            
+            const califLabel = r.califTienda ? `${r.califTienda} / 100` : '<span style="color:#94a3b8;">N/A</span>';
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${r.idFila}</td>
+                    <td><strong>${r.s}</strong></td>
+                    <td>${r.suc}</td>
+                    <td>${r.f}</td>
+                    <td><strong>${r.total} Pts</strong></td>
+                    <td>${badge}</td>
+                    <td><strong>${califLabel}</strong></td>
+                    <td><button onclick=\"borrarRegistro(${r.idFila})\" style=\"color:red; background:none; border:none; cursor:pointer;\">❌ Borrar</button></td>
                 </tr>`;
-            }
         });
     }
 
-    function renderOp2Supervisores(stats) {
-        const container = document.getElementById('radarContainer');
-        if(!container) return;
-        container.innerHTML = '';
-        const labels = Object.keys(stats);
-
-        const ctxBar = document.getElementById('comparativaChart');
-        if(ctxBar) {
-            if(comparativaChart) comparativaChart.destroy();
-            comparativaChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: { 
-                    labels: labels, 
-                    datasets: [{ 
-                        label: '% Promedio Mensual KPIs Supervisor', 
-                        data: labels.map(l => stats[l].c > 0 ? (stats[l].t/stats[l].c).toFixed(1) : 0), 
-                        backgroundColor: '#27ae60', 
-                        borderRadius: 5 
-                    }] 
-                },
-                options: { maintainAspectRatio: false, scales: { y: { beginAtZero:true, max:100 } } }
-            });
-        }
-
-        labels.forEach(sup => {
-            const s = stats[sup];
-            const avg = s.c > 0 ? (s.t/s.c).toFixed(1) : "0.0";
-            const color = parseFloat(avg) >= 90 ? 'verde' : (parseFloat(avg) >= 70 ? 'amarillo' : 'rojo');
-            
-            const box = document.createElement('div');
-            box.className = 'chart-box';
-            box.innerHTML = `<div class="score-badge ${color}">${avg}%</div><p style="margin:5px 0; font-weight:bold; font-size:0.9em">${sup}</p><canvas id="r-${sup}"></canvas>`;
-            container.appendChild(box);
-            
-            const divisor = s.c > 0 ? s.c : 1;
-            
-            new Chart(document.getElementById(`r-${sup}`), {
-                type: 'radar',
-                data: {
-                    labels: ['Visitas','Checklist','Arqueo','Adeudos','Rotación','Asistencia','Conteo','Productividad'],
-                    datasets: [{ 
-                        data: [
-                            (s.v/divisor).toFixed(1), 
-                            (s.ch/divisor).toFixed(1), 
-                            (s.ar/divisor).toFixed(1), 
-                            (s.ad/divisor).toFixed(1), 
-                            (s.rot/divisor).toFixed(1), 
-                            (s.as/divisor).toFixed(1), 
-                            (s.pr/divisor).toFixed(1), 
-                            (s.py/divisor).toFixed(1)
-                        ], 
-                        backgroundColor: 'rgba(39,174,96,0.1)', 
-                        borderColor: '#27ae60', 
-                        borderWidth: 1.5 
-                    }]
-                },
-                options: { scales: { r: { min:0, max:15, ticks: { display:false } } }, plugins: { legend: { display:false } } }
-            });
-        });
-    }
-
-    function renderOp3SucursalesYLineal(statsSucursal, registrosGrafica) {
-        const body = document.getElementById('sucursalesTablaBody');
-        if(!body) return;
-        body.innerHTML = '';
-        
-        const sucursalLabelsTable = Object.keys(statsSucursal);
-
-        sucursalLabelsTable.forEach(suc => {
-            const data = statsSucursal[suc];
-            const promedio = (data.totalScore / data.conteo).toFixed(1);
-            const colorSemaforo = promedio >= 90 ? 'verde' : (promedio >= 70 ? 'amarillo' : 'rojo');
-
-            body.innerHTML += `<tr>
-                <td style="font-weight:600; text-align:left;">${suc}</td>
-                <td>${data.supervisor}</td>
-                <td><span class="semaforo ${colorSemaforo}">${promedio}%</span></td>
-                <td>${data.conteo}</td>
-                <td>${String(data.ultimaFecha).split('T')[0]}</td>
-            </tr>`;
-        });
-
-        const ctxLine = document.getElementById('sucursalesLineChart');
-        if(ctxLine) {
-            if(sucursalesLineChart) sucursalesLineChart.destroy(); 
-            
-            const sucursalFiltroActivo = document.getElementById('filtroGraficaSucursal').value;
-            const etiquetasEjeX = registrosGrafica.map(r => r.fechaTexto);
-            const valoresEjeY = registrosGrafica.map(r => r.puntaje);
-            const tooltipsInformacion = registrosGrafica.map(r => sucursalFiltroActivo !== 'TODAS' ? `Calif. Tienda: ${r.puntaje}%` : `${r.sucursal}: ${r.puntaje}%`);
-
-            sucursalesLineChart = new Chart(ctxLine, {
-                type: 'line',
-                data: {
-                    labels: etiquetasEjeX,
-                    datasets: [{
-                        label: 'Evolución de Calificación Tienda (%)',
-                        data: valoresEjeY,
-                        borderColor: '#0f172a',
-                        backgroundColor: '#27ae60',
-                        borderWidth: 2.5,
-                        pointBackgroundColor: '#27ae60',
-                        pointBorderColor: '#0f172a',
-                        pointRadius: 6,
-                        pointHoverRadius: 9,
-                        tension: 0.1, 
-                        fill: false
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Puntaje de Tienda (%)', font: { weight: 'bold' } } },
-                        x: { title: { display: true, text: 'Fechas de las Visitas', font: { weight: 'bold' } } }
-                    },
-                    plugins: { tooltip: { callbacks: { label: function(context) { return tooltipsInformacion[context.dataIndex]; } } } }
-                }
-            });
-        }
-    }
-
-    function renderRankingTop10(statsSucursal) {
-        const container = document.getElementById('rankingSucursalesContainer');
-        if (!container) return;
-        container.innerHTML = '';
-
-        let listaSucursales = Object.keys(statsSucursal).map(suc => {
-            return { nombre: suc, promedio: parseFloat((statsSucursal[suc].totalScore / statsSucursal[suc].conteo).toFixed(1)) };
-        });
-
-        listaSucursales.sort((a, b) => b.promedio - a.promedio);
-        let top10 = listaSucursales.slice(0, 10);
-
-        if (top10.length === 0) {
-            container.innerHTML = `<p style="font-size:0.9rem; color:#64748b; margin: 10px 0 0 0;">No hay datos registrados en este mes para generar el ranking.</p>`;
-            return;
-        }
-
-        top10.forEach((suc, index) => {
-            const puesto = index + 1;
-            let claseEspecial = '';
-            if (puesto === 1) claseEspecial = 'top-1';
-            else if (puesto === 2) claseEspecial = 'top-2';
-            else if (puesto === 3) claseEspecial = 'top-3';
-
-            container.innerHTML += `
-                <div class="ranking-item ${claseEspecial}">
-                    <div class="ranking-badge">${puesto}</div>
-                    <div class="ranking-info">
-                        <div class="ranking-name" title="${suc.nombre}">${suc.nombre}</div>
-                        <div class="ranking-score">${suc.promedio}%</div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    /* --- LOGICA Y LOGISTICA DE HORARIOS PREMIUM (V1.4.5) --- */
-    function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
-        let semanas = [];
-        let fechaPivote = new Date(ano, mesIndice, 1);
-        while(fechaPivote.getDay() !== 3) { fechaPivote.setDate(fechaPivote.getDate() - 1); }
-
-        for (let k = 0; k < 6; k++) {
-            let inicioSemana = new Date(fechaPivote);
-            let finSemana = new Date(fechaPivote);
-            finSemana.setDate(finSemana.getDate() + 6);
-            if (inicioSemana.getMonth() === mesIndice || finSemana.getMonth() === mesIndice) {
-                semanas.push({ inicio: inicioSemana, fin: finSemana });
-            }
-            fechaPivote.setDate(fechaPivote.getDate() + 7);
-        }
-        return semanas;
-    }
-
-    // Función auxiliar para construir el desplegable estructurado por medias horas
-    function generarSelectMediaHora(idLlave, valorActual) {
-        let html = `<select class="horario-time-dropdown" onchange="guardarCeldaHorario('${idLlave}', this.value)">`;
-        opcionesMediaHora.forEach(hora => {
-            let seleccionado = hora === valorActual ? "selected" : "";
-            html += `<option value="${hora}" ${seleccionado}>${hora || '--:--'}</option>`;
-        });
-        html += `</select>`;
-        return html;
-    }
-
-    function renderizarBloquesHorarios() {
-        const contenedor = document.getElementById('contenedorBloquesHorarios');
-        if(!contenedor) return;
-        contenedor.innerHTML = '';
-
-        const mesSeleccionado = parseInt(document.getElementById('filtroMes').value);
-        const supervisorFiltrado = document.getElementById('filtroHorarioSupervisor').value;
-        const anoActual = new Date().getFullYear();
-
-        const semanas = obtenerSemanasMesMiercolesAMartes(anoActual, mesSeleccionado);
-        const diasNombres = ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", "Lunes", "Martes"];
-
-        semanas.forEach((semana, indiceSemana) => {
-            const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
-            const strFin = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
-            
-            const semanaBloqueGeneral = document.createElement('div');
-            semanaBloqueGeneral.className = 'semana-contenedor-general';
-            semanaBloqueGeneral.innerHTML = `<div class="semana-header-titulo">
-                📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
-            </div>`;
-
-            const gridSupervisores = document.createElement('div');
-            gridSupervisores.className = 'grid-bloques-supervisores';
-
-            let supsAMostrar = supervisorFiltrado === "TODOS" ? listadoSupervisores : [supervisorFiltrado];
-
-            supsAMostrar.forEach(sup => {
-                const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
-                const cardSupervisor = document.createElement('div');
-                cardSupervisor.className = 'supervisor-horario-card';
-
-                let htmlCard = `<div class="supervisor-card-name">
-                    <span>👤 ${sup}</span>
-                    <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Neufeld Team</span>
-                </div>
-                <div class="table-container-horario">
-                    <table class="table-horario">
-                        <thead>
-                            <tr>
-                                <th style="width: 15%; text-align: left; padding-left: 15px;">Día</th>
-                                <th style="width: 34%;">Horario (Entrada / Salida)</th>
-                                <th style="width: 20%;">Apertura</th>
-                                <th style="width: 20%;">Cierre</th>
-                                <th style="width: 11%;">Estatus / Ausencia</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-                for(let d = 0; d < 7; d++) {
-                    let dTmp = new Date(semana.inicio);
-                    dTmp.setDate(dTmp.getDate() + d);
-                    const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
-
-                    let estatusEspecial = localStorage.getItem(`${idLlaveBase}_dia_${d}_estatusEspecial`) || "NORMAL";
-                    let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${d}_hEntrada`) || "";
-                    let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${d}_hSalida`) || "";
-                    let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
-                    let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${d}_cierre`) || "";
-
-                    let esEspecial = estatusEspecial !== "NORMAL";
-                    let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
-                                         estatusEspecial === "TXT" ? "⏳ TIEMPO POR TIEMPO" :
-                                         estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
-                                         estatusEspecial === "CUMPLE" ? "🎂 CUMPLEANOS" :
-                                         estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
-                                         estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
-
-                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esEspecial ? 'fila-descanso-activa' : ''}">
-                        <td style="text-align:left; font-weight:700; color:var(--navy); padding-left: 15px;">${fechaStringFormateada}</td>
-                        
-                        <td id="cell_horario_${idLlaveBase}_d${d}" ${esEspecial ? 'colspan="3" class="celda-descanso-texto"' : ''}>
-                            ${esEspecial ? etiquetaEstatus : `
-                                <div class="rango-horas">
-                                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${d}_hEntrada`, hEntrada)}
-                                    <span>a</span>
-                                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${d}_hSalida`, hSalida)}
-                                </div>
-                            `}
-                        </td>
-                        
-                        <td id="cell_apertura_${idLlaveBase}_d${d}" style="${esEspecial ? 'display: none;' : ''}">
-                            <div class="text-visualizador-container" id="view_apertura_${idLlaveBase}_d${d}">
-                                <span>${valApertura || '--'}</span>
-                                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${d}, 'apertura')">✏️</button>
-                            </div>
-                        </td>
-                        
-                        <td id="cell_cierre_${idLlaveBase}_d${d}" style="${esEspecial ? 'display: none;' : ''}">
-                            <div class="text-visualizador-container" id="view_cierre_${idLlaveBase}_d${d}">
-                                <span>${valCierre || '--'}</span>
-                                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${d}, 'cierre')">✏️</button>
-                            </div>
-                        </td>
-                        
-                        <td>
-                            <select class="horario-select" style="padding: 4px; font-size: 0.78rem;" onchange="cambiarEstatusEspecialDia('${idLlaveBase}', ${d}, this.value, '${sup}')">
-                                <option value="NORMAL" ${estatusEspecial === 'NORMAL' ? 'selected' : ''}>Laboral</option>
-                                <option value="DESCANSO" ${estatusEspecial === 'DESCANSO' ? 'selected' : ''}>Descanso</option>
-                                <option value="TXT" ${estatusEspecial === 'TXT' ? 'selected' : ''}>Tiempo X Tiempo</option>
-                                <option value="PERMISO" ${estatusEspecial === 'PERMISO' ? 'selected' : ''}>Permiso S/G</option>
-                                <option value="CUMPLE" ${estatusEspecial === 'CUMPLE' ? 'selected' : ''}>Cumpleaños</option>
-                                <option value="INCAPACIDAD" ${estatusEspecial === 'INCAPACIDAD' ? 'selected' : ''}>Incapacidad</option>
-                                <option value="VACACIONES" ${estatusEspecial === 'VACACIONES' ? 'selected' : ''}>Vacaciones</option>
-                            </select>
-                        </td>
-                    </tr>`;
-                }
-
-                htmlCard += `</tbody></table></div>`;
-                cardSupervisor.innerHTML = htmlCard;
-                gridSupervisores.appendChild(cardSupervisor);
-            });
-
-            semanaBloqueGeneral.appendChild(gridSupervisores);
-            contenedor.appendChild(semanaBloqueGeneral);
-        });
-
-        if (semanas.length === 0) {
-            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No hay semanas calculadas.</p>`;
-        }
-    }
-
-    function guardarCeldaHorario(llaveStorage, valor) {
-        localStorage.setItem(llaveStorage, valor);
-    }
-
-    function activarEdicionInline(idLlaveBase, diaIndice, campo) {
-        const contenedor = document.getElementById(`view_${campo}_${idLlaveBase}_d${diaIndice}`);
-        if(!contenedor) return;
-
-        const valorActual = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`) || "";
-        
-        contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="...">`;
-        
-        const input = document.getElementById(`edit_input_${campo}_${idLlaveBase}_d${diaIndice}`);
-        input.focus();
-        input.select();
-
-        const guardarCambio = () => {
-            const nuevoValor = input.value.trim();
-            localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
-            contenedor.innerHTML = `
-                <span>${nuevoValor || '--'}</span>
-                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, '${campo}')">✏️</button>
-            `;
-        };
-
-        input.onblur = guardarCambio;
-        input.onkeydown = (e) => { if (e.key === 'Enter') guardarCambio(); };
-    }
-
-    function cambiarEstatusEspecialDia(idLlaveBase, diaIndice, nuevoEstatus, supervisor) {
-        localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_estatusEspecial`, nuevoEstatus);
-        
-        const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
-        const cellHorario = document.getElementById(`cell_horario_${idLlaveBase}_d${diaIndice}`);
-        const cellApertura = document.getElementById(`cell_apertura_${idLlaveBase}_d${diaIndice}`);
-        const cellCierre = document.getElementById(`cell_cierre_${idLlaveBase}_d${diaIndice}`);
-
-        if(!filaTarget) return;
-
-        if(nuevoEstatus !== "NORMAL") {
-            filaTarget.classList.add('fila-descanso-activa');
-            cellHorario.setAttribute('colspan', '3');
-            cellHorario.className = 'celda-descanso-texto';
-
-            let textoVisible = "💤 DESCANSO";
-            if(nuevoEstatus === "TXT") textoVisible = "⏳ TIEMPO POR TIEMPO";
-            else if(nuevoEstatus === "PERMISO") textoVisible = "📄 PERMISO SIN GOCE";
-            else if(nuevoEstatus === "CUMPLE") textoVisible = "🎂 CUMPLEAÑOS";
-            else if(nuevoEstatus === "INCAPACIDAD") textoVisible = "🏥 INCAPACIDAD";
-            else if(nuevoEstatus === "VACACIONES") textoVisible = "✈️ VACACIONES";
-
-            cellHorario.innerHTML = textoVisible;
-            if(cellApertura) cellApertura.style.display = 'none';
-            if(cellCierre) cellCierre.style.display = 'none';
-        } else {
-            filaTarget.classList.remove('fila-descanso-activa');
-            cellHorario.removeAttribute('colspan');
-            cellHorario.className = '';
-            
-            let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hEntrada`) || "";
-            let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hSalida`) || "";
-            let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
-            let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
-
-            cellHorario.innerHTML = `
-                <div class="rango-horas">
-                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${diaIndice}_hEntrada`, hEntrada)}
-                    <span>a</span>
-                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${diaIndice}_hSalida`, hSalida)}
-                </div>`;
-            
-            if(cellApertura) {
-                cellApertura.style.display = '';
-                cellApertura.innerHTML = `
-                    <div class="text-visualizador-container" id="view_apertura_${idLlaveBase}_d${diaIndice}">
-                        <span>${valApertura || '--'}</span>
-                        <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, 'apertura')">✏️</button>
-                    </div>`;
-            }
-            if(cellCierre) {
-                cellCierre.style.display = '';
-                cellCierre.innerHTML = `
-                    <div class="text-visualizador-container" id="view_cierre_${idLlaveBase}_d${diaIndice}">
-                        <span>${valCierre || '--'}</span>
-                        <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, 'cierre')">✏️</button>
-                    </div>`;
-            }
-        }
-    }
-
-    function filterTable(filterRowId, tbodyId) {
-        const inputs = document.querySelectorAll(`#${filterRowId} input`);
-        const rows = document.getElementById(tbodyId).getElementsByTagName('tr');
-        
-        for (let row of rows) {
-            let show = true;
-            let activeInputsIndex = 0;
-            inputs.forEach((input, idx) => {
-                const filter = input.value.toLowerCase();
-                const cell = row.getElementsByTagName('td')[activeInputsIndex];
-                if (filter && cell && cell.innerText.toLowerCase().indexOf(filter) === -1) {
-                    show = false;
-                }
-                activeInputsIndex++;
-            });
+    function filtrarTabla() {
+        const sup = document.getElementById('f_sup').value.toUpperCase();
+        const suc = document.getElementById('f_suc').value.toUpperCase();
+        const fec = document.getElementById('f_fec').value.toUpperCase();
+        const rows = document.querySelectorAll('#tablaDatos tbody tr');
+        for(let row of rows) {
+            const tSup = row.cells[1].innerText.toUpperCase();
+            const tSuc = row.cells[2].innerText.toUpperCase();
+            const tFec = row.cells[3].innerText.toUpperCase();
+            const show = tSup.includes(sup) && tSuc.includes(suc) && tFec.includes(fec);
             row.style.display = show ? "" : "none";
         }
     }
 
-    function guardarEnNubeConValidacion() {
+    async function guardarEnNube() {
         const s = document.getElementById('sup').value;
         if(!s) return alert("Por favor selecciona un Supervisor");
-
-        if (prompt("Contraseña de seguridad requerida para guardar el reporte:") === CODIGO_SEGURIDAD) {
-            ejecutarGuardarEnNube();
-        } else {
-            alert("Contraseña incorrecta. El reporte no fue guardado.");
-        }
-    }
-
-    async function ejecutarGuardarEnNube() {
         toggleLoading(true);
-        const s = document.getElementById('sup').value;
+        
         const califTiendaInput = document.getElementById('califTienda').value;
-
         const reg = { 
             action: 'guardar', s, 
             suc: document.getElementById('sucursal').value, 
@@ -1161,11 +628,277 @@
         }
     }
 
-    window.onload = () => {
-        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-        document.getElementById('filtroMes').value = new Date().getMonth();
-        cargarDatosNube();
-    };
-</script>
+    function construirBloquesHorariosUI() {
+        const cont = document.getElementById('contenedorBloquesHorarios');
+        cont.innerHTML = "";
+
+        listaSupervisoresUnicos.forEach(sup => {
+            let bSup = matrizHorariosGlobal.find(h => h.supervisor === sup);
+            if(!bSup) {
+                bSup = { supervisor: sup, Lunes:"DESCANSO", Martes:"DESCANSO", Miércoles:"DESCANSO", Jueves:"DESCANSO", Viernes:"DESCANSO", Sábado:"DESCANSO", Domingo:"DESCANSO" };
+                matrizHorariosGlobal.push(bSup);
+            }
+
+            let card = document.createElement('div');
+            card.className = "supervisor-horario-card";
+            
+            let htmlHTML = `
+                <div class="supervisor-card-name">
+                    <span>👤 ${sup}</span>
+                    <span style="font-size:0.8rem; font-weight:normal; opacity:0.9;">Turno Semanal</span>
+                </div>
+                <div class="table-container-horario">
+                    <table class="table-horario">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;">Día</th>
+                                <th style="width: 40%;">Estatus / Sucursal</th>
+                                <th style="width: 35%;">Rango de Horas</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            listaDiasSemanales.forEach(dia => {
+                let celdaValor = bSup[dia] || "DESCANSO";
+                let stringHoras = bSup[dia + "_horas"] || "08:00-16:00";
+                let parteDesde = "08:00";
+                let parteHasta = "16:00";
+                
+                if(stringHoras.includes("-")){
+                    const sp = stringHoras.split("-");
+                    parteDesde = sp[0];
+                    parteHasta = sp[1];
+                }
+
+                let esDescansoEspecial = (celdaValor === "DESCANSO" || celdaValor === "VACACIONES" || celdaValor === "INCAPACIDAD");
+
+                htmlHTML += `
+                    <tr id="fila-${sup}-${dia}" class="${esDescansoEspecial ? 'fila-descanso-activa' : ''}">
+                        <td style="font-weight:700; color:var(--navy); text-align:left; padding-left:15px;">${dia}</td>
+                        <td>
+                            <select class="horario-select" onchange="actualizarEstatusHorario('${sup}','${dia}', this.value)">
+                                <option value="DESCANSO" ${celdaValor==="DESCANSO"?'selected':''}>😴 DESCANSO</option>
+                                <option value="VACACIONES" ${celdaValor==="VACACIONES"?'selected':''}>✈️ VACACIONES</option>
+                                <option value="INCAPACIDAD" ${celdaValor==="INCAPACIDAD"?'selected':''}>🏥 INCAPACIDAD</option>
+                                <option value="SUCURSAL_TEXTO" ${!esDescansoEspecial?'selected':''}>📍 ASIGNAR SUCURSAL...</option>
+                            </select>
+                            <div id="wrapper-texto-${sup}-${dia}" style="margin-top: 6px; display: ${esDescansoEspecial ? 'none' : 'block'};">
+                                <div class="text-visualizador-container">
+                                    <span id="label-suc-${sup}-${dia}">${esDescansoEspecial ? 'ALAMEDAS' : celdaValor}</span>
+                                    <button class="btn-editar-plumita" onclick="activarInputTextoInline('${sup}','${dia}')" title="Editar sucursal">✏️</button>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div id="rango-horas-wrapper-${sup}-${dia}" class="rango-horas" style="display: ${esDescansoEspecial ? 'none' : 'flex'};">
+                                ${generarDropdownMediaHora(sup, dia, 'desde', parteDesde)}
+                                <span>a</span>
+                                ${generarDropdownMediaHora(sup, dia, 'hasta', parteHasta)}
+                            </div>
+                            <div id="celda-descanso-label-${sup}-${dia}" class="celda-descanso-texto" style="display: ${esDescansoEspecial ? 'block' : 'none'};">
+                                ${celdaValor}
+                            </div>
+                        </td>
+                    </tr>`;
+            });
+
+            htmlHTML += `</tbody></table></div>`;
+            card.innerHTML = htmlHTML;
+            cont.appendChild(card);
+        });
+    }
+
+    function generarDropdownMediaHora(sup, dia, tipo, valorSeleccionado) {
+        let select = `<select class="horario-time-dropdown" onchange="actualizarDropdownHoras('${sup}','${dia}','${tipo}', this.value)">`;
+        for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 30) {
+                let hh = h.toString().padStart(2, '0');
+                let mm = m.toString().padStart(2, '0');
+                let t = `${hh}:${mm}`;
+                select += `<option value="${t}" ${t===valorSeleccionado?'selected':''}>${t}</option>`;
+            }
+        }
+        select += `</select>`;
+        return select;
+    }
+
+    function actualizarEstatusHorario(sup, dia, valorSelect) {
+        let bSup = matrizHorariosGlobal.find(h => h.supervisor === sup);
+        const fila = document.getElementById(`fila-${sup}-${dia}`);
+        const wrapperTexto = document.getElementById(`wrapper-texto-${sup}-${dia}`);
+        const wrapperHoras = document.getElementById(`rango-horas-wrapper-${sup}-${dia}`);
+        const labelDescanso = document.getElementById(`celda-descanso-label-${sup}-${dia}`);
+        const lblSucursal = document.getElementById(`label-suc-${sup}-${dia}`);
+
+        if(valorSelect === "SUCURSAL_TEXTO") {
+            fila.classList.remove('fila-descanso-activa');
+            wrapperTexto.style.display = "block";
+            wrapperHoras.style.display = "flex";
+            labelDescanso.style.display = "none";
+            
+            let anterior = bSup[dia];
+            if(anterior === "DESCANSO" || anterior === "VACACIONES" || anterior === "INCAPACIDAD") {
+                bSup[dia] = "ALAMEDAS";
+            }
+            lblSucursal.innerText = bSup[dia];
+        } else {
+            fila.classList.add('fila-descanso-activa');
+            wrapperTexto.style.display = "none";
+            wrapperHoras.style.display = "none";
+            labelDescanso.style.display = "block";
+            
+            bSup[dia] = valorSelect;
+            labelDescanso.innerText = valorSelect;
+        }
+    }
+
+    function activarInputTextoInline(sup, dia) {
+        let bSup = matrizHorariosGlobal.find(h => h.supervisor === sup);
+        const container = document.getElementById(`wrapper-texto-${sup}-${dia}`).querySelector('.text-visualizador-container');
+        const valorActual = bSup[dia];
+
+        container.innerHTML = `<input type="text" class="input-inline-edicion" id="input-inline-${sup}-${dia}" value="${valorActual}" onblur="guardarInputTextoInline('${sup}','${dia}')" onkeydown="evaluarEnterInline(event, '${sup}','${dia}')">`;
+        
+        const inp = document.getElementById(`input-inline-${sup}-${dia}`);
+        inp.focus();
+        inp.select();
+    }
+
+    function guardarInputTextoInline(sup, dia) {
+        let bSup = matrizHorariosGlobal.find(h => h.supervisor === sup);
+        const container = document.getElementById(`wrapper-texto-${sup}-${dia}`).querySelector('.text-visualizador-container');
+        const nuevoValor = document.getElementById(`input-inline-${sup}-${dia}`).value.trim().toUpperCase() || "ALAMEDAS";
+        
+        bSup[dia] = nuevoValor;
+        
+        container.innerHTML = `
+            <span id="label-suc-${sup}-${dia}">${nuevoValor}</span>
+            <button class="btn-editar-plumita" onclick="activarInputTextoInline('${sup}','${dia}')" title="Editar sucursal">✏️</button>
+        `;
+    }
+
+    function evaluarEnterInline(e, sup, dia) {
+        if(e.key === 'Enter') {
+            guardarInputTextoInline(sup, dia);
+        }
+    }
+
+    function actualizarDropdownHoras(sup, dia, tipo, valor) {
+        let bSup = matrizHorariosGlobal.find(h => h.supervisor === sup);
+        let actualString = bSup[dia + "_horas"] || "08:00-16:00";
+        let desde = actualString.split("-")[0] || "08:00";
+        let hasta = actualString.split("-")[1] || "16:00";
+
+        if(tipo === 'desde') desde = valor;
+        if(tipo === 'hasta') hasta = valor;
+
+        bSup[dia + "_horas"] = `${desde}-${hasta}`;
+    }
+
+    async function guardarHorariosNube() {
+        toggleLoading(true);
+        try {
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({ action: 'guardarHorarios', horarios: matrizHorariosGlobal })
+            });
+            alert("Matriz de horarios guardada con éxito en la nube.");
+        } catch(e) {
+            alert("Error al guardar.");
+        } finally {
+            toggleLoading(false);
+        }
+    }
+
+    let instComparativaChart = null;
+
+    function renderizarTodasLasGraficas() {
+        const filtroSuc = document.getElementById('sucursalGraficaFiltro').value;
+        const calculos = {};
+        
+        listaSupervisoresUnicos.forEach(s => { calculos[s] = { sumaPts: 0, visitasContadas: 0, sumaCalifTienda: 0, tiendasConCalif: 0 }; });
+
+        baseDatosMemoria.forEach(r => {
+            if(filtroSuc !== "TODAS" && r.suc !== filtroSuc) return;
+            if(calculos[r.s]) {
+                calculos[r.s].sumaPts += r.total;
+                calculos[r.s].visitasContadas++;
+                if(r.califTienda && !isNaN(r.califTienda)) {
+                    calculos[r.s].sumaCalifTienda += parseFloat(r.califTienda);
+                    calculos[r.s].tiendasConCalif++;
+                }
+            }
+        });
+
+        const dataSupervisores = [];
+        const dataPromediosKpis = [];
+        const dataPromediosTiendas = [];
+
+        listaSupervisoresUnicos.forEach(sup => {
+            const c = calculos[sup];
+            const promKpi = c.visitasContadas > 0 ? Math.round(c.sumaPts / c.visitasContadas) : 0;
+            const promTienda = c.tiendasConCalif > 0 ? Math.round(c.sumaCalifTienda / c.tiendasConCalif) : 0;
+            
+            dataSupervisores.push(sup);
+            dataPromediosKpis.push(promKpi);
+            dataPromediosTiendas.push(promTienda);
+        });
+
+        // Gráfica de Barras Comparativa
+        if(instComparativaChart) instComparativaChart.destroy();
+        const ctxComp = document.getElementById('chartComparativo').getContext('2d');
+        instComparativaChart = new Chart(ctxComp, {
+            type: 'bar',
+            data: {
+                labels: dataSupervisores,
+                datasets: [
+                    { label: 'Promedio KPIs Auditoría', data: dataPromediosKpis, backgroundColor: '#27ae60', borderRadius: 6 },
+                    { label: 'Promedio Calif. Tiendas', data: dataPromediosTiendas, backgroundColor: '#3498db', borderRadius: 6 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { min: 0, max: 100 } }
+            }
+        });
+
+        // Listado de Ranking
+        const arrRanking = dataSupervisores.map((sup, idx) => ({ name: sup, score: dataPromediosKpis[idx] })).sort((a,b) => b.score - a.score);
+        const rList = document.getElementById('rankingList');
+        rList.innerHTML = "";
+        arrRanking.forEach((item, index) => {
+            rList.innerHTML += `
+                <div class="ranking-item top-${index+1}">
+                    <div class="ranking-badge">${index+1}</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${item.name}</div>
+                        <div class="ranking-score">${item.score} Pts</div>
+                    </div>
+                </div>`;
+        });
+
+        // Bloques individuales inferiores
+        const dGrid = document.getElementById('dashboardGrid');
+        dGrid.innerHTML = "";
+        dataSupervisores.forEach((sup, idx) => {
+            const pk = dataPromediosKpis[idx];
+            const pt = dataPromediosTiendas[idx];
+            let colorClase = "rojo";
+            if(pk >= 85) colorClase = "verde";
+            else if(pk >= 70) colorClase = "amarillo";
+
+            dGrid.innerHTML += `
+                <div class="chart-box">
+                    <span class="score-badge ${colorClase}">${pk} Pts</span>
+                    <h4 style="margin:5px 0 15px 0; color:var(--navy); font-size:0.95em; text-align:left;">${sup}</h4>
+                    <p style="font-size:0.82em; margin:4px 0; color:#64748b; text-align:left;">Auditorías: <strong>${calculos[sup].visitasContadas}</strong></p>
+                    <p style="font-size:0.82em; margin:4px 0; color:#64748b; text-align:left;">Promedio KPIs: <strong>${pk}%</strong></p>
+                    <p style="font-size:0.82em; margin:4px 0; color:#64748b; text-align:left;">Promedio Tiendas: <strong>${pt}/100</strong></p>
+                </div>`;
+        });
+    }
+    </script>
 </body>
 </html>
