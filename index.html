@@ -148,14 +148,14 @@
         .semana-contenedor-general { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 35px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.04); }
         .semana-header-titulo { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         
-        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(640px, 1fr)); gap: 25px; }
+        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(660px, 1fr)); gap: 25px; }
         @media(max-width: 768px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
 
         .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); transition: transform 0.2s; }
         .supervisor-horario-card:hover { transform: translateY(-2px); }
         .supervisor-card-name { font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-neufeld)); padding: 14px 20px; }
         
-        .horario-select, .horario-time {
+        .horario-select {
             width: 100%;
             padding: 8px 10px;
             border: 1px solid var(--border);
@@ -167,40 +167,67 @@
             transition: all 0.2s;
             box-sizing: border-box;
         }
-        .horario-select:focus, .horario-time:focus {
+        .horario-select:focus {
             border-color: var(--verde-neufeld);
             outline: none;
             background: #ffffff;
             box-shadow: 0 0 0 3px rgba(39,174,96,0.12);
         }
 
+        /* Selector de Horas por Media Hora: Más llamativo e imponente */
+        .horario-time-dropdown {
+            padding: 6px 8px;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--navy);
+            font-weight: 700; /* Texto de horas más marcado */
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .horario-time-dropdown:focus {
+            border-color: var(--verde-neufeld);
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.15);
+        }
+
         .rango-horas { display: flex; align-items: center; gap: 6px; justify-content: center; }
-        .rango-horas span { font-size: 0.8rem; color: #94a3b8; font-weight: bold; }
+        .rango-horas span { font-size: 0.85rem; color: #64748b; font-weight: bold; }
         
         /* Visualización Limpia de Texto de Sucursales */
         .text-visualizador-container {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            font-weight: 600;
+            gap: 6px;
+            font-weight: 700;
             color: var(--verde-oscuro);
-            font-size: 0.88rem;
+            font-size: 0.95rem; /* Letras más grandes */
             text-align: center;
             width: 100%;
+            min-height: 32px;
         }
+        
+        /* Lapicito oculto por defecto, aparece sutilmente al hacer hover en la celda */
         .btn-editar-plumita {
             background: #f1f5f9;
             border: none;
             cursor: pointer;
-            font-size: 0.75rem;
-            padding: 4px 6px;
+            font-size: 0.7rem; /* Icono más pequeño y elegante */
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             color: #64748b;
+            opacity: 0; /* Oculto */
+        }
+        td:hover .btn-editar-plumita {
+            opacity: 1; /* Aparece al pasar el mouse por la celda */
         }
         .btn-editar-plumita:hover {
             background: var(--verde-claro);
@@ -212,7 +239,9 @@
             padding: 6px 8px;
             border: 1px solid var(--verde-neufeld);
             border-radius: 6px;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--verde-oscuro);
             text-align: center;
             outline: none;
             box-shadow: 0 0 0 3px rgba(39,174,96,0.15);
@@ -236,7 +265,7 @@
         .table-container-horario { overflow-x: auto; border: none; }
         .table-horario { width: 100%; border-collapse: collapse; font-size: 0.88em; }
         .table-horario th { background: #f8fafc; color: #64748b; padding: 14px 12px; text-align: center; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
-        .table-horario td { padding: 10px 12px; border-top: 1px solid #f1f5f9; text-align: center; vertical-align: middle; height: 48px; }
+        .table-horario td { padding: 10px 12px; border-top: 1px solid #f1f5f9; text-align: center; vertical-align: middle; height: 52px; }
         .table-horario tr:hover { background-color: #fcfdfe; }
         
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
@@ -284,7 +313,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.4.0</div>
+    <div class="app-version-tag">Versión 1.4.5</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -483,7 +512,7 @@
                     </select>
                 </div>
                 <div style="font-size: 0.85rem; color: #475569; margin-left: auto; background: var(--bg-light); padding: 12px 18px; border-radius: 10px; border-left: 4px solid var(--verde-neufeld); max-width: 550px;">
-                    💡 <strong>Edición Ejecutiva:</strong> Haz clic en el lápiz (✏️) para redactar o cambiar libremente la Apertura y el Cierre. Al guardar se quita el recuadro. Selecciona opciones especiales (Descanso, Vacaciones, etc.) para fusionar la fila automáticamente.
+                    💡 <strong>Edición Ejecutiva:</strong> Pasa el mouse sobre Apertura/Cierre para revelar el lápiz (✏️) de redacción libre. Las horas ahora se seleccionan ágilmente en bloques fijos de 30 minutos.
                 </div>
             </div>
 
@@ -508,6 +537,14 @@
         "LEONARDO": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
         "NOEMI": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
     };
+
+    // Arreglo de opciones cada 30 minutos para agilizar la selección
+    const opcionesMediaHora = [
+        "", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", 
+        "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", 
+        "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", 
+        "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"
+    ];
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
 
@@ -598,7 +635,7 @@
 
                 let valorTiendaRaw = r[14];
                 if (typeof valorTiendaRaw === 'string') {
-                    valoresTiendaRaw = valorTiendaRaw.replace('%', '').trim();
+                    valorTiendaRaw = valorTiendaRaw.replace('%', '').trim();
                 }
                 let califTiendaNumerica = parseFloat(valorTiendaRaw);
                 if (isNaN(califTiendaNumerica)) califTiendaNumerica = 0;
@@ -819,7 +856,7 @@
         });
     }
 
-    /* --- LOGICA Y LOGISTICA DE HORARIOS PREMIUM (V1.4.0) --- */
+    /* --- LOGICA Y LOGISTICA DE HORARIOS PREMIUM (V1.4.5) --- */
     function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
         let semanas = [];
         let fechaPivote = new Date(ano, mesIndice, 1);
@@ -835,6 +872,17 @@
             fechaPivote.setDate(fechaPivote.getDate() + 7);
         }
         return semanas;
+    }
+
+    // Función auxiliar para construir el desplegable estructurado por medias horas
+    function generarSelectMediaHora(idLlave, valorActual) {
+        let html = `<select class="horario-time-dropdown" onchange="guardarCeldaHorario('${idLlave}', this.value)">`;
+        opcionesMediaHora.forEach(hora => {
+            let seleccionado = hora === valorActual ? "selected" : "";
+            html += `<option value="${hora}" ${seleccionado}>${hora || '--:--'}</option>`;
+        });
+        html += `</select>`;
+        return html;
     }
 
     function renderizarBloquesHorarios() {
@@ -878,9 +926,9 @@
                         <thead>
                             <tr>
                                 <th style="width: 15%; text-align: left; padding-left: 15px;">Día</th>
-                                <th style="width: 32%;">Horario (Entrada / Salida)</th>
-                                <th style="width: 21%;">Apertura</th>
-                                <th style="width: 21%;">Cierre</th>
+                                <th style="width: 34%;">Horario (Entrada / Salida)</th>
+                                <th style="width: 20%;">Apertura</th>
+                                <th style="width: 20%;">Cierre</th>
                                 <th style="width: 11%;">Estatus / Ausencia</th>
                             </tr>
                         </thead>
@@ -900,10 +948,10 @@
                     let esEspecial = estatusEspecial !== "NORMAL";
                     let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
                                          estatusEspecial === "TXT" ? "⏳ TIEMPO POR TIEMPO" :
-                                         /* PERMISO */ estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
-                                         /* CUMPLE */ estatusEspecial === "CUMPLE" ? "🎂 CUMPLEANOS" :
-                                         /* INCAPACIDAD */ estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
-                                         /* VACACIONES */ estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
+                                         estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
+                                         estatusEspecial === "CUMPLE" ? "🎂 CUMPLEANOS" :
+                                         estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
+                                         estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
 
                     htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esEspecial ? 'fila-descanso-activa' : ''}">
                         <td style="text-align:left; font-weight:700; color:var(--navy); padding-left: 15px;">${fechaStringFormateada}</td>
@@ -911,9 +959,9 @@
                         <td id="cell_horario_${idLlaveBase}_d${d}" ${esEspecial ? 'colspan="3" class="celda-descanso-texto"' : ''}>
                             ${esEspecial ? etiquetaEstatus : `
                                 <div class="rango-horas">
-                                    <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_hEntrada', this.value)">
+                                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${d}_hEntrada`, hEntrada)}
                                     <span>a</span>
-                                    <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_hSalida', this.value)">
+                                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${d}_hSalida`, hSalida)}
                                 </div>
                             `}
                         </td>
@@ -970,7 +1018,7 @@
 
         const valorActual = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`) || "";
         
-        contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="Escribe aquí...">`;
+        contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="...">`;
         
         const input = document.getElementById(`edit_input_${campo}_${idLlaveBase}_d${diaIndice}`);
         input.focus();
@@ -1026,9 +1074,9 @@
 
             cellHorario.innerHTML = `
                 <div class="rango-horas">
-                    <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hEntrada', this.value)">
+                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${diaIndice}_hEntrada`, hEntrada)}
                     <span>a</span>
-                    <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hSalida', this.value)">
+                    ${generarSelectMediaHora(`${idLlaveBase}_dia_${diaIndice}_hSalida`, hSalida)}
                 </div>`;
             
             if(cellApertura) {
