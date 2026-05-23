@@ -144,18 +144,17 @@
         .ranking-name { font-weight: 600; font-size: 0.85em; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ranking-score { font-size: 0.8em; font-weight: bold; color: var(--verde-neufeld); }
 
-        /* --- NUEVO ENTORNO DE HORARIOS ULTRA-MODERNO --- */
+        /* --- ENTORNO DE HORARIOS ULTRA-MODERNO CON EDICIÓN EN TEXTO --- */
         .semana-contenedor-general { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 35px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.04); }
         .semana-header-titulo { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         
-        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(620px, 1fr)); gap: 25px; }
+        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(640px, 1fr)); gap: 25px; }
         @media(max-width: 768px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
 
         .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); transition: transform 0.2s; }
         .supervisor-horario-card:hover { transform: translateY(-2px); }
         .supervisor-card-name { font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-neufeld)); padding: 14px 20px; }
         
-        /* Selectores premium de Horas y Listas desplegables de Sucursales */
         .horario-select, .horario-time {
             width: 100%;
             padding: 8px 10px;
@@ -175,39 +174,69 @@
             box-shadow: 0 0 0 3px rgba(39,174,96,0.12);
         }
 
-        .rango-horas {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            justify-content: center;
-        }
-        .rango-horas span {
-            font-size: 0.8rem;
-            color: #94a3b8;
-            font-weight: bold;
-        }
+        .rango-horas { display: flex; align-items: center; gap: 6px; justify-content: center; }
+        .rango-horas span { font-size: 0.8rem; color: #94a3b8; font-weight: bold; }
         
-        /* Modos visuales interactivos para el Descanso */
-        tr.fila-descanso-activa { background-color: #f1f5f9 !important; transition: all 0.3s ease; }
+        /* Visualización Limpia de Texto de Sucursales */
+        .text-visualizador-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--verde-oscuro);
+            font-size: 0.88rem;
+            text-align: center;
+            width: 100%;
+        }
+        .btn-editar-plumita {
+            background: #f1f5f9;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+        }
+        .btn-editar-plumita:hover {
+            background: var(--verde-claro);
+            color: var(--verde-oscuro);
+            transform: scale(1.1);
+        }
+        .input-inline-edicion {
+            width: 90%;
+            padding: 6px 8px;
+            border: 1px solid var(--verde-neufeld);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.15);
+        }
+
+        /* Estilo para Filas del Estatus Especial (Descanso, Vacaciones, etc.) */
+        tr.fila-descanso-activa { background-color: #f8fafc !important; transition: all 0.3s ease; }
         .celda-descanso-texto {
             font-weight: 700;
-            color: #64748b;
-            letter-spacing: 1px;
+            color: #475569;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
-            font-style: italic;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             text-align: center;
             background: #e2e8f0;
-            border-radius: 6px;
-            padding: 6px 0;
+            border-radius: 8px;
+            padding: 8px 0;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
         
-        .checkbox-descanso-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--verde-neufeld); }
-
         .table-container-horario { overflow-x: auto; border: none; }
         .table-horario { width: 100%; border-collapse: collapse; font-size: 0.88em; }
         .table-horario th { background: #f8fafc; color: #64748b; padding: 14px 12px; text-align: center; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
-        .table-horario td { padding: 10px 12px; border-top: 1px solid #f1f5f9; text-align: center; vertical-align: middle; }
+        .table-horario td { padding: 10px 12px; border-top: 1px solid #f1f5f9; text-align: center; vertical-align: middle; height: 48px; }
         .table-horario tr:hover { background-color: #fcfdfe; }
         
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
@@ -231,18 +260,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         nav.collapsed .btn-text { display: none; }
-
-        .app-version-tag {
-            position: absolute;
-            bottom: 8px;
-            left: 12px;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            font-weight: 500;
-            z-index: 1005;
-            pointer-events: none;
-            user-select: none;
-        }
+        .app-version-tag { position: absolute; bottom: 8px; left: 12px; font-size: 0.75rem; color: #94a3b8; font-weight: 500; z-index: 1005; pointer-events: none; user-select: none; }
 
         @media (max-width: 992px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 576px) { .kpi-grid { grid-template-columns: 1fr; } }
@@ -266,7 +284,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.3.0</div>
+    <div class="app-version-tag">Versión 1.4.0</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -464,13 +482,12 @@
                         <option value="NOEMI">Noemi</option>
                     </select>
                 </div>
-                <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; background: var(--bg-light); padding: 10px 15px; border-radius: 8px; border-left: 4px solid var(--verde-neufeld);">
-                    ✨ <strong>Diseño Premium:</strong> Al activar "Descanso", las celdas se fusionan automáticamente al centro. Horas con reloj nativo y sucursales filtradas por zona. Los cambios se guardan automáticamente.
+                <div style="font-size: 0.85rem; color: #475569; margin-left: auto; background: var(--bg-light); padding: 12px 18px; border-radius: 10px; border-left: 4px solid var(--verde-neufeld); max-width: 550px;">
+                    💡 <strong>Edición Ejecutiva:</strong> Haz clic en el lápiz (✏️) para redactar o cambiar libremente la Apertura y el Cierre. Al guardar se quita el recuadro. Selecciona opciones especiales (Descanso, Vacaciones, etc.) para fusionar la fila automáticamente.
                 </div>
             </div>
 
-            <div id="contenedorBloquesHorarios">
-                </div>
+            <div id="contenedorBloquesHorarios"></div>
         </div>
     </main>
 </div>
@@ -581,12 +598,10 @@
 
                 let valorTiendaRaw = r[14];
                 if (typeof valorTiendaRaw === 'string') {
-                    valorTiendaRaw = valorTiendaRaw.replace('%', '').trim();
+                    valoresTiendaRaw = valorTiendaRaw.replace('%', '').trim();
                 }
                 let califTiendaNumerica = parseFloat(valorTiendaRaw);
-                if (isNaN(califTiendaNumerica)) {
-                    califTiendaNumerica = 0; 
-                }
+                if (isNaN(califTiendaNumerica)) califTiendaNumerica = 0;
 
                 if(!statsSucursal[r[2]]) statsSucursal[r[2]] = { totalScore: 0, conteo: 0, supervisor: supNom, ultimaFecha: r[3] };
                 statsSucursal[r[2]].totalScore += califTiendaNumerica;
@@ -760,24 +775,10 @@
                 options: {
                     maintainAspectRatio: false,
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            title: { display: true, text: 'Puntaje de Tienda (%)', font: { weight: 'bold' } }
-                        },
-                        x: {
-                            title: { display: true, text: 'Fechas de las Visitas', font: { weight: 'bold' } }
-                        }
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Puntaje de Tienda (%)', font: { weight: 'bold' } } },
+                        x: { title: { display: true, text: 'Fechas de las Visitas', font: { weight: 'bold' } } }
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return tooltipsInformacion[context.dataIndex];
-                                }
-                            }
-                        }
-                    }
+                    plugins: { tooltip: { callbacks: { label: function(context) { return tooltipsInformacion[context.dataIndex]; } } } }
                 }
             });
         }
@@ -789,10 +790,7 @@
         container.innerHTML = '';
 
         let listaSucursales = Object.keys(statsSucursal).map(suc => {
-            return {
-                nombre: suc,
-                promedio: parseFloat((statsSucursal[suc].totalScore / statsSucursal[suc].conteo).toFixed(1))
-            };
+            return { nombre: suc, promedio: parseFloat((statsSucursal[suc].totalScore / statsSucursal[suc].conteo).toFixed(1)) };
         });
 
         listaSucursales.sort((a, b) => b.promedio - a.promedio);
@@ -817,25 +815,20 @@
                         <div class="ranking-name" title="${suc.nombre}">${suc.nombre}</div>
                         <div class="ranking-score">${suc.promedio}%</div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 
-    /* --- LOGICA Y LOGISTICA DE HORARIOS DINAMICOS PREMIUM --- */
+    /* --- LOGICA Y LOGISTICA DE HORARIOS PREMIUM (V1.4.0) --- */
     function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
         let semanas = [];
         let fechaPivote = new Date(ano, mesIndice, 1);
-        
-        while(fechaPivote.getDay() !== 3) {
-            fechaPivote.setDate(fechaPivote.getDate() - 1);
-        }
+        while(fechaPivote.getDay() !== 3) { fechaPivote.setDate(fechaPivote.getDate() - 1); }
 
         for (let k = 0; k < 6; k++) {
             let inicioSemana = new Date(fechaPivote);
             let finSemana = new Date(fechaPivote);
             finSemana.setDate(finSemana.getDate() + 6);
-
             if (inicioSemana.getMonth() === mesIndice || finSemana.getMonth() === mesIndice) {
                 semanas.push({ inicio: inicioSemana, fin: finSemana });
             }
@@ -862,7 +855,6 @@
             
             const semanaBloqueGeneral = document.createElement('div');
             semanaBloqueGeneral.className = 'semana-contenedor-general';
-            
             semanaBloqueGeneral.innerHTML = `<div class="semana-header-titulo">
                 📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
             </div>`;
@@ -874,16 +866,14 @@
 
             supsAMostrar.forEach(sup => {
                 const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
-                
                 const cardSupervisor = document.createElement('div');
                 cardSupervisor.className = 'supervisor-horario-card';
 
                 let htmlCard = `<div class="supervisor-card-name">
                     <span>👤 ${sup}</span>
                     <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Neufeld Team</span>
-                </div>`;
-
-                htmlCard += `<div class="table-container-horario">
+                </div>
+                <div class="table-container-horario">
                     <table class="table-horario">
                         <thead>
                             <tr>
@@ -891,36 +881,35 @@
                                 <th style="width: 32%;">Horario (Entrada / Salida)</th>
                                 <th style="width: 21%;">Apertura</th>
                                 <th style="width: 21%;">Cierre</th>
-                                <th style="width: 11%;">Descanso</th>
+                                <th style="width: 11%;">Estatus / Ausencia</th>
                             </tr>
                         </thead>
                         <tbody>`;
-
-                const listaSucursalesSup = sucursalesData[sup] || [];
 
                 for(let d = 0; d < 7; d++) {
                     let dTmp = new Date(semana.inicio);
                     dTmp.setDate(dTmp.getDate() + d);
                     const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
 
-                    let esDescanso = localStorage.getItem(`${idLlaveBase}_dia_${d}_isDescanso`) === "true";
+                    let estatusEspecial = localStorage.getItem(`${idLlaveBase}_dia_${d}_estatusEspecial`) || "NORMAL";
                     let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${d}_hEntrada`) || "";
                     let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${d}_hSalida`) || "";
                     let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
                     let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${d}_cierre`) || "";
 
-                    let optionsApertura = `<option value="">-- No asignada --</option>`;
-                    let optionsCierre = `<option value="">-- No asignada --</option>`;
-                    listaSucursalesSup.forEach(suc => {
-                        optionsApertura += `<option value="${suc}" ${valApertura === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
-                        optionsCierre += `<option value="${suc}" ${valCierre === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
-                    });
+                    let esEspecial = estatusEspecial !== "NORMAL";
+                    let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
+                                         estatusEspecial === "TXT" ? "⏳ TIEMPO POR TIEMPO" :
+                                         /* PERMISO */ estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
+                                         /* CUMPLE */ estatusEspecial === "CUMPLE" ? "🎂 CUMPLEANOS" :
+                                         /* INCAPACIDAD */ estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
+                                         /* VACACIONES */ estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
 
-                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esDescanso ? 'fila-descanso-activa' : ''}">
+                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esEspecial ? 'fila-descanso-activa' : ''}">
                         <td style="text-align:left; font-weight:700; color:var(--navy); padding-left: 15px;">${fechaStringFormateada}</td>
                         
-                        <td id="cell_horario_${idLlaveBase}_d${d}" ${esDescanso ? 'colspan="3" class="celda-descanso-texto"' : ''}>
-                            ${esDescanso ? '💤 DESCANSO' : `
+                        <td id="cell_horario_${idLlaveBase}_d${d}" ${esEspecial ? 'colspan="3" class="celda-descanso-texto"' : ''}>
+                            ${esEspecial ? etiquetaEstatus : `
                                 <div class="rango-horas">
                                     <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_hEntrada', this.value)">
                                     <span>a</span>
@@ -929,21 +918,30 @@
                             `}
                         </td>
                         
-                        <td id="cell_apertura_${idLlaveBase}_d${d}" style="${esDescanso ? 'display: none;' : ''}">
-                            <select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_apertura', this.value)">
-                                ${optionsApertura}
-                            </select>
+                        <td id="cell_apertura_${idLlaveBase}_d${d}" style="${esEspecial ? 'display: none;' : ''}">
+                            <div class="text-visualizador-container" id="view_apertura_${idLlaveBase}_d${d}">
+                                <span>${valApertura || '--'}</span>
+                                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${d}, 'apertura')">✏️</button>
+                            </div>
                         </td>
                         
-                        <td id="cell_cierre_${idLlaveBase}_d${d}" style="${esDescanso ? 'display: none;' : ''}">
-                            <select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_cierre', this.value)">
-                                ${optionsCierre}
-                            </select>
+                        <td id="cell_cierre_${idLlaveBase}_d${d}" style="${esEspecial ? 'display: none;' : ''}">
+                            <div class="text-visualizador-container" id="view_cierre_${idLlaveBase}_d${d}">
+                                <span>${valCierre || '--'}</span>
+                                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${d}, 'cierre')">✏️</button>
+                            </div>
                         </td>
                         
                         <td>
-                            <input type="checkbox" class="checkbox-descanso-custom" ${esDescanso ? 'checked' : ''} 
-                                onchange="alternarDescansoDiaFila('${idLlaveBase}', ${d}, this.checked, '${sup}')">
+                            <select class="horario-select" style="padding: 4px; font-size: 0.78rem;" onchange="cambiarEstatusEspecialDia('${idLlaveBase}', ${d}, this.value, '${sup}')">
+                                <option value="NORMAL" ${estatusEspecial === 'NORMAL' ? 'selected' : ''}>Laboral</option>
+                                <option value="DESCANSO" ${estatusEspecial === 'DESCANSO' ? 'selected' : ''}>Descanso</option>
+                                <option value="TXT" ${estatusEspecial === 'TXT' ? 'selected' : ''}>Tiempo X Tiempo</option>
+                                <option value="PERMISO" ${estatusEspecial === 'PERMISO' ? 'selected' : ''}>Permiso S/G</option>
+                                <option value="CUMPLE" ${estatusEspecial === 'CUMPLE' ? 'selected' : ''}>Cumpleaños</option>
+                                <option value="INCAPACIDAD" ${estatusEspecial === 'INCAPACIDAD' ? 'selected' : ''}>Incapacidad</option>
+                                <option value="VACACIONES" ${estatusEspecial === 'VACACIONES' ? 'selected' : ''}>Vacaciones</option>
+                            </select>
                         </td>
                     </tr>`;
                 }
@@ -966,61 +964,88 @@
         localStorage.setItem(llaveStorage, valor);
     }
 
-    function alternarDescansoDiaFila(idLlaveBase, diaIndice, checado, supervisor) {
-        localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_isDescanso`, checado);
+    function activarEdicionInline(idLlaveBase, diaIndice, campo) {
+        const contenedor = document.getElementById(`view_${campo}_${idLlaveBase}_d${diaIndice}`);
+        if(!contenedor) return;
+
+        const valorActual = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`) || "";
+        
+        contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="Escribe aquí...">`;
+        
+        const input = document.getElementById(`edit_input_${campo}_${idLlaveBase}_d${diaIndice}`);
+        input.focus();
+        input.select();
+
+        const guardarCambio = () => {
+            const nuevoValor = input.value.trim();
+            localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
+            contenedor.innerHTML = `
+                <span>${nuevoValor || '--'}</span>
+                <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, '${campo}')">✏️</button>
+            `;
+        };
+
+        input.onblur = guardarCambio;
+        input.onkeydown = (e) => { if (e.key === 'Enter') guardarCambio(); };
+    }
+
+    function cambiarEstatusEspecialDia(idLlaveBase, diaIndice, nuevoEstatus, supervisor) {
+        localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_estatusEspecial`, nuevoEstatus);
         
         const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
         const cellHorario = document.getElementById(`cell_horario_${idLlaveBase}_d${diaIndice}`);
         const cellApertura = document.getElementById(`cell_apertura_${idLlaveBase}_d${diaIndice}`);
         const cellCierre = document.getElementById(`cell_cierre_${idLlaveBase}_d${diaIndice}`);
 
-        if(filaTarget) {
-            if(checado) {
-                filaTarget.classList.add('fila-descanso-activa');
-                
-                cellHorario.setAttribute('colspan', '3');
-                cellHorario.className = 'celda-descanso-texto';
-                cellHorario.innerHTML = '💤 DESCANSO';
-                
-                if(cellApertura) cellApertura.style.display = 'none';
-                if(cellCierre) cellCierre.style.display = 'none';
-            } else {
-                filaTarget.classList.remove('fila-descanso-activa');
-                
-                cellHorario.removeAttribute('colspan');
-                cellHorario.className = '';
-                
-                let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hEntrada`) || "";
-                let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hSalida`) || "";
-                let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
-                let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
+        if(!filaTarget) return;
 
-                cellHorario.innerHTML = `
-                    <div class="rango-horas">
-                        <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hEntrada', this.value)">
-                        <span>a</span>
-                        <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hSalida', this.value)">
+        if(nuevoEstatus !== "NORMAL") {
+            filaTarget.classList.add('fila-descanso-activa');
+            cellHorario.setAttribute('colspan', '3');
+            cellHorario.className = 'celda-descanso-texto';
+
+            let textoVisible = "💤 DESCANSO";
+            if(nuevoEstatus === "TXT") textoVisible = "⏳ TIEMPO POR TIEMPO";
+            else if(nuevoEstatus === "PERMISO") textoVisible = "📄 PERMISO SIN GOCE";
+            else if(nuevoEstatus === "CUMPLE") textoVisible = "🎂 CUMPLEAÑOS";
+            else if(nuevoEstatus === "INCAPACIDAD") textoVisible = "🏥 INCAPACIDAD";
+            else if(nuevoEstatus === "VACACIONES") textoVisible = "✈️ VACACIONES";
+
+            cellHorario.innerHTML = textoVisible;
+            if(cellApertura) cellApertura.style.display = 'none';
+            if(cellCierre) cellCierre.style.display = 'none';
+        } else {
+            filaTarget.classList.remove('fila-descanso-activa');
+            cellHorario.removeAttribute('colspan');
+            cellHorario.className = '';
+            
+            let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hEntrada`) || "";
+            let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hSalida`) || "";
+            let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
+            let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
+
+            cellHorario.innerHTML = `
+                <div class="rango-horas">
+                    <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hEntrada', this.value)">
+                    <span>a</span>
+                    <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hSalida', this.value)">
+                </div>`;
+            
+            if(cellApertura) {
+                cellApertura.style.display = '';
+                cellApertura.innerHTML = `
+                    <div class="text-visualizador-container" id="view_apertura_${idLlaveBase}_d${diaIndice}">
+                        <span>${valApertura || '--'}</span>
+                        <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, 'apertura')">✏️</button>
                     </div>`;
-                
-                if(cellApertura) {
-                    cellApertura.style.display = '';
-                    const listaSucursalesSup = sucursalesData[supervisor] || [];
-                    let optionsApertura = `<option value="">-- No asignada --</option>`;
-                    listaSucursalesSup.forEach(suc => {
-                        optionsApertura += `<option value="${suc}" ${valApertura === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
-                    });
-                    cellApertura.innerHTML = `<select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_apertura', this.value)">${optionsApertura}</select>`;
-                }
-                
-                if(cellCierre) {
-                    cellCierre.style.display = '';
-                    const listaSucursalesSup = sucursalesData[supervisor] || [];
-                    let optionsCierre = `<option value="">-- No asignada --</option>`;
-                    listaSucursalesSup.forEach(suc => {
-                        optionsCierre += `<option value="${suc}" ${valCierre === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
-                    });
-                    cellCierre.innerHTML = `<select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_cierre', this.value)">${optionsCierre}</select>`;
-                }
+            }
+            if(cellCierre) {
+                cellCierre.style.display = '';
+                cellCierre.innerHTML = `
+                    <div class="text-visualizador-container" id="view_cierre_${idLlaveBase}_d${diaIndice}">
+                        <span>${valCierre || '--'}</span>
+                        <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, 'cierre')">✏️</button>
+                    </div>`;
             }
         }
     }
@@ -1061,8 +1086,7 @@
         const califTiendaInput = document.getElementById('califTienda').value;
 
         const reg = { 
-            action: 'guardar', 
-            s, 
+            action: 'guardar', s, 
             suc: document.getElementById('sucursal').value, 
             f: document.getElementById('fecha').value, 
             realizado: true, 
@@ -1076,10 +1100,8 @@
         });
         
         await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-        
         document.getElementById('califTienda').value = '';
         document.querySelectorAll('.kpi').forEach(c => { c.checked = false; c.parentElement.classList.remove('active'); });
-        
         setTimeout(cargarDatosNube, 1500);
     }
 
