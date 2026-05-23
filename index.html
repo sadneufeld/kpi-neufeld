@@ -148,23 +148,60 @@
         .semana-contenedor-general { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 35px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.04); }
         .semana-header-titulo { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         
-        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); gap: 25px; }
-        @media(max-width: 600px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
+        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(620px, 1fr)); gap: 25px; }
+        @media(max-width: 768px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
 
         .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); transition: transform 0.2s; }
         .supervisor-horario-card:hover { transform: translateY(-2px); }
         .supervisor-card-name { font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-neufeld)); padding: 14px 20px; }
         
-        .horario-input-text { width: 94%; padding: 8px 10px; border: 1px solid transparent; background: #f8fafc; border-radius: 6px; font-size: 0.85rem; text-align: left; transition: all 0.2s; color: var(--text-main); font-weight: 500; }
-        .horario-input-text:focus { border-color: var(--verde-neufeld); outline: none; background: #ffffff; box-shadow: 0 0 0 3px rgba(39,174,96,0.12); }
-        .horario-input-text::placeholder { color: #94a3b8; font-weight: 400; }
+        /* Selectores premium de Horas y Listas desplegables de Sucursales */
+        .horario-select, .horario-time {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .horario-select:focus, .horario-time:focus {
+            border-color: var(--verde-neufeld);
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(39,174,96,0.12);
+        }
+
+        .rango-horas {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+        .rango-horas span {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: bold;
+        }
         
-        /* Modos interactivos de Descanso */
-        tr.fila-descanso-activa { background-color: #f8fafc !important; color: #94a3b8; transition: all 0.3s ease; }
-        tr.fila-descanso-activa td { border-top-color: #f1f5f9; }
-        tr.fila-descanso-activa .horario-input-text { background-color: #f1f5f9; border-color: transparent; color: #94a3b8; text-decoration: line-through; font-style: italic; opacity: 0.6; }
+        /* Modos visuales interactivos para el Descanso */
+        tr.fila-descanso-activa { background-color: #f1f5f9 !important; transition: all 0.3s ease; }
+        .celda-descanso-texto {
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-style: italic;
+            font-size: 0.9rem;
+            text-align: center;
+            background: #e2e8f0;
+            border-radius: 6px;
+            padding: 6px 0;
+        }
         
-        /* Personalización de Checkbox interactivo */
         .checkbox-descanso-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--verde-neufeld); }
 
         .table-container-horario { overflow-x: auto; border: none; }
@@ -229,7 +266,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.2.0</div>
+    <div class="app-version-tag">Versión 1.3.0</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -428,7 +465,7 @@
                     </select>
                 </div>
                 <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; background: var(--bg-light); padding: 10px 15px; border-radius: 8px; border-left: 4px solid var(--verde-neufeld);">
-                    ✨ <strong>Tip Pro:</strong> Activa el descanso para inhabilitar momentáneamente el día; si te equivocaste, desmárcalo para editar de nuevo. Los cambios se guardan al instante.
+                    ✨ <strong>Diseño Premium:</strong> Al activar "Descanso", las celdas se fusionan automáticamente al centro. Horas con reloj nativo y sucursales filtradas por zona. Los cambios se guardan automáticamente.
                 </div>
             </div>
 
@@ -785,7 +822,7 @@
         });
     }
 
-    /* --- ENTORNO REESTRUCTURADO DE HORARIOS DINÁMICOS --- */
+    /* --- LOGICA Y LOGISTICA DE HORARIOS DINAMICOS PREMIUM --- */
     function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
         let semanas = [];
         let fechaPivote = new Date(ano, mesIndice, 1);
@@ -850,57 +887,63 @@
                     <table class="table-horario">
                         <thead>
                             <tr>
-                                <th style="text-align:left; width:130px;">Día / Fecha</th>
-                                <th style="width:110px;">Horario</th>
-                                <th style="width:130px;">Apertura</th>
-                                <th style="width:130px;">Cierre</th>
-                                <th>Anotaciones / Junta</th>
-                                <th style="width:75px;">Descanso</th>
+                                <th style="width: 15%; text-align: left; padding-left: 15px;">Día</th>
+                                <th style="width: 32%;">Horario (Entrada / Salida)</th>
+                                <th style="width: 21%;">Apertura</th>
+                                <th style="width: 21%;">Cierre</th>
+                                <th style="width: 11%;">Descanso</th>
                             </tr>
                         </thead>
                         <tbody>`;
+
+                const listaSucursalesSup = sucursalesData[sup] || [];
 
                 for(let d = 0; d < 7; d++) {
                     let dTmp = new Date(semana.inicio);
                     dTmp.setDate(dTmp.getDate() + d);
                     const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
 
-                    // Carga desde localStorage
-                    let isDescanso = localStorage.getItem(`${idLlaveBase}_dia_${d}_isDescanso`) === "true";
-                    let valHorario = localStorage.getItem(`${idLlaveBase}_dia_${d}_horario`) || "";
+                    let esDescanso = localStorage.getItem(`${idLlaveBase}_dia_${d}_isDescanso`) === "true";
+                    let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${d}_hEntrada`) || "";
+                    let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${d}_hSalida`) || "";
                     let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
                     let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${d}_cierre`) || "";
-                    let valNotas = localStorage.getItem(`${idLlaveBase}_dia_${d}_notas`) || "";
 
-                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${isDescanso ? 'fila-descanso-activa' : ''}">
-                        <td style="text-align:left; font-weight:700; color:var(--navy); background:#f8fafc;">${fechaStringFormateada}</td>
-                        <td>
-                            <input type="text" class="horario-input-text" placeholder="Turno" 
-                                value="${isDescanso ? 'DESCANSO AGENDADO' : valHorario}" ${isDescanso ? 'disabled' : ''}
-                                id="in_horario_${idLlaveBase}_d${d}"
-                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_horario', this.value)">
+                    let optionsApertura = `<option value="">-- No asignada --</option>`;
+                    let optionsCierre = `<option value="">-- No asignada --</option>`;
+                    listaSucursalesSup.forEach(suc => {
+                        optionsApertura += `<option value="${suc}" ${valApertura === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
+                        optionsCierre += `<option value="${suc}" ${valCierre === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
+                    });
+
+                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esDescanso ? 'fila-descanso-activa' : ''}">
+                        <td style="text-align:left; font-weight:700; color:var(--navy); padding-left: 15px;">${fechaStringFormateada}</td>
+                        
+                        <td id="cell_horario_${idLlaveBase}_d${d}" ${esDescanso ? 'colspan="3" class="celda-descanso-texto"' : ''}>
+                            ${esDescanso ? '💤 DESCANSO' : `
+                                <div class="rango-horas">
+                                    <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_hEntrada', this.value)">
+                                    <span>a</span>
+                                    <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_hSalida', this.value)">
+                                </div>
+                            `}
                         </td>
-                        <td>
-                            <input type="text" class="horario-input-text" placeholder="Sucursal" 
-                                value="${isDescanso ? '' : valApertura}" ${isDescanso ? 'disabled' : ''}
-                                id="in_apertura_${idLlaveBase}_d${d}"
-                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_apertura', this.value)">
+                        
+                        <td id="cell_apertura_${idLlaveBase}_d${d}" style="${esDescanso ? 'display: none;' : ''}">
+                            <select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_apertura', this.value)">
+                                ${optionsApertura}
+                            </select>
                         </td>
-                        <td>
-                            <input type="text" class="horario-input-text" placeholder="Sucursal" 
-                                value="${isDescanso ? '' : valCierre}" ${isDescanso ? 'disabled' : ''}
-                                id="in_cierre_${idLlaveBase}_d${d}"
-                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_cierre', this.value)">
+                        
+                        <td id="cell_cierre_${idLlaveBase}_d${d}" style="${esDescanso ? 'display: none;' : ''}">
+                            <select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_cierre', this.value)">
+                                ${optionsCierre}
+                            </select>
                         </td>
+                        
                         <td>
-                            <input type="text" class="horario-input-text" placeholder="Observaciones..." 
-                                value="${isDescanso ? '' : valNotas}" ${isDescanso ? 'disabled' : ''}
-                                id="in_notas_${idLlaveBase}_d${d}"
-                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_notas', this.value)">
-                        </td>
-                        <td style="background:#f8fafc;">
-                            <input type="checkbox" class="checkbox-descanso-custom" ${isDescanso ? 'checked' : ''} 
-                                onchange="alternarDescansoDiaFila('${idLlaveBase}', ${d}, this.checked)">
+                            <input type="checkbox" class="checkbox-descanso-custom" ${esDescanso ? 'checked' : ''} 
+                                onchange="alternarDescansoDiaFila('${idLlaveBase}', ${d}, this.checked, '${sup}')">
                         </td>
                     </tr>`;
                 }
@@ -923,36 +966,61 @@
         localStorage.setItem(llaveStorage, valor);
     }
 
-    // Alternador interactivo sin bloqueo permanente
-    function alternarDescansoDiaFila(idLlaveBase, diaIndice, checado) {
+    function alternarDescansoDiaFila(idLlaveBase, diaIndice, checado, supervisor) {
         localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_isDescanso`, checado);
         
         const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
-        const inHorario = document.getElementById(`in_horario_${idLlaveBase}_d${diaIndice}`);
-        const inApertura = document.getElementById(`in_apertura_${idLlaveBase}_d${diaIndice}`);
-        const inCierre = document.getElementById(`in_cierre_${idLlaveBase}_d${diaIndice}`);
-        const inNotas = document.getElementById(`in_notas_${idLlaveBase}_d${diaIndice}`);
+        const cellHorario = document.getElementById(`cell_horario_${idLlaveBase}_d${diaIndice}`);
+        const cellApertura = document.getElementById(`cell_apertura_${idLlaveBase}_d${diaIndice}`);
+        const cellCierre = document.getElementById(`cell_cierre_${idLlaveBase}_d${diaIndice}`);
 
         if(filaTarget) {
             if(checado) {
                 filaTarget.classList.add('fila-descanso-activa');
-                if(inHorario) { inHorario.disabled = true; inHorario.value = "DESCANSO AGENDADO"; }
-                if(inApertura) { inApertura.disabled = true; inApertura.value = ""; }
-                if(inCierre) { inCierre.disabled = true; inCierre.value = ""; }
-                if(inNotas) { inNotas.disabled = true; inNotas.value = ""; }
+                
+                cellHorario.setAttribute('colspan', '3');
+                cellHorario.className = 'celda-descanso-texto';
+                cellHorario.innerHTML = '💤 DESCANSO';
+                
+                if(cellApertura) cellApertura.style.display = 'none';
+                if(cellCierre) cellCierre.style.display = 'none';
             } else {
                 filaTarget.classList.remove('fila-descanso-activa');
                 
-                // Al desmarcar, recuperamos lo que el usuario tenía antes si es que existía
-                let valHorarioOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_horario`) || "";
-                let valAperturaOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
-                let valCierreOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
-                let valNotasOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_notas`) || "";
+                cellHorario.removeAttribute('colspan');
+                cellHorario.className = '';
+                
+                let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hEntrada`) || "";
+                let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hSalida`) || "";
+                let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
+                let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
 
-                if(inHorario) { inHorario.disabled = false; inHorario.value = valHorarioOld; }
-                if(inApertura) { inApertura.disabled = false; inApertura.value = valAperturaOld; }
-                if(inCierre) { inCierre.disabled = false; inCierre.value = valCierreOld; }
-                if(inNotas) { inNotas.disabled = false; inNotas.value = valNotasOld; }
+                cellHorario.innerHTML = `
+                    <div class="rango-horas">
+                        <input type="time" class="horario-time" value="${hEntrada}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hEntrada', this.value)">
+                        <span>a</span>
+                        <input type="time" class="horario-time" value="${hSalida}" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_hSalida', this.value)">
+                    </div>`;
+                
+                if(cellApertura) {
+                    cellApertura.style.display = '';
+                    const listaSucursalesSup = sucursalesData[supervisor] || [];
+                    let optionsApertura = `<option value="">-- No asignada --</option>`;
+                    listaSucursalesSup.forEach(suc => {
+                        optionsApertura += `<option value="${suc}" ${valApertura === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
+                    });
+                    cellApertura.innerHTML = `<select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_apertura', this.value)">${optionsApertura}</select>`;
+                }
+                
+                if(cellCierre) {
+                    cellCierre.style.display = '';
+                    const listaSucursalesSup = sucursalesData[supervisor] || [];
+                    let optionsCierre = `<option value="">-- No asignada --</option>`;
+                    listaSucursalesSup.forEach(suc => {
+                        optionsCierre += `<option value="${suc}" ${valCierre === suc ? 'selected' : ''}>${suc.split(' - ')[0]}</option>`;
+                    });
+                    cellCierre.innerHTML = `<select class="horario-select" onchange="guardarCeldaHorario('${idLlaveBase}_dia_${diaIndice}_cierre', this.value)">${optionsCierre}</select>`;
+                }
             }
         }
     }
