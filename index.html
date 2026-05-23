@@ -21,7 +21,7 @@
         }
 
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
             background-color: var(--bg-light); 
             color: var(--text-main); 
             margin: 0; 
@@ -112,7 +112,7 @@
         .input-group { display: flex; flex-direction: column; gap: 8px; }
         .input-group label { font-size: 0.85em; font-weight: 600; color: #64748b; text-transform: uppercase; }
 
-        .filtros-grafica-sucursal { display: flex; gap: 15px; background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; border: 1px solid var(--border); }
+        .filtros-grafica-sucursal { display: flex; gap: 15px; background: #ffffff; padding: 20px; border-radius: 14px; margin-bottom: 25px; align-items: center; flex-wrap: wrap; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; margin-bottom: 20px; }
         .kpi-card { 
@@ -144,23 +144,35 @@
         .ranking-name { font-weight: 600; font-size: 0.85em; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ranking-score { font-size: 0.8em; font-weight: bold; color: var(--verde-neufeld); }
 
-        /* --- NUEVO DISEÑO DE BLOQUES DE HORARIOS (ESTILO IMAGEN) --- */
-        .semana-contenedor-general { background: #f1f5f9; border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 35px; }
-        .semana-header-titulo { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        /* --- NUEVO ENTORNO DE HORARIOS ULTRA-MODERNO --- */
+        .semana-contenedor-general { background: #ffffff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 35px; box-shadow: 0 10px 15px -3px rgba(15,23,42,0.04); }
+        .semana-header-titulo { font-size: 1.25rem; font-weight: 800; color: var(--navy); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         
-        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; }
+        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); gap: 25px; }
         @media(max-width: 600px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
 
-        .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .supervisor-card-name { font-size: 1rem; font-weight: 700; color: var(--verde-oscuro); margin: 0 0 10px 0; display: flex; justify-content: space-between; align-items: center; background: var(--verde-claro); padding: 8px 12px; border-radius: 8px; }
+        .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); transition: transform 0.2s; }
+        .supervisor-horario-card:hover { transform: translateY(-2px); }
+        .supervisor-card-name { font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-neufeld)); padding: 14px 20px; }
         
-        .horario-input-text { width: 92%; padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.82rem; text-align: left; }
-        .horario-input-text:focus { border-color: var(--verde-neufeld); outline: none; background: #fff; }
+        .horario-input-text { width: 94%; padding: 8px 10px; border: 1px solid transparent; background: #f8fafc; border-radius: 6px; font-size: 0.85rem; text-align: left; transition: all 0.2s; color: var(--text-main); font-weight: 500; }
+        .horario-input-text:focus { border-color: var(--verde-neufeld); outline: none; background: #ffffff; box-shadow: 0 0 0 3px rgba(39,174,96,0.12); }
+        .horario-input-text::placeholder { color: #94a3b8; font-weight: 400; }
         
-        /* Fila de descanso activa */
-        tr.fila-descanso-activa { background-color: #f1f5f9 !important; color: #94a3b8; }
-        tr.fila-descanso-activa input { background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; pointer-events: none; }
+        /* Modos interactivos de Descanso */
+        tr.fila-descanso-activa { background-color: #f8fafc !important; color: #94a3b8; transition: all 0.3s ease; }
+        tr.fila-descanso-activa td { border-top-color: #f1f5f9; }
+        tr.fila-descanso-activa .horario-input-text { background-color: #f1f5f9; border-color: transparent; color: #94a3b8; text-decoration: line-through; font-style: italic; opacity: 0.6; }
+        
+        /* Personalización de Checkbox interactivo */
+        .checkbox-descanso-custom { width: 18px; height: 18px; cursor: pointer; accent-color: var(--verde-neufeld); }
 
+        .table-container-horario { overflow-x: auto; border: none; }
+        .table-horario { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+        .table-horario th { background: #f8fafc; color: #64748b; padding: 14px 12px; text-align: center; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        .table-horario td { padding: 10px 12px; border-top: 1px solid #f1f5f9; text-align: center; vertical-align: middle; }
+        .table-horario tr:hover { background-color: #fcfdfe; }
+        
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 100%; }
         th { background: #f1f5f9; color: var(--navy); padding: 12px; text-align: center; font-weight: 700; }
@@ -217,7 +229,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.3</div>
+    <div class="app-version-tag">Versión 1.2.0</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -403,10 +415,10 @@
         </div>
 
         <div id="tab-horarios" class="tab-content">
-            <div class="filtros-grafica-sucursal" style="background: white; margin-bottom: 20px;">
-                <div style="display:flex; flex-direction:column; gap:4px; min-width: 250px;">
-                    <label style="font-size:0.85rem; font-weight:bold; color:var(--navy);">Filtrar por Supervisor:</label>
-                    <select id="filtroHorarioSupervisor" onchange="renderizarBloquesHorarios()">
+            <div class="filtros-grafica-sucursal">
+                <div style="display:flex; flex-direction:column; gap:6px; min-width: 280px;">
+                    <label style="font-size:0.85rem; font-weight:bold; color:var(--navy);">Filtrar Vista por Supervisor:</label>
+                    <select id="filtroHorarioSupervisor" onchange="renderizarBloquesHorarios()" style="width: 100%;">
                         <option value="TODOS">-- Todos los Supervisores --</option>
                         <option value="ADRIANA">Adriana</option>
                         <option value="CITLALLI">Citlalli</option>
@@ -415,8 +427,8 @@
                         <option value="NOEMI">Noemi</option>
                     </select>
                 </div>
-                <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; font-style: italic;">
-                    💡 Marcar "Descanso" sombreará la fila completa. Los cambios se guardan automáticamente.
+                <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; background: var(--bg-light); padding: 10px 15px; border-radius: 8px; border-left: 4px solid var(--verde-neufeld);">
+                    ✨ <strong>Tip Pro:</strong> Activa el descanso para inhabilitar momentáneamente el día; si te equivocaste, desmárcalo para editar de nuevo. Los cambios se guardan al instante.
                 </div>
             </div>
 
@@ -432,7 +444,6 @@
     let datosGlobales = [];
     let comparativaChart = null;
     let sucursalesLineChart = null; 
-    let radaresInstancias = {};
 
     const listadoSupervisores = ["ADRIANA", "CITLALLI", "KARLA", "LEONARDO", "NOEMI"];
 
@@ -774,7 +785,7 @@
         });
     }
 
-    /* --- LÓGICA DE HORARIOS MEJORADA (ESTILO VERTICAL POR SUPERVISOR / IMAGEN) --- */
+    /* --- ENTORNO REESTRUCTURADO DE HORARIOS DINÁMICOS --- */
     function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
         let semanas = [];
         let fechaPivote = new Date(ano, mesIndice, 1);
@@ -812,15 +823,13 @@
             const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
             const strFin = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
             
-            // Contenedor de la semana
             const semanaBloqueGeneral = document.createElement('div');
             semanaBloqueGeneral.className = 'semana-contenedor-general';
             
             semanaBloqueGeneral.innerHTML = `<div class="semana-header-titulo">
-                📅 Semana ${indiceSemana + 1} (del ${strInicio} al ${strFin})
+                📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
             </div>`;
 
-            // Grid interior para acomodar las tarjetas de supervisores lado a lado
             const gridSupervisores = document.createElement('div');
             gridSupervisores.className = 'grid-bloques-supervisores';
 
@@ -834,30 +843,29 @@
 
                 let htmlCard = `<div class="supervisor-card-name">
                     <span>👤 ${sup}</span>
-                    <span style="font-size:0.75rem; font-weight:normal; opacity:0.8;">Horario Semanal</span>
+                    <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Neufeld Team</span>
                 </div>`;
 
-                htmlCard += `<div class="table-container" style="margin-top:0; border:none;">
-                    <table>
+                htmlCard += `<div class="table-container-horario">
+                    <table class="table-horario">
                         <thead>
                             <tr>
-                                <th style="text-align:left; width:130px; background:#f8fafc;">Día / Fecha</th>
-                                <th style="width:100px;">Horario</th>
+                                <th style="text-align:left; width:130px;">Día / Fecha</th>
+                                <th style="width:110px;">Horario</th>
                                 <th style="width:130px;">Apertura</th>
                                 <th style="width:130px;">Cierre</th>
                                 <th>Anotaciones / Junta</th>
-                                <th style="width:75px; background:#f8fafc;">Descanso</th>
+                                <th style="width:75px;">Descanso</th>
                             </tr>
                         </thead>
                         <tbody>`;
 
-                // Construcción vertical de los 7 días
                 for(let d = 0; d < 7; d++) {
                     let dTmp = new Date(semana.inicio);
                     dTmp.setDate(dTmp.getDate() + d);
                     const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
 
-                    // Carga de Storage
+                    // Carga desde localStorage
                     let isDescanso = localStorage.getItem(`${idLlaveBase}_dia_${d}_isDescanso`) === "true";
                     let valHorario = localStorage.getItem(`${idLlaveBase}_dia_${d}_horario`) || "";
                     let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
@@ -865,29 +873,33 @@
                     let valNotas = localStorage.getItem(`${idLlaveBase}_dia_${d}_notas`) || "";
 
                     htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${isDescanso ? 'fila-descanso-activa' : ''}">
-                        <td style="text-align:left; font-weight:600; background:#f8fafc;">${fechaStringFormateada}</td>
+                        <td style="text-align:left; font-weight:700; color:var(--navy); background:#f8fafc;">${fechaStringFormateada}</td>
                         <td>
-                            <input type="text" class="horario-input-text" placeholder="Turno..." 
-                                value="${valHorario}" ${isDescanso ? 'disabled' : ''}
+                            <input type="text" class="horario-input-text" placeholder="Turno" 
+                                value="${isDescanso ? 'DESCANSO AGENDADO' : valHorario}" ${isDescanso ? 'disabled' : ''}
+                                id="in_horario_${idLlaveBase}_d${d}"
                                 onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_horario', this.value)">
                         </td>
                         <td>
-                            <input type="text" class="horario-input-text" placeholder="Sucursales..." 
-                                value="${valApertura}" ${isDescanso ? 'disabled' : ''}
+                            <input type="text" class="horario-input-text" placeholder="Sucursal" 
+                                value="${isDescanso ? '' : valApertura}" ${isDescanso ? 'disabled' : ''}
+                                id="in_apertura_${idLlaveBase}_d${d}"
                                 onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_apertura', this.value)">
                         </td>
                         <td>
-                            <input type="text" class="horario-input-text" placeholder="Sucursales..." 
-                                value="${valCierre}" ${isDescanso ? 'disabled' : ''}
+                            <input type="text" class="horario-input-text" placeholder="Sucursal" 
+                                value="${isDescanso ? '' : valCierre}" ${isDescanso ? 'disabled' : ''}
+                                id="in_cierre_${idLlaveBase}_d${d}"
                                 onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_cierre', this.value)">
                         </td>
                         <td>
-                            <input type="text" class="horario-input-text" placeholder="Notas / Juntas..." 
-                                value="${valNotas}" ${isDescanso ? 'disabled' : ''}
+                            <input type="text" class="horario-input-text" placeholder="Observaciones..." 
+                                value="${isDescanso ? '' : valNotas}" ${isDescanso ? 'disabled' : ''}
+                                id="in_notas_${idLlaveBase}_d${d}"
                                 onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_notas', this.value)">
                         </td>
                         <td style="background:#f8fafc;">
-                            <input type="checkbox" ${isDescanso ? 'checked' : ''} 
+                            <input type="checkbox" class="checkbox-descanso-custom" ${isDescanso ? 'checked' : ''} 
                                 onchange="alternarDescansoDiaFila('${idLlaveBase}', ${d}, this.checked)">
                         </td>
                     </tr>`;
@@ -903,28 +915,44 @@
         });
 
         if (semanas.length === 0) {
-            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No hay semanas calculadas para el mes actual.</p>`;
+            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No hay semanas calculadas.</p>`;
         }
     }
 
-    // Guardado automático dinámico
     function guardarCeldaHorario(llaveStorage, valor) {
         localStorage.setItem(llaveStorage, valor);
     }
 
-    // Manejo interactivo del Checkbox de Descanso estilo imagen
+    // Alternador interactivo sin bloqueo permanente
     function alternarDescansoDiaFila(idLlaveBase, diaIndice, checado) {
         localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_isDescanso`, checado);
         
         const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
+        const inHorario = document.getElementById(`in_horario_${idLlaveBase}_d${diaIndice}`);
+        const inApertura = document.getElementById(`in_apertura_${idLlaveBase}_d${diaIndice}`);
+        const inCierre = document.getElementById(`in_cierre_${idLlaveBase}_d${diaIndice}`);
+        const inNotas = document.getElementById(`in_notas_${idLlaveBase}_d${diaIndice}`);
+
         if(filaTarget) {
-            const inputs = filaTarget.querySelectorAll('.horario-input-text');
             if(checado) {
                 filaTarget.classList.add('fila-descanso-activa');
-                inputs.forEach(inp => { inp.disabled = true; });
+                if(inHorario) { inHorario.disabled = true; inHorario.value = "DESCANSO AGENDADO"; }
+                if(inApertura) { inApertura.disabled = true; inApertura.value = ""; }
+                if(inCierre) { inCierre.disabled = true; inCierre.value = ""; }
+                if(inNotas) { inNotas.disabled = true; inNotas.value = ""; }
             } else {
                 filaTarget.classList.remove('fila-descanso-activa');
-                inputs.forEach(inp => { inp.disabled = false; });
+                
+                // Al desmarcar, recuperamos lo que el usuario tenía antes si es que existía
+                let valHorarioOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_horario`) || "";
+                let valAperturaOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
+                let valCierreOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
+                let valNotasOld = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_notas`) || "";
+
+                if(inHorario) { inHorario.disabled = false; inHorario.value = valHorarioOld; }
+                if(inApertura) { inApertura.disabled = false; inApertura.value = valAperturaOld; }
+                if(inCierre) { inCierre.disabled = false; inCierre.value = valCierreOld; }
+                if(inNotas) { inNotas.disabled = false; inNotas.value = valNotasOld; }
             }
         }
     }
