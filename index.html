@@ -144,15 +144,25 @@
         .ranking-name { font-weight: 600; font-size: 0.85em; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .ranking-score { font-size: 0.8em; font-weight: bold; color: var(--verde-neufeld); }
 
-        /* Contenedores de Horarios */
-        .semana-bloque { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
-        .semana-titulo { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--verde-claro); display: flex; justify-content: space-between; }
-        .horario-input-celda { width: 94%; padding: 6px; border: 1px solid transparent; border-radius: 4px; font-size: 0.85rem; text-align: center; background: transparent; }
-        .horario-input-celda:focus { border-color: var(--verde-neufeld); background: #ffffff; outline: none; box-shadow: 0 0 4px rgba(39,174,96,0.2); }
-        .horario-select-descanso { width: 100%; padding: 4px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.8rem; background-color: #fafafa; }
+        /* --- NUEVO DISEÑO DE BLOQUES DE HORARIOS (ESTILO IMAGEN) --- */
+        .semana-contenedor-general { background: #f1f5f9; border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 35px; }
+        .semana-header-titulo { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        
+        .grid-bloques-supervisores { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 20px; }
+        @media(max-width: 600px) { .grid-bloques-supervisores { grid-template-columns: 1fr; } }
+
+        .supervisor-horario-card { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .supervisor-card-name { font-size: 1rem; font-weight: 700; color: var(--verde-oscuro); margin: 0 0 10px 0; display: flex; justify-content: space-between; align-items: center; background: var(--verde-claro); padding: 8px 12px; border-radius: 8px; }
+        
+        .horario-input-text { width: 92%; padding: 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.82rem; text-align: left; }
+        .horario-input-text:focus { border-color: var(--verde-neufeld); outline: none; background: #fff; }
+        
+        /* Fila de descanso activa */
+        tr.fila-descanso-activa { background-color: #f1f5f9 !important; color: #94a3b8; }
+        tr.fila-descanso-activa input { background-color: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; pointer-events: none; }
 
         .table-container { overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border); background: white; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 1100px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85em; min-width: 100%; }
         th { background: #f1f5f9; color: var(--navy); padding: 12px; text-align: center; font-weight: 700; }
         td { padding: 11px 12px; border-top: 1px solid var(--border); text-align: center; }
         tr:hover { background-color: #f8fafc; }
@@ -207,7 +217,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.2</div>
+    <div class="app-version-tag">Versión 1.1.3</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -406,7 +416,7 @@
                     </select>
                 </div>
                 <div style="font-size: 0.85rem; color: #64748b; margin-left: auto; font-style: italic;">
-                    💡 Los cambios y textos de los horarios se guardan automáticamente.
+                    💡 Marcar "Descanso" sombreará la fila completa. Los cambios se guardan automáticamente.
                 </div>
             </div>
 
@@ -764,29 +774,23 @@
         });
     }
 
-    /* --- LÓGICA EXCLUSIVA PARA LA GENERACIÓN DE HORARIOS (MIERCOLES A MARTES) --- */
+    /* --- LÓGICA DE HORARIOS MEJORADA (ESTILO VERTICAL POR SUPERVISOR / IMAGEN) --- */
     function obtenerSemanasMesMiercolesAMartes(ano, mesIndice) {
         let semanas = [];
-        // Buscar el primer miércoles que define el inicio o coincidencia del mes
         let fechaPivote = new Date(ano, mesIndice, 1);
         
-        // Retroceder hasta encontrar el miércoles anterior más cercano para armar ciclos completos de Mié-Mar
         while(fechaPivote.getDay() !== 3) {
             fechaPivote.setDate(fechaPivote.getDate() - 1);
         }
 
-        // Generar rangos hasta sobrepasar el mes de análisis
         for (let k = 0; k < 6; k++) {
             let inicioSemana = new Date(fechaPivote);
             let finSemana = new Date(fechaPivote);
             finSemana.setDate(finSemana.getDate() + 6);
 
-            // Criterio: La semana debe tener al menos un día dentro del mes actual seleccionado
             if (inicioSemana.getMonth() === mesIndice || finSemana.getMonth() === mesIndice) {
                 semanas.push({ inicio: inicioSemana, fin: finSemana });
             }
-            
-            // Avanzar a la siguiente semana
             fechaPivote.setDate(fechaPivote.getDate() + 7);
         }
         return semanas;
@@ -801,111 +805,128 @@
         const supervisorFiltrado = document.getElementById('filtroHorarioSupervisor').value;
         const anoActual = new Date().getFullYear();
 
-        // Obtener los rangos de fechas (miércoles a martes)
         const semanas = obtenerSemanasMesMiercolesAMartes(anoActual, mesSeleccionado);
-        const diasSemanaNombres = ["Mié", "Jue", "Vie", "Sáb", "Dom", "Lun", "Mar"];
+        const diasNombres = ["Miércoles", "Jueves", "Viernes", "Sábado", "Domingo", "Lunes", "Martes"];
 
         semanas.forEach((semana, indiceSemana) => {
             const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
-            const strFin = banana = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+            const strFin = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
             
-            const bloque = document.createElement('div');
-            bloque.className = 'semana-bloque';
+            // Contenedor de la semana
+            const semanaBloqueGeneral = document.createElement('div');
+            semanaBloqueGeneral.className = 'semana-contenedor-general';
             
-            let htmlTitulo = `<div class="semana-titulo">
-                <span>📅 Semana ${indiceSemana + 1}: del ${strInicio} al ${strFin}</span>
-                <span style="font-size:0.8rem; color:var(--verde-neufeld);">Horario Semanal</span>
+            semanaBloqueGeneral.innerHTML = `<div class="semana-header-titulo">
+                📅 Semana ${indiceSemana + 1} (del ${strInicio} al ${strFin})
             </div>`;
-            
-            let htmlTablaHeader = `<div class="table-container" style="margin-top:0;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:140px; background:#e2e8f0;">Supervisor</th>`;
-            
-            // Construir dinámicamente las columnas de los 7 días con su fecha numérica
-            let listaFechasDias = [];
-            for(let d=0; d<7; d++) {
-                let dTmp = new Date(semana.inicio);
-                dTmp.setDate(dTmp.getDate() + d);
-                listaFechasDias.push(dTmp.getDate());
-                htmlTablaHeader += `<th style="width:90px;">${diasSemanaNombres[d]} ${dTmp.getDate()}</th>`;
-            }
 
-            htmlTablaHeader += `
-                            <th style="width:110px; background:#f8fafc;">Descanso</th>
-                            <th style="width:120px;">Apertura</th>
-                            <th style="width:120px;">Cierre</th>
-                            <th>Anotaciones / Junta</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+            // Grid interior para acomodar las tarjetas de supervisores lado a lado
+            const gridSupervisores = document.createElement('div');
+            gridSupervisores.className = 'grid-bloques-supervisores';
 
             let supsAMostrar = supervisorFiltrado === "TODOS" ? listadoSupervisores : [supervisorFiltrado];
-            let filasContenido = "";
 
             supsAMostrar.forEach(sup => {
                 const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
+                
+                const cardSupervisor = document.createElement('div');
+                cardSupervisor.className = 'supervisor-horario-card';
 
-                // Cargar valores desde el almacenamiento local persistente (localStorage)
-                let valDescanso = localStorage.getItem(`${idLlaveBase}_descanso`) || "";
-                let valApertura = localStorage.getItem(`${idLlaveBase}_apertura`) || "";
-                let valCierre = localStorage.getItem(`${idLlaveBase}_cierre`) || "";
-                let valNotas = localStorage.getItem(`${idLlaveBase}_notas`) || "";
+                let htmlCard = `<div class="supervisor-card-name">
+                    <span>👤 ${sup}</span>
+                    <span style="font-size:0.75rem; font-weight:normal; opacity:0.8;">Horario Semanal</span>
+                </div>`;
 
-                filasContenido += `<tr>
-                    <td style="font-weight:700; text-align:left; color:var(--navy); background:#f8fafc;">${sup}</td>`;
+                htmlCard += `<div class="table-container" style="margin-top:0; border:none;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:left; width:130px; background:#f8fafc;">Día / Fecha</th>
+                                <th style="width:100px;">Horario</th>
+                                <th style="width:130px;">Apertura</th>
+                                <th style="width:130px;">Cierre</th>
+                                <th>Anotaciones / Junta</th>
+                                <th style="width:75px; background:#f8fafc;">Descanso</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
 
-                // Celdas para cada uno de los 7 días correspondientes
-                for(let d=0; d<7; d++) {
-                    let valDia = localStorage.getItem(`${idLlaveBase}_dia_${d}`) || "";
-                    filasContenido += `<td>
-                        <input type="text" class="horario-input-celda" 
-                            placeholder="-" value="${valDia}"
-                            onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}', this.value)">
-                    </td>`;
+                // Construcción vertical de los 7 días
+                for(let d = 0; d < 7; d++) {
+                    let dTmp = new Date(semana.inicio);
+                    dTmp.setDate(dTmp.getDate() + d);
+                    const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
+
+                    // Carga de Storage
+                    let isDescanso = localStorage.getItem(`${idLlaveBase}_dia_${d}_isDescanso`) === "true";
+                    let valHorario = localStorage.getItem(`${idLlaveBase}_dia_${d}_horario`) || "";
+                    let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
+                    let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${d}_cierre`) || "";
+                    let valNotas = localStorage.getItem(`${idLlaveBase}_dia_${d}_notas`) || "";
+
+                    htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${isDescanso ? 'fila-descanso-activa' : ''}">
+                        <td style="text-align:left; font-weight:600; background:#f8fafc;">${fechaStringFormateada}</td>
+                        <td>
+                            <input type="text" class="horario-input-text" placeholder="Turno..." 
+                                value="${valHorario}" ${isDescanso ? 'disabled' : ''}
+                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_horario', this.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="horario-input-text" placeholder="Sucursales..." 
+                                value="${valApertura}" ${isDescanso ? 'disabled' : ''}
+                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_apertura', this.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="horario-input-text" placeholder="Sucursales..." 
+                                value="${valCierre}" ${isDescanso ? 'disabled' : ''}
+                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_cierre', this.value)">
+                        </td>
+                        <td>
+                            <input type="text" class="horario-input-text" placeholder="Notas / Juntas..." 
+                                value="${valNotas}" ${isDescanso ? 'disabled' : ''}
+                                onchange="guardarCeldaHorario('${idLlaveBase}_dia_${d}_notas', this.value)">
+                        </td>
+                        <td style="background:#f8fafc;">
+                            <input type="checkbox" ${isDescanso ? 'checked' : ''} 
+                                onchange="alternarDescansoDiaFila('${idLlaveBase}', ${d}, this.checked)">
+                        </td>
+                    </tr>`;
                 }
 
-                // Selector de Descanso
-                filasContenido += `<td style="background:#f8fafc;">
-                    <select class="horario-select-descanso" onchange="guardarCeldaHorario('${idLlaveBase}_descanso', this.value)">
-                        <option value="">--</option>
-                        ${diasSemanaNombres.map(dName => `<option value="${dName}" ${valDescanso === dName ? 'selected' : ''}>${dName}</option>`).join('')}
-                    </select>
-                </td>`;
-
-                // Celda Apertura
-                filasContenido += `<td>
-                    <input type="text" class="horario-input-celda" placeholder="Apertura..." value="${valApertura}" onchange="guardarCeldaHorario('${idLlaveBase}_apertura', this.value)">
-                </td>`;
-                
-                // Celda Cierre
-                filasContenido += `<td>
-                    <input type="text" class="horario-input-celda" placeholder="Cierre..." value="${valCierre}" onchange="guardarCeldaHorario('${idLlaveBase}_cierre', this.value)">
-                </td>`;
-
-                // Celda Notas / Junta
-                filasContenido += `<td>
-                    <input type="text" class="horario-input-celda" style="text-align:left;" placeholder="Anotaciones generales o juntas..." value="${valNotas}" onchange="guardarCeldaHorario('${idLlaveBase}_notas', this.value)">
-                </td>`;
-
-                filasContenido += `</tr>`;
+                htmlCard += `</tbody></table></div>`;
+                cardSupervisor.innerHTML = htmlCard;
+                gridSupervisores.appendChild(cardSupervisor);
             });
 
-            let htmlTablaCierre = `</tbody></table></div>`;
-            
-            bloque.innerHTML = htmlTitulo + htmlTablaHeader + filasContenido + htmlTablaCierre;
-            contenedor.appendChild(bloque);
+            semanaBloqueGeneral.appendChild(gridSupervisores);
+            contenedor.appendChild(semanaBloqueGeneral);
         });
 
         if (semanas.length === 0) {
-            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No se pudieron procesar semanas para este mes.</p>`;
+            contenedor.innerHTML = `<p style="text-align:center; padding:20px; color:#64748b;">No hay semanas calculadas para el mes actual.</p>`;
         }
     }
 
-    // Guardado persistente automático en localStorage
+    // Guardado automático dinámico
     function guardarCeldaHorario(llaveStorage, valor) {
         localStorage.setItem(llaveStorage, valor);
+    }
+
+    // Manejo interactivo del Checkbox de Descanso estilo imagen
+    function alternarDescansoDiaFila(idLlaveBase, diaIndice, checado) {
+        localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_isDescanso`, checado);
+        
+        const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
+        if(filaTarget) {
+            const inputs = filaTarget.querySelectorAll('.horario-input-text');
+            if(checado) {
+                filaTarget.classList.add('fila-descanso-activa');
+                inputs.forEach(inp => { inp.disabled = true; });
+            } else {
+                filaTarget.classList.remove('fila-descanso-activa');
+                inputs.forEach(inp => { inp.disabled = false; });
+            }
+        }
     }
 
     function filterTable(filterRowId, tbodyId) {
