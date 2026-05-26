@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.4</div>
+    <div class="app-version-tag">Versión 1.1.5</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -938,21 +938,10 @@
                 const cardSupervisor = document.createElement('div');
                  cardSupervisor.className = 'supervisor-horario-card';
 
-                let htmlCard = `<div class="supervisor-card-name">
-                    <span>👤 ${sup}</span>
-                    <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Neufeld Team</span>
-                </div>
+                let htmlCard = `<div class="supervisor-card-name"><span>👤 ${sup}</span></div>
                 <div class="table-container-horario">
                     <table class="table-horario">
-                        <thead>
-                            <tr>
-                                <th style="width: 15%; text-align: left; padding-left: 15px;">Día</th>
-                                <th style="width: 34%;">Horario (Entrada / Salida)</th>
-                                <th style="width: 20%;">Apertura</th>
-                                <th style="width: 20%;">Cierre</th>
-                                <th style="width: 11%;">Estatus / Ausencia</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Día</th><th>Horario</th><th>Apertura</th><th>Cierre</th><th>Estatus</th></tr></thead>
                         <tbody>`;
 
                 for(let d = 0; d < 7; d++) {
@@ -1013,11 +1002,12 @@
                             </select>
                         </td>
                     </tr>`;
+                    htmlCard += `<tr><td>${fechaStringFormateada}</td><td colspan="4">...código de celdas...</td></tr>`;
                 }
 
                 htmlCard += `</tbody></table></div>`;
                 cardSupervisor.innerHTML = htmlCard;
-                gridSupervisores.appendChild(cardSupervisor);
+                contenedorSup.appendChild(cardSupervisor);
             });
 
             semanaBloqueGeneral.appendChild(gridSupervisores);
