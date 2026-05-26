@@ -261,6 +261,19 @@
             padding: 8px 0;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
         }
+
+        /* Nuevo contenedor para agrupar las semanas */
+        .grid-semanas-contenedor {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+            gap: 25px;
+        }
+
+        @media(max-width: 1200px) {
+            .grid-semanas-contenedor {
+                grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+            }
+        }
         
         .table-container-horario { overflow-x: auto; border: none; }
         .table-horario { width: 100%; border-collapse: collapse; font-size: 0.88em; }
@@ -888,7 +901,10 @@
     function renderizarBloquesHorarios() {
         const contenedor = document.getElementById('contenedorBloquesHorarios');
         if(!contenedor) return;
-        contenedor.innerHTML = '';
+    
+        // Crear el grid principal de semanas una sola vez
+        contenedor.innerHTML = '<div class="grid-semanas-contenedor" id="gridSemanas"></div>';
+        const gridSemanas = document.getElementById('gridSemanas');
 
         const mesSeleccionado = parseInt(document.getElementById('filtroMes').value);
         const supervisorFiltrado = document.getElementById('filtroHorarioSupervisor').value;
@@ -900,22 +916,27 @@
         semanas.forEach((semana, indiceSemana) => {
             const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
             const strFin = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
-            
-            const semanaBloqueGeneral = document.createElement('div');
-            semanaBloqueGeneral.className = 'semana-contenedor-general';
-            semanaBloqueGeneral.innerHTML = `<div class="semana-header-titulo">
-                📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
-            </div>`;
-
-            const gridSupervisores = document.createElement('div');
-            gridSupervisores.className = 'grid-bloques-supervisores';
-
+        
+             // Creamos un contenedor para la semana
+            const bloqueSemana = document.createElement('div');
+            bloqueSemana.className = 'semana-contenedor-general'; // Mantiene tus estilos de tarjeta
+            bloqueSemana.innerHTML = `
+                <div class="semana-header-titulo">
+                    📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
+                </div>
+                <div class="grid-bloques-supervisores" id="supervisores_sem_${indiceSemana}"></div>
+            `;
+        
+            gridSemanas.appendChild(bloqueSemana);
+        
+            // Lógica para llenar los supervisores dentro de este bloque de semana (igual a como lo tenías)
+            const contenedorSup = document.getElementById(`supervisores_sem_${indiceSemana}`);
             let supsAMostrar = supervisorFiltrado === "TODOS" ? listadoSupervisores : [supervisorFiltrado];
 
             supsAMostrar.forEach(sup => {
                 const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
                 const cardSupervisor = document.createElement('div');
-                cardSupervisor.className = 'supervisor-horario-card';
+                 cardSupervisor.className = 'supervisor-horario-card';
 
                 let htmlCard = `<div class="supervisor-card-name">
                     <span>👤 ${sup}</span>
