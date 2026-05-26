@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.5</div>
+    <div class="app-version-tag">Versión 1.1.6</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -898,11 +898,11 @@
         return html;
     }
 
-    function renderizarBloquesHorarios() {
+function renderizarBloquesHorarios() {
         const contenedor = document.getElementById('contenedorBloquesHorarios');
         if(!contenedor) return;
     
-        // Crear el grid principal de semanas una sola vez
+        // 1. Limpiamos y creamos el grid principal de semanas en 2 columnas
         contenedor.innerHTML = '<div class="grid-semanas-contenedor" id="gridSemanas"></div>';
         const gridSemanas = document.getElementById('gridSemanas');
 
@@ -917,31 +917,41 @@
             const strInicio = semana.inicio.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
             const strFin = semana.fin.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
         
-             // Creamos un contenedor para la semana
+            // 2. Creamos un contenedor para la semana y lo agregamos al grid
             const bloqueSemana = document.createElement('div');
-            bloqueSemana.className = 'semana-contenedor-general'; // Mantiene tus estilos de tarjeta
+            bloqueSemana.className = 'semana-contenedor-general';
             bloqueSemana.innerHTML = `
                 <div class="semana-header-titulo">
                     📅 Semana ${indiceSemana + 1} <span style="font-weight:400; font-size:1rem; color:#64748b; margin-left:5px;">(del ${strInicio} al ${strFin})</span>
                 </div>
                 <div class="grid-bloques-supervisores" id="supervisores_sem_${indiceSemana}"></div>
             `;
-        
             gridSemanas.appendChild(bloqueSemana);
         
-            // Lógica para llenar los supervisores dentro de este bloque de semana (igual a como lo tenías)
+            // 3. Llenamos los supervisores dentro de este bloque de semana
             const contenedorSup = document.getElementById(`supervisores_sem_${indiceSemana}`);
             let supsAMostrar = supervisorFiltrado === "TODOS" ? listadoSupervisores : [supervisorFiltrado];
 
             supsAMostrar.forEach(sup => {
                 const idLlaveBase = `horario_${anoActual}_${mesSeleccionado}_sem${indiceSemana}_${sup}`;
                 const cardSupervisor = document.createElement('div');
-                 cardSupervisor.className = 'supervisor-horario-card';
+                cardSupervisor.className = 'supervisor-horario-card';
 
-                let htmlCard = `<div class="supervisor-card-name"><span>👤 ${sup}</span></div>
+                let htmlCard = `<div class="supervisor-card-name">
+                    <span>👤 ${sup}</span>
+                    <span style="font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">Neufeld Team</span>
+                </div>
                 <div class="table-container-horario">
                     <table class="table-horario">
-                        <thead><tr><th>Día</th><th>Horario</th><th>Apertura</th><th>Cierre</th><th>Estatus</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th style="width: 15%; text-align: left; padding-left: 15px;">Día</th>
+                                <th style="width: 34%;">Horario (Entrada / Salida)</th>
+                                <th style="width: 20%;">Apertura</th>
+                                <th style="width: 20%;">Cierre</th>
+                                <th style="width: 11%;">Estatus / Ausencia</th>
+                            </tr>
+                        </thead>
                         <tbody>`;
 
                 for(let d = 0; d < 7; d++) {
@@ -959,7 +969,7 @@
                     let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
                                          estatusEspecial === "TXT" ? "⏳ TIEMPO POR TIEMPO" :
                                          estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
-                                         estatusEspecial === "CUMPLE" ? "🎂 CUMPLEANOS" :
+                                         estatusEspecial === "CUMPLE" ? "🎂 CUMPLEAÑOS" :
                                          estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
                                          estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
 
@@ -1002,16 +1012,12 @@
                             </select>
                         </td>
                     </tr>`;
-                    htmlCard += `<tr><td>${fechaStringFormateada}</td><td colspan="4">...código de celdas...</td></tr>`;
                 }
 
                 htmlCard += `</tbody></table></div>`;
                 cardSupervisor.innerHTML = htmlCard;
                 contenedorSup.appendChild(cardSupervisor);
             });
-
-            semanaBloqueGeneral.appendChild(gridSupervisores);
-            contenedor.appendChild(semanaBloqueGeneral);
         });
 
         if (semanas.length === 0) {
