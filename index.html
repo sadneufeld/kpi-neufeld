@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.7</div>
+    <div class="app-version-tag">Versión 1.1.8</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -1049,7 +1049,8 @@ function renderizarBloquesHorarios() {
         const contenedor = document.getElementById(`view_${campo}_${idLlaveBase}_d${diaIndice}`);
         if(!contenedor) return;
 
-        const valorActual = guardarCeldaHorario(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
+        // Leemos el valor actual desde la variable global (la nube)
+        const valorActual = horariosGlobales[`${idLlaveBase}_dia_${diaIndice}_${campo}`] || "";
         
         contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="...">`;
         
@@ -1059,7 +1060,9 @@ function renderizarBloquesHorarios() {
 
         const guardarCambio = () => {
             const nuevoValor = input.value.trim();
-            localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
+            // GUARDAMOS EL CAMBIO EN LA NUBE CON NUESTRA NUEVA FUNCIÓN
+            guardarCeldaHorario(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
+            
             contenedor.innerHTML = `
                 <span>${nuevoValor || '--'}</span>
                 <button class="btn-editar-plumita" onclick="activarEdicionInline('${idLlaveBase}', ${diaIndice}, '${campo}')">✏️</button>
@@ -1071,6 +1074,7 @@ function renderizarBloquesHorarios() {
     }
 
     function cambiarEstatusEspecialDia(idLlaveBase, diaIndice, nuevoEstatus, supervisor) {
+        // Guarda el nuevo estatus en la nube
         guardarCeldaHorario(`${idLlaveBase}_dia_${diaIndice}_estatusEspecial`, nuevoEstatus);
         
         const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
@@ -1100,10 +1104,11 @@ function renderizarBloquesHorarios() {
             cellHorario.removeAttribute('colspan');
             cellHorario.className = '';
             
-            let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hEntrada`) || "";
-            let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_hSalida`) || "";
-            let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_apertura`) || "";
-            let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_cierre`) || "";
+            // Leemos los datos de la NUBE para volver a mostrarlos
+            let hEntrada = horariosGlobales[`${idLlaveBase}_dia_${diaIndice}_hEntrada`] || "";
+            let hSalida = horariosGlobales[`${idLlaveBase}_dia_${diaIndice}_hSalida`] || "";
+            let valApertura = horariosGlobales[`${idLlaveBase}_dia_${diaIndice}_apertura`] || "";
+            let valCierre = horariosGlobales[`${idLlaveBase}_dia_${diaIndice}_cierre`] || "";
 
             cellHorario.innerHTML = `
                 <div class="rango-horas">
