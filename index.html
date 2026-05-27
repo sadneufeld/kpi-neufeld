@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.6</div>
+    <div class="app-version-tag">Versión 1.1.7</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -535,9 +535,10 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyp4US04tdcDm3Kxgbz3D7XgpJIb20deIh8oM6ZYNfq_OGdsxgJjsDpFD1-g7xXlPeh/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztEkJozeffcy-aeeMxZahdSADr6RbCD7zvxemiDtH7c14VC_OkrYR3gpK8XPsNa-js/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
+    let horariosGlobales = {};
     let comparativaChart = null;
     let sucursalesLineChart = null; 
 
@@ -598,10 +599,16 @@
     async function cargarDatosNube() {
         toggleLoading(true);
         try {
-            const resp = await fetch(WEB_APP_URL);
-            datosGlobales = await resp.json();
-            procesarYRenderizarTodo();
-        } catch(e) { console.error(e); }
+                // 1. Cargar Auditorías
+                const respAuditorias = await fetch(WEB_APP_URL);
+                datosGlobales = await respAuditorias.json();
+
+                // 2. Cargar Horarios de la nube
+                const respHorarios = await fetch(WEB_APP_URL + "?action=getHorarios");
+                horariosGlobales = await respHorarios.json();
+
+                procesarYRenderizarTodo();
+        } catch(e) { console.error("Error al cargar datos:", e); }
         toggleLoading(false);
     }
 
@@ -959,11 +966,11 @@ function renderizarBloquesHorarios() {
                     dTmp.setDate(dTmp.getDate() + d);
                     const fechaStringFormateada = `${diasNombres[d]} ${dTmp.getDate()}`;
 
-                    let estatusEspecial = localStorage.getItem(`${idLlaveBase}_dia_${d}_estatusEspecial`) || "NORMAL";
-                    let hEntrada = localStorage.getItem(`${idLlaveBase}_dia_${d}_hEntrada`) || "";
-                    let hSalida = localStorage.getItem(`${idLlaveBase}_dia_${d}_hSalida`) || "";
-                    let valApertura = localStorage.getItem(`${idLlaveBase}_dia_${d}_apertura`) || "";
-                    let valCierre = localStorage.getItem(`${idLlaveBase}_dia_${d}_cierre`) || "";
+                    let estatusEspecial = horariosGlobales[`${idLlaveBase}_dia_${d}_estatusEspecial`] || "NORMAL";
+                    let hEntrada = horariosGlobales[`${idLlaveBase}_dia_${d}_hEntrada`] || "";
+                    let hSalida = horariosGlobales[`${idLlaveBase}_dia_${d}_hSalida`] || "";
+                    let valApertura = horariosGlobales[`${idLlaveBase}_dia_${d}_apertura`] || "";
+                    let valCierre = horariosGlobales[`${idLlaveBase}_dia_${d}_cierre`] || "";
 
                     let esEspecial = estatusEspecial !== "NORMAL";
                     let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
@@ -1025,15 +1032,24 @@ function renderizarBloquesHorarios() {
         }
     }
 
-    function guardarCeldaHorario(llaveStorage, valor) {
-        localStorage.setItem(llaveStorage, valor);
+    // Nueva función que envía cada cambio a tu Google Sheets instantáneamente
+    async function guardarCeldaHorario(llaveStorage, valor) {
+        horariosGlobales[llaveStorage] = valor; // Actualiza en pantalla rápido
+    
+        try {
+            await fetch(WEB_APP_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify({ action: 'guardar_horario', llave: llaveStorage, valor: valor }) 
+            });
+        } catch(e) { console.error("Error guardando horario en la nube:", e); }
     }
 
     function activarEdicionInline(idLlaveBase, diaIndice, campo) {
         const contenedor = document.getElementById(`view_${campo}_${idLlaveBase}_d${diaIndice}`);
         if(!contenedor) return;
 
-        const valorActual = localStorage.getItem(`${idLlaveBase}_dia_${diaIndice}_${campo}`) || "";
+        const valorActual = guardarCeldaHorario(`${idLlaveBase}_dia_${diaIndice}_${campo}`, nuevoValor);
         
         contenedor.innerHTML = `<input type="text" class="input-inline-edicion" id="edit_input_${campo}_${idLlaveBase}_d${diaIndice}" value="${valorActual}" placeholder="...">`;
         
@@ -1055,7 +1071,7 @@ function renderizarBloquesHorarios() {
     }
 
     function cambiarEstatusEspecialDia(idLlaveBase, diaIndice, nuevoEstatus, supervisor) {
-        localStorage.setItem(`${idLlaveBase}_dia_${diaIndice}_estatusEspecial`, nuevoEstatus);
+        guardarCeldaHorario(`${idLlaveBase}_dia_${diaIndice}_estatusEspecial`, nuevoEstatus);
         
         const filaTarget = document.getElementById(`row_${idLlaveBase}_d${diaIndice}`);
         const cellHorario = document.getElementById(`cell_horario_${idLlaveBase}_d${diaIndice}`);
