@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.1.8</div>
+    <div class="app-version-tag">Versión 1.1.9</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -895,14 +895,19 @@
     }
 
     // Función auxiliar para construir el desplegable estructurado por medias horas
-    function generarSelectMediaHora(idLlave, valorActual) {
-        let html = `<select class="horario-time-dropdown" onchange="guardarCeldaHorario('${idLlave}', this.value)">`;
-        opcionesMediaHora.forEach(hora => {
-            let seleccionado = hora === valorActual ? "selected" : "";
-            html += `<option value="${hora}" ${seleccionado}>${hora || '--:--'}</option>`;
-        });
-        html += `</select>`;
-        return html;
+    function generarSelectMediaHora(id, valorSeleccionado) {
+        let opciones = `<option value="">--:--</option>`;
+        // Generamos horas de 06:00 a 22:00
+        for(let h = 6; h <= 22; h++) {
+            for(let m = 0; m < 60; m += 30) {
+                let hora = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+                // Si la hora coincide con el valor guardado, se marca como 'selected'
+                let selected = (hora === valorSeleccionado) ? "selected" : "";
+                opciones += `<option value="${hora}" ${selected}>${hora}</option>`;
+            }
+        }
+        // ¡Aquí está el secreto! El 'onchange' es el que guarda en el Google Sheet
+        return `<select class="horario-select" onchange="guardarCeldaHorario('${id}', this.value)">${opciones}</select>`;
     }
 
 function renderizarBloquesHorarios() {
@@ -968,8 +973,8 @@ function renderizarBloquesHorarios() {
 
                     let estatusEspecial = horariosGlobales[`${idLlaveBase}_dia_${d}_estatusEspecial`] || "NORMAL";
                     let hEntrada = horariosGlobales[`${idLlaveBase}_dia_${d}_hEntrada`] || "";
+                    let hEntrada = horariosGlobales[`${idLlaveBase}_dia_${d}_hEntrada`] || "";
                     let hSalida = horariosGlobales[`${idLlaveBase}_dia_${d}_hSalida`] || "";
-                    let valApertura = horariosGlobales[`${idLlaveBase}_dia_${d}_apertura`] || "";
                     let valCierre = horariosGlobales[`${idLlaveBase}_dia_${d}_cierre`] || "";
 
                     let esEspecial = estatusEspecial !== "NORMAL";
