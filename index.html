@@ -535,7 +535,7 @@
 </div>
 
 <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbztEkJozeffcy-aeeMxZahdSADr6RbCD7zvxemiDtH7c14VC_OkrYR3gpK8XPsNa-js/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1uRuuT4p8fX6Bcl_Idq_UeQBzy6OVvF5jQuRkBKRGqoI5FTE3b2cZoYHfNjbdSr0e/exec";
     const CODIGO_SEGURIDAD = "Neufeld2024";
     let datosGlobales = [];
     let horariosGlobales = {};
@@ -895,21 +895,29 @@
     }
 
     // Función auxiliar para construir el desplegable estructurado por medias horas
-    function generarSelectMediaHora(id, valorSeleccionado) {
+    function generarSelectMediaHora(idLlave, valorSeleccionado) {
+        // 1. Limpiamos y aseguramos el formato (ej. convierte "8:30" en "08:30")
+        let valorLimpio = String(valorSeleccionado || "").trim();
+        if (valorLimpio.length === 4 && valorLimpio.indexOf(":") === 1) {
+            valorLimpio = "0" + valorLimpio;
+        }
+
         let opciones = `<option value="">--:--</option>`;
-        // Generamos horas de 06:00 a 22:00
+        
+        // 2. Generamos horas de 06:00 a 22:00
         for(let h = 6; h <= 22; h++) {
             for(let m = 0; m < 60; m += 30) {
                 let hora = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-                // Si la hora coincide con el valor guardado, se marca como 'selected'
-                let selected = (hora === valorSeleccionado) ? "selected" : "";
-                opciones += `<option value="${hora}" ${selected}>${hora}</option>`;
+                
+                // 3. Comparamos contra el valor limpio
+                let seleccionado = (hora === valorLimpio) ? "selected" : "";
+                opciones += `<option value="${hora}" ${seleccionado}>${hora}</option>`;
             }
         }
-        // ¡Aquí está el secreto! El 'onchange' es el que guarda en el Google Sheet
-        return `<select class="horario-select" onchange="guardarCeldaHorario('${id}', this.value)">${opciones}</select>`;
+        // Usamos la clase 'horario-time-dropdown' para que se vea con el diseño bonito
+        return `<select class="horario-time-dropdown" onchange="guardarCeldaHorario('${idLlave}', this.value)">${opciones}</select>`;
     }
-
+    
 function renderizarBloquesHorarios() {
         const contenedor = document.getElementById('contenedorBloquesHorarios');
         if(!contenedor) return;
