@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.2.1</div>
+    <div class="app-version-tag">Versión 1.2.2</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -374,7 +374,7 @@
                     </div>
                     <div class="input-group">
                         <label>Sucursal</label>
-                        <select id="sucursal"></select>
+                        <select id="sucursal" onchange="verificarBloqueoCalificacion()"></select>
                     </div>
                     <div class="input-group">
                         <label>Fecha de Auditoría</label>
@@ -577,8 +577,31 @@
     function cargarSucursalesFormulario() {
         const sup = document.getElementById('sup').value;
         const combo = document.getElementById('sucursal');
-        combo.innerHTML = '';
-        if(sup && sucursalesData[sup]) sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
+        combo.innerHTML = ''; // Limpia las opciones anteriores
+        
+        if(sup && sucursalesData[sup]) {
+            // Añade las sucursales normales
+            sucursalesData[sup].forEach(s => combo.add(new Option(s, s)));
+            // Añade la opción "comodín" al final
+            combo.add(new Option("Otra / No Aplica", "OTRA_NO_APLICA"));
+        }
+        
+        // Cada vez que se cargan nuevas sucursales, verificamos si hay que bloquear el campo
+        verificarBloqueoCalificacion();
+    }
+
+    function verificarBloqueoCalificacion() {
+        const comboSucursal = document.getElementById('sucursal');
+        const inputCalifTienda = document.getElementById('califTienda');
+        
+        if (comboSucursal.value === "OTRA_NO_APLICA") {
+            inputCalifTienda.value = ""; // Vaciamos el campo por seguridad
+            inputCalifTienda.disabled = true; // Lo bloqueamos
+            inputCalifTienda.style.backgroundColor = "#e2e8f0"; // Lo ponemos gris para indicar que está inactivo
+        } else {
+            inputCalifTienda.disabled = false; // Lo desbloqueamos
+            inputCalifTienda.style.backgroundColor = "#ffffff"; // Regresa a blanco
+        }
     }
 
     function actualizarFiltrosGrafica(origen) {
