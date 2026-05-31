@@ -1016,7 +1016,10 @@ function renderizarBloquesHorarios() {
                                          estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
                                          estatusEspecial === "CUMPLE" ? "🎂 CUMPLEAÑOS" :
                                          estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
+                                         estatusEspecial === "FESTIVO" ? "👀 FESTIVO" :
+                                         estatusEspecial === "EVENTO" ? "🚩 EVENTO" :                        
                                          estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
+                    
 
                     htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esEspecial ? 'fila-descanso-activa' : ''}">
                         <td style="text-align:left; font-weight:700; color:var(--navy); padding-left: 15px;">${fechaStringFormateada}</td>
