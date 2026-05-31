@@ -1011,14 +1011,14 @@ function renderizarBloquesHorarios() {
                     let valCierre = horariosGlobales[`${idLlaveBase}_dia_${d}_cierre`] || "";
 
                     let esEspecial = estatusEspecial !== "NORMAL";
-                    let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
+                  let etiquetaEstatus = estatusEspecial === "DESCANSO" ? "💤 DESCANSO" : 
                                          estatusEspecial === "TXT" ? "⏳ TIEMPO POR TIEMPO" :
                                          estatusEspecial === "PERMISO" ? "📄 PERMISO SIN GOCE" :
                                          estatusEspecial === "CUMPLE" ? "🎂 CUMPLEAÑOS" :
                                          estatusEspecial === "INCAPACIDAD" ? "🏥 INCAPACIDAD" :
-                                         estatusEspecial === "FESTIVO" ? "👀 FESTIVO" :
-                                         estatusEspecial === "EVENTO" ? "🚩 EVENTO" :                        
-                                         estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : estatusEspecial;
+                                         estatusEspecial === "VACACIONES" ? "✈️ VACACIONES" : 
+                                         estatusEspecial === "FESTIVO" ? "🎉 FESTIVO" :
+                                         estatusEspecial === "EVENTO" ? "🎪 EVENTO" : estatusEspecial;
                     
 
                     htmlCard += `<tr id="row_${idLlaveBase}_d${d}" class="${esEspecial ? 'fila-descanso-activa' : ''}">
@@ -1057,6 +1057,8 @@ function renderizarBloquesHorarios() {
                                 <option value="CUMPLE" ${estatusEspecial === 'CUMPLE' ? 'selected' : ''}>Cumpleaños</option>
                                 <option value="INCAPACIDAD" ${estatusEspecial === 'INCAPACIDAD' ? 'selected' : ''}>Incapacidad</option>
                                 <option value="VACACIONES" ${estatusEspecial === 'VACACIONES' ? 'selected' : ''}>Vacaciones</option>
+                                <option value="FESTIVO" ${estatusEspecial === 'FESTIVO' ? 'selected' : ''}>Festivo</option>
+                                <option value="EVENTO" ${estatusEspecial === 'EVENTO' ? 'selected' : ''}>Evento</option>
                             </select>
                         </td>
                     </tr>`;
@@ -1136,6 +1138,8 @@ function renderizarBloquesHorarios() {
             else if(nuevoEstatus === "CUMPLE") textoVisible = "🎂 CUMPLEAÑOS";
             else if(nuevoEstatus === "INCAPACIDAD") textoVisible = "🏥 INCAPACIDAD";
             else if(nuevoEstatus === "VACACIONES") textoVisible = "✈️ VACACIONES";
+            else if(nuevoEstatus === "FESTIVO") textoVisible = "🎉 FESTIVO";
+            else if(nuevoEstatus === "EVENTO") textoVisible = "🎪 EVENTO";
 
             cellHorario.innerHTML = textoVisible;
             if(cellApertura) cellApertura.style.display = 'none';
