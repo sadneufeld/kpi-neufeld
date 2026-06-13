@@ -326,7 +326,7 @@
 </div>
 
 <div class="main-wrapper">
-    <div class="app-version-tag">Versión 1.2.4</div>
+    <div class="app-version-tag">Versión 1.2.5</div>
 
     <nav id="sidebar">
         <div class="nav-items">
@@ -365,7 +365,6 @@
                         <label>Supervisor</label>
                         <select id="sup" onchange="cargarSucursalesFormulario()">
                             <option value="">Seleccionar...</option>
-                            <option value="ADRIANA">Adriana</option>
                             <option value="CITLALLI">Citlalli</option>
                             <option value="KARLA">Karla</option>
                             <option value="LEONARDO">Leonardo</option>
@@ -475,7 +474,6 @@
                         <label style="font-size:0.8rem; font-weight:bold; color:var(--text-main);">Filtrar por Zona (Supervisor):</label>
                         <select id="filtroGraficaZona" onchange="actualizarFiltrosGrafica('zona')">
                             <option value="TODOS">-- Ver Todas las Zonas --</option>
-                            <option value="ADRIANA">Zona Adriana</option>
                             <option value="CITLALLI">Zona Citlalli</option>
                             <option value="KARLA">Zona Karla</option>
                             <option value="LEONARDO">Zona Leonardo</option>
@@ -517,7 +515,6 @@
                     <label style="font-size:0.85rem; font-weight:bold; color:var(--navy);">Filtrar Vista por Supervisor:</label>
                     <select id="filtroHorarioSupervisor" onchange="renderizarBloquesHorarios()" style="width: 100%;">
                         <option value="TODOS">-- Todos los Supervisores --</option>
-                        <option value="ADRIANA">Adriana</option>
                         <option value="CITLALLI">Citlalli</option>
                         <option value="KARLA">Karla</option>
                         <option value="LEONARDO">Leonardo</option>
@@ -542,14 +539,13 @@
     let comparativaChart = null;
     let sucursalesLineChart = null; 
 
-    const listadoSupervisores = ["ADRIANA", "CITLALLI", "KARLA", "LEONARDO", "NOEMI"];
+    const listadoSupervisores = ["CITLALLI", "KARLA", "LEONARDO", "NOEMI"];
 
     const sucursalesData = {
-        "ADRIANA": ["ATE - Amoripax Tetlan", "ATO - Amoripax Tonala", "ASL - Amoripax Santa Lucia", "ACA - Avila Camacho", "IND - Independencia", "RCE - Real Center", "SIS - San Isidro", "SLU - Santa Lucia", "TES - Tesistan", "TET - Tetlan", "TRA - Transito"],
-        "CITLALLI": ["AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "REV - Revolucion", "TEC - Technology"],
-        "KARLA": ["ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero"],
-        "LEONARDO": ["AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TLA - Tlaquepaque", "TON - Tonala"],
-        "NOEMI": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol"]
+        "CITLALLI": ["ACA - Avila Camacho", "AME - Americas", "CHA - Chapultepec", "FED - Federalta", "LPA - La Paz", "OBL - Oblatos", "POR - Punto Oriente", "RCE - Real Center", "REV - Revolucion", "SIS - San Isidro", "TEC - Technology"],
+        "KARLA": ["ASL - Amoripax Santa Lucia", "ALC - Alcalde", "COL - Colon", "ETE - Expendio Tepeyac", "GCO - Golfo de Cortes", "GUA - Guadalupe", "ING - Inglaterra", "JUA - Juarez", "NOB - Niño Obrero", "SLU - Santa Lucia", "TES - Tesistan"],
+        "LEONARDO": ["ATE - Amoripax Tetlan", "ATO - Amoripax Tonala", "AER - Aeropuerto", "ALT - Altea", "CPI - Centro las Pintas", "CON - Concepcion", "RMI - R Michel", "RPL - Rio Plaza", "SFE - Santa Fe", "TET - Tetlan", "TLA - Tlaquepaque", "TON - Tonala"],
+        "NOEMI": ["BUG - Bugambilias", "CRE - Camino Real", "CGR - Ciudad Granja", "GAL - Galerias", "HIS - Historiadores", "IND - Independencia", "LCA - La Calma", "LPL - Lapislazuli", "MOT - Mariano Otero", "PSO - Plaza del Sol", "TRA - Transito"]
     };
 
     // Arreglo de opciones cada 30 minutos para agilizar la selección
@@ -643,7 +639,6 @@
 
         const mes = parseInt(document.getElementById('filtroMes').value);
         let statsSupervisores = {
-            "ADRIANA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
             "CITLALLI": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
             "KARLA": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
             "LEONARDO": { v:0, ch:0, ar:0, ad:0, rot:0, as:0, pr:0, py:0, t:0, c:0 },
